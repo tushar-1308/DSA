@@ -1,0 +1,1355 @@
+// GENERIC TREE NOT DONE QUESTIONS 35,37,39,42,50,52,53
+
+
+
+// CONSTRUCT A GENERIC TREE
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+GenericTreeNode* rootNode = NULL;
+
+void Print(GenericTreeNode* root){
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+int main(){
+    
+    GenericTreeNode* newNode = new GenericTreeNode(1);
+    rootNode = newNode;
+    
+    for(int i=2; i<=4; i++){
+        GenericTreeNode* newNode = new GenericTreeNode(i);
+        rootNode->childrens.push_back(newNode);
+    }
+    
+    for(int i=5; i<=7; i++){
+        GenericTreeNode* newNode = new GenericTreeNode(i);          //                      1  
+        rootNode->childrens[0]->childrens.push_back(newNode);       //             /        |       \
+    }                                                               //            /         |        \        
+                                                                    //           2          3         4
+    for(int i=8; i<=8; i++){                                        /*        /  |  \       |       /   \    */
+        GenericTreeNode* newNode = new GenericTreeNode(i);          //        5  6   7      8      9     10 
+        rootNode->childrens[1]->childrens.push_back(newNode);       //                   /  |  \
+    }                                                               //                  11  12  13           
+    
+    for(int i=9; i<=10; i++){
+        GenericTreeNode* newNode = new GenericTreeNode(i);
+        rootNode->childrens[2]->childrens.push_back(newNode);
+    }
+    
+    for(int i=11; i<=13; i++){
+        GenericTreeNode* newNode = new GenericTreeNode(i);
+        rootNode->childrens[1]->childrens[0]->childrens.push_back(newNode);
+    }
+    
+    Print(rootNode);
+    
+    return 0;
+}
+eg.
+1 2 5 6 7 3 8 11 12 13 4 9 10 
+
+
+
+
+// CONSTRUCT A GENERIC TREE USING STACK AND VECTOR
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+GenericTreeNode* rootNode = NULL;
+
+void Print(GenericTreeNode* root){
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+int main(){
+    
+    //                      1  
+    //             /        |       \
+    //            /         |        \        
+    //           2          3         4
+    /*        /  |  \       |       /   \     */
+    //       5   6   7      8      9     10 
+    //                   /  |  \
+    //                  11  12  13           
+    
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+            }
+        }
+        
+    }
+    Print(temp);
+    return 0;
+}
+
+
+
+
+// PREORDER & POSTORDER & LEVELORDER TRAVERSALS
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+GenericTreeNode* rootNode = NULL;
+
+void Print(GenericTreeNode* root){
+    
+    // PREORDER
+    // cout<<root->data<<" ";
+    
+    // if(root->childrens.size()==0){
+    //     return;
+    // }
+    // else{
+    //     for(int i=0; i<root->childrens.size(); i++){
+    //         Print(root->childrens[i]);
+    //     }
+    // }
+    
+    // POSTORDER
+    if(root->childrens.size()==0){
+        cout<<root->data<<" ";
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+        cout<<root->data<<" ";
+    }
+    
+    
+}
+
+// LEVELORDER TRAVERSAL
+void Print(queue<GenericTreeNode*> answer){
+    
+    if(answer.size()==0){
+        return;
+    }
+    GenericTreeNode* temp = answer.front();
+    cout<<temp->data<<" ";
+    answer.pop();
+    if(temp->childrens.size()>0){
+        for(int i=0; i<temp->childrens.size(); i++){
+            answer.push(temp->childrens[i]);
+        }
+    }
+    Print(answer);
+}
+
+int main(){
+    
+    //                      1  
+    //             /        |       \
+    //            /         |        \        
+    //           2          3         4
+    /*        /  |  \       |       /   \     */
+    //       5   6   7      8      9     10 
+    //                   /  |  \
+    //                  11  12  13           
+    
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                nodeData.top()->childrens.push_back(newNode);
+                
+            }
+            nodeData.push(newNode);
+        }
+    }
+    queue<GenericTreeNode*> answer;
+    answer.push(temp);
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    Print(answer);       // LEVELORDER
+    return 0;
+}
+eg.
+5 6 7 2 11 12 13 8 3 9 10 4 1 
+1 2 3 4 5 6 7 8 9 10 11 12 13 
+
+
+// LEVELORDER ZIGZAG TRAVERSAL
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+GenericTreeNode* rootNode = NULL;
+
+// Zig-Zag LEVELORDER TRAVERSAL
+void Print(stack<GenericTreeNode*> answer, bool &zigzag){
+    
+    if(answer.size()==0){
+        return;
+    }
+    if(zigzag==true){
+        cout<<endl;
+        stack<GenericTreeNode*> values;
+        zigzag = false;
+        while(answer.size()!=0){
+            GenericTreeNode* temp = answer.top();
+            cout<<temp->data<<" ";
+            answer.pop();
+            if(temp->childrens.size()>0){
+                for(int i=0; i<temp->childrens.size(); i++){
+                    values.push(temp->childrens[i]);
+                }
+            }
+        }
+        answer = values;
+    }
+    else{
+        cout<<endl;
+        stack<GenericTreeNode*> values;
+        zigzag = true;
+        while(answer.size()!=0){
+            GenericTreeNode* temp = answer.top();
+            cout<<temp->data<<" ";
+            answer.pop();
+            if(temp->childrens.size()>0){
+                for(int i=temp->childrens.size()-1; i>=0; i--){
+                    values.push(temp->childrens[i]);
+                }
+            }
+        }
+        answer = values;
+    }
+    Print(answer, zigzag);
+}
+
+int main(){
+    
+    //                      1  
+    //             /        |       \
+    //            /         |        \        
+    //           2          3         4
+    /*        /  |  \       |       /   \     */
+    //       5   6   7      8      9     10 
+    //                   /  |  \
+    //                  11  12  13           
+    
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                nodeData.top()->childrens.push_back(newNode);
+                
+            }
+            nodeData.push(newNode);
+        }
+    }
+    stack<GenericTreeNode*> answer;
+    answer.push(temp);
+    bool zigzag = true;
+    cout<<"Node values in Zig-Zag Motion";
+    Print(answer, zigzag);       // LEVELORDER
+    return 0;
+}
+eg.
+Node values in Zig-Zag Motion
+1 
+4 3 2 
+5 6 7 8 9 10 
+13 12 11 
+
+
+// LINEARIZE A GENERIC TREE
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+struct LinearGenericTreeNode{
+    int data;
+    LinearGenericTreeNode* childNode;
+    LinearGenericTreeNode(int val){
+        data = val;
+    }
+};
+
+GenericTreeNode* rootNode = NULL;
+LinearGenericTreeNode* LGTrootNode = NULL;
+int sizeOfGenericTree = 0;
+
+void Print(GenericTreeNode* root, LinearGenericTreeNode* &LGTrootNode){
+    
+    // PREORDER
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            LinearGenericTreeNode* newNode1 = new LinearGenericTreeNode(root->childrens[i]->data);
+            LGTrootNode->childNode = newNode1;
+            LGTrootNode = LGTrootNode->childNode;
+            Print(root->childrens[i], LGTrootNode);
+        }
+    }
+}
+
+int main(){
+    
+    //                      1                                                
+    //             /        |       \                               
+    //            /         |        \                                      
+    //           2          3         4                                 
+    /*        /  |  \       |       /   \     */                            
+    //       5   6   7      8      9     10                                     
+    //                   /  |  \                                                
+    //                  11  12  13                                          
+    
+    //      1 -> 2 -> 5 -> 5 -> 6 -> 7 -> 3 -> 8 -> 11 -> 12 -> 13 -> 4 -> 9 -> 10
+    
+    GenericTreeNode* temp = NULL;
+    LinearGenericTreeNode* tempo = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            LinearGenericTreeNode* newNode1 = new LinearGenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            LGTrootNode = newNode1;
+            tempo = LGTrootNode;
+            nodeData.push(newNode);
+            sizeOfGenericTree+=1;
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+                sizeOfGenericTree+=1;
+            }
+        }
+    }
+    cout<<"Size of tree is :"<<sizeOfGenericTree<<endl;
+    Print(temp, LGTrootNode);      // PREORDER & POSTORDER
+    cout<<endl;
+    while(tempo!=NULL){
+        cout<<tempo->data<<" ";
+        tempo = tempo->childNode;
+    }
+    return 0;
+}
+eg.
+Size of tree is :13
+1 2 5 6 7 3 8 11 12 13 4 9 10 
+1 2 5 6 7 3 8 11 12 13 4 9 10 
+
+
+
+// MIRROR OF GENERIC TREE
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+GenericTreeNode* rootNode = NULL;
+
+void Print(queue<GenericTreeNode*> answer){
+    
+    // LEVELORDER TRAVERSAL
+    if(answer.size()==0){
+        return;
+    }
+    GenericTreeNode* temp = answer.front();
+    cout<<temp->data<<" ";
+    answer.pop();
+    if(temp->childrens.size()>0){
+        for(int i=0; i<temp->childrens.size(); i++){
+            answer.push(temp->childrens[i]);
+        }
+    }
+    Print(answer);
+}
+
+void MirrorOfGenericTree(GenericTreeNode* root){
+    if(root->childrens.size()==0){
+        return;
+    }
+    int totalChilds = root->childrens.size();
+    for(int i=0; i<totalChilds; i++){
+        MirrorOfGenericTree(root->childrens[i]);
+    }
+    for(int i=0; i<totalChilds/2; i++){
+        GenericTreeNode* temp = root->childrens[i];
+        root->childrens[i] = root->childrens[totalChilds-i-1];
+        root->childrens[totalChilds-i-1] = temp;
+    }
+}
+
+int main(){
+    
+    //                      1  
+    //             /        |       \
+    //            /         |        \        
+    //           2          3         4
+    /*        /  |  \       |       /   \     */
+    //       5   6   7      8      9     10 
+    //                   /  |  \
+    //                  11  12  13           
+    
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+            }
+        }
+        
+    }
+
+    std::queue<GenericTreeNode*> answer;
+    answer.push(temp);
+    Print(answer);       // LEVELORDER
+    cout<<endl;
+    MirrorOfGenericTree(temp);
+    std::queue<GenericTreeNode*> newAnswer;
+    newAnswer.push(temp);
+    Print(newAnswer);   
+    return 0;
+}
+eg.
+1 2 3 4 5 6 7 8 9 10 11 12 13 
+1 4 3 2 10 9 8 7 6 5 13 12 11 
+
+
+
+
+// REMOVE LEAF NODES
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+GenericTreeNode* rootNode = NULL;
+
+void Print(queue<GenericTreeNode*> answer){
+    
+    // LEVELORDER TRAVERSAL
+    if(answer.size()==0){
+        return;
+    }
+    GenericTreeNode* temp = answer.front();
+    if(temp->data!=-1){
+        cout<<temp->data<<" ";
+    }
+    answer.pop();
+    if(temp->childrens.size()>0){
+        for(int i=0; i<temp->childrens.size(); i++){
+            answer.push(temp->childrens[i]);
+        }
+    }
+    Print(answer);
+}
+
+void RemoveLeavesFromGenericTree(GenericTreeNode* root, GenericTreeNode* emptyNodeToRemoveLeafNodes){
+    if(root->childrens.size()==0){
+        return;
+    }
+    int totalChilds = root->childrens.size();
+    for(int i=0; i<totalChilds; i++){
+        if(root->childrens[i]->childrens.size()==0){
+            root->childrens[i]=emptyNodeToRemoveLeafNodes;
+        }
+        else{
+            RemoveLeavesFromGenericTree(root->childrens[i], emptyNodeToRemoveLeafNodes);
+            
+        }
+    }
+}
+
+
+int main(){
+    
+    //                      1  
+    //             /        |       \
+    //            /         |        \        
+    //           2          3         4
+    /*        /  |  \       |       /   \     */
+    //       5   6   7      8      9     10 
+    //                   /  |  \
+    //                  11  12  13           
+    
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+            }
+        }
+    }
+
+    queue<GenericTreeNode*> answer;
+    answer.push(temp);
+    Print(answer);       // LEVELORDER
+    cout<<endl;
+    
+    GenericTreeNode* emptyNodeToRemoveLeafNodes = new GenericTreeNode(-1);
+    RemoveLeavesFromGenericTree(temp, emptyNodeToRemoveLeafNodes);
+    
+    queue<GenericTreeNode*> newAnswer;
+    newAnswer.push(temp);
+    Print(newAnswer);       // LEVELORDER
+    return 0;
+}
+eg.
+1 2 3 4 5 6 7 8 9 10 11 12 13 
+1 2 3 4 8 
+
+
+
+// NODE TO ROOT PATH 
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+bool found = false;
+GenericTreeNode* rootNode = NULL;
+
+void Print(GenericTreeNode* root){
+    
+    // PREORDER
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+void FindNodeToRootPath(GenericTreeNode* root, int val, bool &found){
+
+    // PREORDER
+    if(root->data == val){
+        found = true;
+        cout<<root->data<<" ";
+        return;
+    }
+    for(int i=0; i<root->childrens.size(); i++){
+        if(found==false){
+            FindNodeToRootPath(root->childrens[i], val, found);
+        }
+    }
+    if(found==true){
+        cout<<root->data<<" ";
+    }
+}
+
+int main(){
+    
+    //                      1                                                
+    //             /        |       \                               
+    //            /         |        \                                      
+    //           2          3         4                                 
+    /*        /  |  \       |       /   \     */                            
+    //       5   6   7      8      9     10                                     
+    //                   /  |  \                                                
+    //                  11  12  13                                          
+    
+    int nodeValue;
+    cout<<"Enter the node value from root path is required: ";
+    cin>>nodeValue;
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                nodeData.top()->childrens.push_back(newNode);
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    FindNodeToRootPath(temp, nodeValue, found);
+    return 0;
+}
+eg.
+Enter the node value from root path is required: 13
+1 2 5 6 7 3 8 11 12 13 4 9 10 
+13 8 3 1 
+
+
+
+// LOWEST COMMON ANCESTOR
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+
+GenericTreeNode* rootNode = NULL;
+int sizeOfGenericTree = 0;
+
+void Print(GenericTreeNode* root){
+    
+    // PREORDER
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+void Find(GenericTreeNode* root, int val, bool &iselemPresent){
+    if(root->data==val){
+        iselemPresent = true;
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Find(root->childrens[i], val, iselemPresent);
+        }
+    }
+}
+
+void LowestCommonAncestor(GenericTreeNode* root, int firstelem, int secelem, stack<GenericTreeNode*> &st){
+    
+    bool isFirstelemPresent = false;
+    bool isSecelemPresent = false;
+    
+    Find(root, firstelem, isFirstelemPresent);
+    Find(root, secelem, isSecelemPresent);
+    
+    if(isFirstelemPresent==true && isSecelemPresent==true){
+        st.push(root);
+    }
+    
+    for(int i=0; i<root->childrens.size(); i++){
+        LowestCommonAncestor(root->childrens[i], firstelem, secelem, st);
+    }
+}
+
+int main(){
+    
+    //                      1                                                
+    //             /        |       \                               
+    //            /         |        \                                      
+    //           2          3         4                                 
+    /*        /  |  \       |       /   \     */                            
+    //       5   6   7      8      9     10                                     
+    //                   /  |  \                                                
+    //                  11  12  13                                          
+    
+    int firstelem, secelem;
+    cout<<"Enter the node values for lowest common ancestor is required: ";
+    cin>>firstelem>>secelem;
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+            sizeOfGenericTree+=1;
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+                sizeOfGenericTree+=1;
+            }
+        }
+    }
+    cout<<"Size of tree is :"<<sizeOfGenericTree<<endl;
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    stack<GenericTreeNode*> st;
+    LowestCommonAncestor(temp, firstelem, secelem, st);
+    cout<<st.top()->data;
+    return 0;
+}
+eg.
+Enter the node values for lowest common ancestor is required: 11 4
+Size of tree is :13
+1 2 5 6 7 3 8 11 12 13 4 9 10 
+1
+
+
+
+// DISTANCE BETWEEN TWO NODES
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+
+GenericTreeNode* rootNode = NULL;
+int sizeOfGenericTree = 0;
+
+void Print(GenericTreeNode* root){
+    
+    // PREORDER
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+void Find(GenericTreeNode* root, int val, bool &iselemPresent){
+    if(root->data==val){
+        iselemPresent = true;
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Find(root->childrens[i], val, iselemPresent);
+        }
+    }
+}
+
+void LowestCommonAncestor(GenericTreeNode* root, int firstelem, int secelem, stack<GenericTreeNode*> &st){
+    
+    bool isFirstelemPresent = false;
+    bool isSecelemPresent = false;
+    
+    Find(root, firstelem, isFirstelemPresent);
+    Find(root, secelem, isSecelemPresent);
+    
+    if(isFirstelemPresent==true && isSecelemPresent==true){
+        st.push(root);
+    }
+    
+    for(int i=0; i<root->childrens.size(); i++){
+        LowestCommonAncestor(root->childrens[i], firstelem, secelem, st);
+    }
+}
+
+void FindDistance(GenericTreeNode* root, int elem, int &NodeDistance, int distance){
+    
+    if(root->data == elem){
+        NodeDistance = distance;
+        return;
+    }
+    for(int i=0; i<root->childrens.size(); i++){
+        distance++;
+        FindDistance(root->childrens[i], elem, NodeDistance, distance);
+        distance--;
+    }
+}
+
+int main(){
+    
+    //                      1                                                
+    //             /        |       \                               
+    //            /         |        \                                      
+    //           2          3         4                                 
+    /*        /  |  \       |       /   \     */                            
+    //       5   6   7      8      9     10                                     
+    //                   /  |  \                                                
+    //                  11  12  13                                          
+    
+    int firstelem, secelem;
+    cout<<"Enter the node values for lowest common ancestor is required: ";
+    cin>>firstelem>>secelem;
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        1,2,5,-1,6,-1,7,-1,-1,3,8,11,-1,12,-1,13,-1,-1,-1,4,9,-1,10,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+            sizeOfGenericTree+=1;
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+                sizeOfGenericTree+=1;
+            }
+        }
+    }
+    cout<<"Size of tree is :"<<sizeOfGenericTree<<endl;
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    stack<GenericTreeNode*> st;
+    LowestCommonAncestor(temp, firstelem, secelem, st);
+    cout<<"Lowest common ancestor: "<<st.top()->data<<endl;
+    
+    int firstNodeDistance = 0;
+    FindDistance(st.top(), firstelem, firstNodeDistance, 0);
+    int secNodeDistance = 0;
+    FindDistance(st.top(), secelem, secNodeDistance, 0);
+    cout<<firstNodeDistance<<" "<<secNodeDistance<<endl;
+    cout<<"Distance b/w two nodes are: "<<firstNodeDistance+secNodeDistance<<endl;
+    return 0;
+}
+
+
+
+// CEIL AND FLOOR VALUES
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+
+GenericTreeNode* rootNode = NULL;
+int sizeOfGenericTree = 0;
+
+void Print(GenericTreeNode* root){
+    
+    // PREORDER
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+void CeilandFloor(int value, int &ceilVal, int &floorVal, GenericTreeNode* root){
+    
+    if(root->data>value && root->data<ceilVal){
+        ceilVal = root->data;
+    }
+    if(root->data<value && root->data>floorVal){
+        floorVal = root->data;
+    }
+    if(root->childrens.size()==0){
+        return;
+    }
+    for(int i=0; i<root->childrens.size(); i++){
+        CeilandFloor(value, ceilVal, floorVal, root->childrens[i]);
+    }
+    
+}
+
+int main(){
+    
+    //                      10                                                
+    //             /        |       \                               
+    //            /         |        \                                      
+    //           20         30       40                                 
+    /*        /  |  \       |       /   \     */                            
+    //      50  60  70     80     90    100                                     
+    //                   /  |  \                                                
+    //                110  120 130                                          
+    
+    int value;
+    int ceilVal=INT_MAX;
+    int floorVal=INT_MIN;
+    cout<<"Enter the value for which ceil and floor is required: ";
+    cin>>value;
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        10,20,50,-1,60,-1,70,-1,-1,30,80,110,-1,120,-1,130,-1,-1,-1,40,90,-1,100,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+            sizeOfGenericTree+=1;
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+                sizeOfGenericTree+=1;
+            }
+        }
+    }
+    cout<<"Size of tree is :"<<sizeOfGenericTree<<endl;
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    CeilandFloor(value, ceilVal, floorVal, temp);
+    cout<<"Ceil and floor values are: "<<ceilVal<<" "<<floorVal;
+    return 0;
+}
+
+
+// Kth LARGEST NUMBER
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+
+GenericTreeNode* rootNode = NULL;
+int sizeOfGenericTree = 0;
+
+void Print(GenericTreeNode* root){
+    
+    // PREORDER
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+void Floor(int largestVal, int &floorVal, GenericTreeNode* root){
+    
+    if(root->data<largestVal && root->data>floorVal){
+        floorVal = root->data;
+    }
+    if(root->childrens.size()==0){
+        return;
+    }
+    for(int i=0; i<root->childrens.size(); i++){
+        Floor(largestVal, floorVal, root->childrens[i]);
+    }
+    
+}
+
+int main(){
+    
+    //                      10                                                
+    //             /        |       \                               
+    //            /         |        \                                      
+    //           20         30       40                                 
+    /*        /  |  \       |       /   \     */                            
+    //      50  60  70     80     90    100                                     
+    //                   /  |  \                                                
+    //                110  120 130                                          
+    
+    int klargest = 0;
+    int infinity=INT_MAX;
+    int floorVal=INT_MIN;
+    cout<<"Enter the kth largest number: ";
+    cin>>klargest;
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        10,20,50,-1,60,-1,70,-1,-1,30,80,110,-1,120,-1,130,-1,-1,-1,40,90,-1,100,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+            sizeOfGenericTree+=1;
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+                sizeOfGenericTree+=1;
+            }
+        }
+    }
+    cout<<"Size of tree is :"<<sizeOfGenericTree<<endl;
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    for(int i=0; i<klargest; i++){
+        floorVal = INT_MIN;
+        Floor(infinity, floorVal, temp);
+        infinity = floorVal;
+    }
+    cout<<"kth largest number is: "<<floorVal;
+    return 0;
+}
+eg.
+Enter the kth largest number: 4
+Size of tree is :13
+10 20 50 60 70 30 80 110 120 130 40 90 100 
+kth largest number is: 100
+
+
+
+// NODE WOTH MAXIMUM SUBTREE SUM
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct GenericTreeNode{
+    int data;
+    vector<GenericTreeNode*> childrens;
+    GenericTreeNode(int val){
+        data = val;
+    }
+};
+
+
+GenericTreeNode* rootNode = NULL;
+int sizeOfGenericTree = 0;
+int node=0;
+
+void Print(GenericTreeNode* root){
+    
+    // PREORDER
+    cout<<root->data<<" ";
+    if(root->childrens.size()==0){
+        return;
+    }
+    else{
+        for(int i=0; i<root->childrens.size(); i++){
+            Print(root->childrens[i]);
+        }
+    }
+}
+
+int MaximumSumOfSubtree(GenericTreeNode* root, int &maximum){
+    
+    int sum=0;
+    
+    for(int i=0; i<root->childrens.size(); i++){
+        int ans = MaximumSumOfSubtree(root->childrens[i], maximum);
+        sum+=ans;
+    }
+    
+    sum+=root->data;
+    
+    if(sum>maximum){
+        node = root->data;
+        maximum = sum;
+    }
+    
+    return sum;
+}
+
+int main(){
+    
+    //                      10                                                
+    //             /        |       \                               
+    //            /         |        \                                      
+    //           20         30       40                                 
+    /*        /    \     /  |  \      |     */                            
+    //      -50   -60  -70  80   90 -100                                     
+    //                    /  \                                                 
+    //                 -110  120                                           
+    
+    
+    GenericTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        10,20,-50,-1,-60,-1,-1,30,-70,-1,80,-110,-1,120,-1,-1,90,-1,-1,40,-100,-1,-1,-1
+    };
+    
+    std::stack<GenericTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeData.size()==0){
+            GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+            rootNode = newNode;
+            temp = rootNode;
+            nodeData.push(newNode);
+            sizeOfGenericTree+=1;
+        }
+        else{
+            if(nodeValues[i]==-1){
+                nodeData.pop();
+            }
+            else{
+                GenericTreeNode* newNode = new GenericTreeNode(nodeValues[i]);
+                nodeData.top()->childrens.push_back(newNode);
+                nodeData.push(newNode);
+                sizeOfGenericTree+=1;
+            }
+        }
+    }
+    cout<<"Size of tree is :"<<sizeOfGenericTree<<endl;
+    Print(temp);      // PREORDER & POSTORDER
+    int maximum = INT_MIN;
+    cout<<endl;
+    MaximumSumOfSubtree(temp, maximum);
+    cout<<"Subtree Node and sum is : "<<node<<" "<<maximum;
+    return 0;
+}
+eg.
+Size of tree is :12
+10 20 -50 -60 30 -70 80 -110 120 90 40 -100 
+Subtree Node and sum is : 30 140

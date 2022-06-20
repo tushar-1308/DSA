@@ -1,0 +1,920 @@
+// Simple Binary search tree construction and PreOrder, InOrder, PostOrder Traversal
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BstNode{
+    int data;
+    BstNode* leftNode;
+    BstNode* rightNode;
+};
+
+BstNode* rootNode=NULL;
+
+BstNode* Insert(BstNode* root, int data){
+    
+    if(root == NULL){
+        BstNode* newNode = new BstNode();
+        newNode->data = data;
+        root = newNode;
+    }
+    
+    else if(data<=root->data){
+        root->leftNode = Insert(root->leftNode, data);
+    }
+    
+    else{
+        root->rightNode = Insert(root->rightNode, data);
+    }
+    
+    return root;
+}
+
+void PreOrder(BstNode* root){
+    if(root == NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    PreOrder(root->leftNode);
+    PreOrder(root->rightNode);
+}
+
+void InOrder(BstNode* root){
+    if(root == NULL){
+        return;
+    }
+
+    InOrder(root->leftNode);
+    cout<<root->data<<" ";
+    InOrder(root->rightNode);
+}
+
+void PostOrder(BstNode* root){
+    if(root == NULL){
+        return;
+    }
+
+    PostOrder(root->leftNode);
+    PostOrder(root->rightNode);
+    cout<<root->data<<" ";
+}
+
+int main(){
+    cout<<"Binary tree: "<<endl;
+    rootNode = Insert(rootNode, 50);
+    rootNode = Insert(rootNode, 20);
+    rootNode = Insert(rootNode, 60);
+    rootNode = Insert(rootNode, 40);
+    rootNode = Insert(rootNode, 55);
+    rootNode = Insert(rootNode, 10);
+    rootNode = Insert(rootNode, 80);
+    
+    cout<<"Pre-Order traversal is: ";
+    PreOrder(rootNode);
+    cout<<endl;
+    cout<<"In-Order traversal is: ";
+    InOrder(rootNode);
+    cout<<endl;
+    cout<<"Post-Order traversal is: ";
+    PostOrder(rootNode);
+    cout<<endl;
+}
+
+
+
+// Search in Binary search tree 
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BstNode{
+    int data;
+    BstNode* leftNode;
+    BstNode* rightNode;
+};
+
+BstNode* rootNode=NULL;
+
+BstNode* Insert(BstNode* root, int data){
+    
+    if(root == NULL){
+        BstNode* newNode = new BstNode();
+        newNode->data = data;
+        root = newNode;
+    }
+    
+    else if(data<=root->data){
+        root->leftNode = Insert(root->leftNode, data);
+    }
+    
+    else{
+        root->rightNode = Insert(root->rightNode, data);
+    }
+    
+    return root;
+}
+
+void PreOrder(BstNode* root){
+    if(root == NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    PreOrder(root->leftNode);
+    PreOrder(root->rightNode);
+}
+
+void InOrder(BstNode* root){
+    if(root == NULL){
+        return;
+    }
+
+    InOrder(root->leftNode);
+    cout<<root->data<<" ";
+    InOrder(root->rightNode);
+}
+
+void PostOrder(BstNode* root){
+    if(root == NULL){
+        return;
+    }
+
+    PostOrder(root->leftNode);
+    PostOrder(root->rightNode);
+    cout<<root->data<<" ";
+}
+
+string Search(BstNode* root, int data){
+    if(root==NULL){
+        return "Not found";
+    }
+    if(root->data == data){
+        return "Found";
+    }
+    
+    if(root->data >= data){
+        return Search(root->leftNode, data);
+    }
+    else{
+        return Search(root->rightNode, data);
+    }
+}
+
+int main(){
+    cout<<"Binary tree: "<<endl;
+    rootNode = Insert(rootNode, 50);
+    rootNode = Insert(rootNode, 20);
+    rootNode = Insert(rootNode, 60);
+    rootNode = Insert(rootNode, 40);
+    rootNode = Insert(rootNode, 55);
+    rootNode = Insert(rootNode, 10);
+    rootNode = Insert(rootNode, 80);
+    
+    cout<<"Pre-Order traversal is: ";
+    PreOrder(rootNode);
+    cout<<endl;
+    cout<<"In-Order traversal is: ";
+    InOrder(rootNode);
+    cout<<endl;
+    cout<<"Post-Order traversal is: ";
+    PostOrder(rootNode);
+    cout<<endl;
+    
+    cout<<"20 found or not: "<<Search(rootNode, 20)<<endl;
+    cout<<"100 found or not: "<<Search(rootNode, 100)<<endl;
+}
+
+
+
+// Find minimum and maximum in BST
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BstNode{
+    int data;
+    BstNode* leftNode;
+    BstNode* rightNode;
+};
+
+BstNode* rootNode=NULL;
+
+BstNode* Insert(BstNode* root, int data){
+    if(root == NULL){
+        BstNode* newNode = new BstNode();
+        newNode->data = data;
+        root = newNode;
+    }
+    
+    else if(data<=root->data){
+        root->leftNode = Insert(root->leftNode, data);
+    }
+    
+    else{
+        root->rightNode = Insert(root->rightNode, data);
+    }
+    
+    return root;
+}
+
+
+int FindMin(BstNode* root){
+    
+    // // Iteratively
+    // if(root==NULL){
+    //     return -1;
+    // }
+    
+    // while(root->leftNode!=NULL){
+    //     root = root->leftNode;
+    // }
+    // return root->data;
+    
+    
+    // Recursively
+    if(root==NULL){
+        return -1;
+    }
+    if(root->leftNode == NULL){
+        return root->data;
+    }
+    
+    return FindMin(root->leftNode);
+    
+}
+
+int FindMax(BstNode* root){
+    
+    // // Iteratively
+    // if(root==NULL){
+    //     return -1;
+    // }
+    
+    // while(root->rightNode!=NULL){
+    //     root = root->rightNode;
+    // }
+    // return root->data;
+    
+    // Recursively
+    if(root==NULL){
+        return -1;
+    }
+    if(root->rightNode == NULL){
+        return root->data;
+    }
+    
+    return FindMax(root->rightNode);
+}
+
+int main(){
+    cout<<"Binary tree: "<<endl;
+    rootNode = Insert(rootNode, 50);
+    rootNode = Insert(rootNode, 20);
+    rootNode = Insert(rootNode, 60);
+    rootNode = Insert(rootNode, 40);
+    rootNode = Insert(rootNode, 55);
+    rootNode = Insert(rootNode, 10);
+    rootNode = Insert(rootNode, 80);
+    
+    cout<<"Minimum element in the BST is: "<<FindMin(rootNode)<<endl;
+    cout<<"Maximum element in the BST is: "<<FindMax(rootNode)<<endl;
+    
+}
+
+
+
+// HEIGHT OF BST 
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int height = 0;
+
+struct BstNode{
+    int data;
+    BstNode* leftNode;
+    BstNode* rightNode;
+};
+
+BstNode* rootNode=NULL;
+
+BstNode* Insert(BstNode* root, int data){
+    if(root == NULL){
+        BstNode* newNode = new BstNode();
+        newNode->data = data;
+        root = newNode;
+    }
+    
+    else if(data<=root->data){
+        root->leftNode = Insert(root->leftNode, data);
+    }
+    
+    else{
+        root->rightNode = Insert(root->rightNode, data);
+    }
+    
+    return root;
+}
+
+void Height(BstNode* root, int currHeight){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    if(currHeight>height){
+        height = currHeight;
+    }
+    
+    if(root->leftNode != NULL){
+        currHeight+=1;
+        Height(root->leftNode, currHeight);
+        currHeight-=1;
+    }
+    
+    if(root->rightNode != NULL){
+        currHeight+=1;
+        Height(root->rightNode, currHeight);
+        currHeight-=1;
+    }
+    
+}
+
+int main(){
+    cout<<"Binary tree: "<<endl;
+    rootNode = Insert(rootNode, 50);
+    rootNode = Insert(rootNode, 20);      //             50
+    rootNode = Insert(rootNode, 60);      /*          /      \              */
+    rootNode = Insert(rootNode, 40);      //        20        60 
+    rootNode = Insert(rootNode, 55);      /*      /   \     /    \          */
+    rootNode = Insert(rootNode, 10);      //    10    40   55     80
+    rootNode = Insert(rootNode, 80);      /*                        \       */
+    rootNode = Insert(rootNode, 100);     //                        100    
+    
+    Height(rootNode, 0);
+    
+    cout<<"Height of BST is: "<<height;
+    
+}
+
+
+
+
+// Breadth Level Traversal/Level Order Traversal
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BSTree{
+    int data;
+    BSTree* leftNode;
+    BSTree* rightNode;
+};
+
+BSTree* rootNode = NULL;
+
+BSTree* Insert(BSTree* rootNode, int data){
+    BSTree* newNode = new BSTree();
+    newNode->data = data;
+    
+    if(rootNode == NULL){
+        rootNode = newNode;
+    }
+    else if(data <= rootNode->data){
+        rootNode->leftNode = Insert(rootNode->leftNode, data);
+    }
+    else{
+        rootNode->rightNode = Insert(rootNode->rightNode, data);
+    }
+    return rootNode;
+}
+
+void PrintLevelOrder(queue<BSTree*> discoveredNodes){
+    
+    if(discoveredNodes.size() == 0){
+        return;
+    }
+    BSTree* node = discoveredNodes.front();
+    discoveredNodes.pop();
+    cout<<node->data<<" ";
+    if(node->leftNode!=NULL){
+        discoveredNodes.push(node->leftNode);
+    }
+    if(node->rightNode!=NULL){
+        discoveredNodes.push(node->rightNode);
+    }
+    PrintLevelOrder(discoveredNodes);
+}
+
+int main()
+{
+    int n;
+    cout<<"Enter the number of nodes: ";
+    cin>>n;
+    int number;
+    for(int i=0; i<n; i++){
+        cin>>number;
+        rootNode = Insert(rootNode, number);
+    }
+    queue<BSTree*> discoveredNodes;
+    discoveredNodes.push(rootNode);
+    PrintLevelOrder(discoveredNodes);
+    return 0;
+}
+eg.
+Enter the number of nodes: 7
+50
+70
+30
+90
+40
+45
+50
+50 30 70 40 90 45 50 
+
+
+
+
+// CHECK IF A BINARY TREE IS BINARY SEARCH TREE OR NOT - NOT CORRECT
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BSTNode{
+    int data;
+    BSTNode* leftNode;
+    BSTNode* rightNode;
+    
+    BSTNode(int val){
+        data = val;
+        leftNode = NULL;
+        rightNode = NULL;
+    }
+};
+
+BSTNode* rootNode = NULL;
+
+BSTNode* BinaryTree(BSTNode* root){
+    // root = new BSTNode(50);                                        //         50
+    // root->leftNode = new BSTNode(30);                              /*      /      \      */     
+    // root->rightNode = new BSTNode(70);                             //     30      70     //
+    // root->leftNode->leftNode = new BSTNode(20);                    //    /  \    /     
+    // root->leftNode->rightNode = new BSTNode(40);                   //   20  40  60     
+    // root->rightNode->leftNode = new BSTNode(60);                   //      VALID
+    
+    root = new BSTNode(50);                                        //          50
+    root->leftNode = new BSTNode(30);                              /*      /      \      */     
+    root->rightNode = new BSTNode(70);                             //     30      70     //
+    root->leftNode->leftNode = new BSTNode(20);                    //    /  \    /     
+    root->leftNode->rightNode = new BSTNode(55);                   //   20  55  60     
+    root->rightNode->leftNode = new BSTNode(60);                   //      INVALID 
+    
+    return root;
+}
+
+void Print(BSTNode* root){
+    if(root==NULL){
+        return;
+    }
+    cout<<root->data<<" ";
+    if(root->leftNode!=NULL){
+        Print(root->leftNode);
+    }
+    if(root->rightNode!=NULL){
+        Print(root->rightNode);
+    }
+}
+
+int maxInLeftSubTree(BSTNode* root){
+    if(root->rightNode==NULL){
+        return root->data;
+    }
+    else{
+        return maxInLeftSubTree(root->rightNode);
+    }
+}
+
+int minInRightSubTree(BSTNode* root){
+    if(root->leftNode==NULL){
+        return root->data;
+    }
+    else{
+        return minInRightSubTree(root->leftNode);
+    }
+}
+
+bool isValidBST(BSTNode* root){
+    
+    if(root->leftNode==NULL && root->rightNode==NULL){
+        return true;
+    }
+    
+    int maxInLST = maxInLeftSubTree(root->leftNode);
+    int minInRST = minInRightSubTree(root->rightNode);
+    
+    if(maxInLST>root->data || minInRST<root->data){
+        return false;
+    }
+    else{
+        return isValidBST(root->leftNode);
+        return isValidBST(root->rightNode);
+    }
+}
+
+int main()
+{
+    rootNode = BinaryTree(rootNode);
+    Print(rootNode);
+    if(isValidBST(rootNode)){
+        cout<<"Valid";
+    }
+    else{
+        cout<<"Invalid";
+    }
+    return 0;
+}
+eg.
+50 30 20 55 70 60 Invalid
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BSTNode{
+    int data;
+    BSTNode* leftNode;
+    BSTNode* rightNode;
+    
+    BSTNode(int val){
+        data = val;
+        leftNode = NULL;
+        rightNode = NULL;
+    }
+};
+
+BSTNode* rootNode = new BSTNode(50); 
+
+void BinaryTree(BSTNode* root){
+    // root = new BSTNode(50);                                        //         50
+    // root->leftNode = new BSTNode(30);                              /*      /      \      */     
+    // root->rightNode = new BSTNode(70);                             //     30      70     //
+    // root->leftNode->leftNode = new BSTNode(20);                    //    /  \    /     
+    // root->leftNode->rightNode = new BSTNode(40);                   //   20  40  60     
+    // root->rightNode->leftNode = new BSTNode(60);                   //      VALID
+    
+    // root = new BSTNode(50);                                     //          50
+    root->leftNode = new BSTNode(25);                              /*      /       \      */     
+    root->rightNode = new BSTNode(75);                             //     25        75     
+    root->leftNode->leftNode = new BSTNode(12);                    //    /  \      /  \   
+    root->leftNode->rightNode = new BSTNode(37);                   //   12  37    62  72   
+    root->rightNode->leftNode = new BSTNode(62);                   //      /  \  /  \    
+    root->rightNode->rightNode = new BSTNode(72);                  //     30 40 60  70
+    root->leftNode->rightNode->leftNode = new BSTNode(30);
+    root->leftNode->rightNode->rightNode = new BSTNode(40);
+    root->rightNode->leftNode->leftNode = new BSTNode(60);
+    root->rightNode->leftNode->rightNode = new BSTNode(70);
+
+}
+
+void Print(BSTNode* root){
+    if(root==NULL){
+        return;
+    }
+    cout<<root->data<<" ";
+    // if(root->leftNode!=NULL){
+        Print(root->leftNode);
+    // }
+    // if(root->rightNode!=NULL){
+        Print(root->rightNode);
+    // }
+}
+
+int maxInLeftSubTree(BSTNode* root){
+    if(root==NULL){
+        return INT_MIN;
+    }
+    if(root->rightNode==NULL){
+        return root->data;
+    }
+    else{
+        return maxInLeftSubTree(root->rightNode);
+    }
+} 
+
+int minInRightSubTree(BSTNode* root){
+    if(root==NULL){
+        return INT_MAX;
+    }
+    if(root->leftNode==NULL){
+        return root->data;
+    }
+    else{
+        return minInRightSubTree(root->leftNode);
+    }
+}
+
+void isValidBST(BSTNode* root, bool &isBST){
+    
+    if(root->leftNode==NULL && root->rightNode==NULL){
+        return;
+    }
+    
+    int maxInLST = maxInLeftSubTree(root->leftNode);
+    int minInRST = minInRightSubTree(root->rightNode);
+    
+    if(maxInLST>root->data || minInRST<root->data){
+        isBST = false;
+        return;
+    }
+    else{
+        isValidBST(root->leftNode, isBST);
+        isValidBST(root->rightNode, isBST);
+    }
+}
+
+int main()
+{
+    BSTNode* newNode = new BSTNode(50);
+    rootNode = newNode;
+    cout<<"start";
+    
+    BinaryTree(rootNode);
+    // Print(rootNode);
+    cout<<"Valid1";
+    // rootNode = BinaryTree(rootNode);
+    cout<<"Valid2";
+    bool isBST = true;
+    // Print(rootNode);
+    // isValidBST(rootNode, isBST);
+    if(isBST){
+        cout<<"Valid";
+    }
+    else{
+        cout<<"Invalid";
+    }
+    return 0;
+}
+
+
+
+// DELETE A NODE FROM BINARY TREE EXCEPT ROOT NODE
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BSTNode{
+    int data;
+    BSTNode* leftNode;
+    BSTNode* rightNode;
+    
+    BSTNode(int val){
+        data = val;
+        leftNode = NULL;
+        rightNode = NULL;
+    }
+};
+
+BSTNode* rootNode = NULL;
+
+BSTNode* BinaryTree(BSTNode* root){
+    
+    root = new BSTNode(12);                                                     //                       12                      
+    root->leftNode = new BSTNode(5);                                            /*                 /             \            */
+    root->leftNode->leftNode = new BSTNode(3);                                  //               5               14
+    root->leftNode->rightNode = new BSTNode(7);                                 /*             /    \          /     \           */
+    root->leftNode->leftNode->leftNode = new BSTNode(1);                        //           3       7       13        17       
+    root->leftNode->rightNode->rightNode = new BSTNode(9);                      /*          /        \               /    \      */
+    root->leftNode->rightNode->rightNode->leftNode = new BSTNode(8);            //         1          9            15      20  
+    root->leftNode->rightNode->rightNode->rightNode = new BSTNode(11);          //                  /   \                 / 
+                                                                                //                 8     11             18  
+    root->rightNode = new BSTNode(14);
+    root->rightNode->leftNode = new BSTNode(13);
+    root->rightNode->rightNode = new BSTNode(17);
+    root->rightNode->rightNode->leftNode = new BSTNode(15);
+    root->rightNode->rightNode->rightNode = new BSTNode(20);
+    root->rightNode->rightNode->rightNode->leftNode = new BSTNode(18);
+     
+    return root;
+}
+
+void Print(BSTNode* root){
+    if(root==NULL){
+        return;
+    }
+    cout<<root->data<<" ";
+    if(root->leftNode!=NULL){
+        Print(root->leftNode);
+    }
+    if(root->rightNode!=NULL){
+        Print(root->rightNode);
+    }
+}
+
+int MinFromRightSubTree(BSTNode* root){
+    if(root->leftNode==NULL){
+        return root->data;
+    }
+    else{
+        return MinFromRightSubTree(root->leftNode);
+    }
+}
+
+void deleteNode(BSTNode* root, int value){
+    if(root->leftNode!=NULL && root->leftNode->data == value){
+        if(root->leftNode->leftNode==NULL && root->leftNode->rightNode==NULL){
+            root->leftNode = NULL;
+            return;
+        }
+        if(root->leftNode->leftNode!=NULL && root->leftNode->rightNode!=NULL){
+            int elem = MinFromRightSubTree(root->leftNode->rightNode);
+            value = elem;
+            root->leftNode->data = elem;
+            deleteNode(root->leftNode, value);
+            return;
+        }
+        if(root->leftNode->leftNode!=NULL){
+            root->leftNode = root->leftNode->leftNode;
+            return;
+        }
+        if(root->leftNode->rightNode!=NULL){
+            root->leftNode = root->leftNode->rightNode;
+            return;
+        }
+    }
+    
+    if(root->rightNode!=NULL && root->rightNode->data == value){
+        if(root->rightNode->leftNode==NULL && root->rightNode->rightNode==NULL){
+            root->rightNode = NULL;
+            return;
+        }
+        if(root->rightNode->leftNode!=NULL && root->rightNode->rightNode!=NULL){
+            int elem = MinFromRightSubTree(root->rightNode->rightNode);
+            value = elem;
+            root->rightNode->data = elem;
+            deleteNode(root->rightNode, value);
+            return;
+        }
+        
+        if(root->rightNode->leftNode!=NULL){
+            root->rightNode = root->rightNode->leftNode;
+            return;
+        }
+        if(root->rightNode->rightNode!=NULL){
+            root->rightNode = root->rightNode->rightNode;
+            return;
+        }
+    }
+    
+    if(value<root->data){
+        deleteNode(root->leftNode, value);
+    }
+    else if(value>=root->data){
+        deleteNode(root->rightNode, value);
+    }
+}
+
+int main()
+{
+    rootNode = BinaryTree(rootNode);
+    Print(rootNode);
+    cout<<endl;
+    deleteNode(rootNode, 12);
+    Print(rootNode);
+    return 0;
+}
+eg.
+12 5 3 1 7 9 8 11 14 13 17 15 20 18 
+12 7 3 1 9 8 11 14 13 17 15 20 18 
+
+
+
+// INORDER SUCCESSOR IN A BINARY TREE
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BSTNode{
+    int data;
+    BSTNode* leftNode;
+    BSTNode* rightNode;
+    
+    BSTNode(int val){
+        data = val;
+        leftNode = NULL;
+        rightNode = NULL;
+    }
+};
+
+BSTNode* rootNode = NULL;
+
+BSTNode* BinaryTree(BSTNode* root){
+    
+    root = new BSTNode(12);                                                     //                       12                      
+    root->leftNode = new BSTNode(5);                                            /*                 /             \            */
+    root->leftNode->leftNode = new BSTNode(3);                                  //               5               14
+    root->leftNode->rightNode = new BSTNode(7);                                 /*             /    \          /     \           */
+    root->leftNode->leftNode->leftNode = new BSTNode(1);                        //           3       7       13        17       
+    root->leftNode->rightNode->rightNode = new BSTNode(9);                      /*          /        \               /    \      */
+    root->leftNode->rightNode->rightNode->leftNode = new BSTNode(8);            //         1          9            15      20  
+    root->leftNode->rightNode->rightNode->rightNode = new BSTNode(11);          //                  /   \                 / 
+                                                                                //                 8     11             18  
+    root->rightNode = new BSTNode(14);
+    root->rightNode->leftNode = new BSTNode(13);
+    root->rightNode->rightNode = new BSTNode(17);
+    root->rightNode->rightNode->leftNode = new BSTNode(15);
+    root->rightNode->rightNode->rightNode = new BSTNode(20);
+    root->rightNode->rightNode->rightNode->leftNode = new BSTNode(18);
+     
+    return root;
+}
+
+void Print(BSTNode* root){
+    if(root==NULL){
+        return;
+    }
+    if(root->leftNode!=NULL){
+        Print(root->leftNode);
+    }
+    cout<<root->data<<" ";
+    if(root->rightNode!=NULL){
+        Print(root->rightNode);
+    }
+}
+
+BSTNode* Find(BSTNode* root, int data){
+    if(root==NULL){
+        return NULL;
+    }
+    else if(root->data == data){
+        return root;
+    }
+    else if(data<root->data){
+        return Find(root->leftNode, data);
+    }
+    else{
+        return Find(root->rightNode, data);
+    }
+}
+
+int InOrderSuccessor(BSTNode* root, int data){
+    BSTNode* currentNode = Find(root, data);
+    if(currentNode == NULL){
+        return 0;
+    }
+    // case1: if node has right subtree 
+    if(currentNode->rightNode != NULL){
+        BSTNode* temp = currentNode->rightNode;
+        while(temp->leftNode!=NULL){
+            temp = temp->leftNode;
+        }
+        return temp->data;
+    }
+    // case2: if node has no right subtree 
+    else{
+        BSTNode* successor = NULL;
+        BSTNode* ancestor = root;
+        while(ancestor!=currentNode){
+            if(currentNode->data < ancestor->data){
+                successor = ancestor;
+                ancestor = ancestor->leftNode;
+            }
+            else{
+                ancestor = ancestor->rightNode;
+            }
+        }
+        return successor->data;
+    }
+}
+
+int main()
+{
+    rootNode = BinaryTree(rootNode);
+    Print(rootNode);
+    cout<<endl;
+    cout<<InOrderSuccessor(rootNode, 12);
+    return 0;
+}
+eg.
+1 3 5 7 8 9 11 12 13 14 15 17 18 20 
+13

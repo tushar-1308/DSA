@@ -1,0 +1,1597 @@
+// GRAPH INITIALIZATION
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+int main()
+{
+    //        40     2
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|  10  |      | 3 \
+    //     1------2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,2));
+    graph[4].push_back(new edge(4,3,2));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    graph[6].push_back(new edge(6,4,8));
+
+    
+    for(int i=0; i<graph.size(); i++){
+        for(int j=0; j<graph[i].size(); j++){
+            edge* ans = graph[i][j];
+            cout<<"edge "<<i+j+1<<" is: "<<ans->source<<"->"<<ans->destination<<" @"<<ans->edgeWeight<<endl;
+        }
+    }
+    return 0;
+}
+
+eg.
+Enter number of vertices: 7
+edge 1 is: 0->1 @10
+edge 2 is: 0->3 @10
+edge 2 is: 1->0 @10
+edge 3 is: 1->2 @10
+edge 3 is: 2->1 @10
+edge 4 is: 2->3 @10
+edge 4 is: 3->0 @10
+edge 5 is: 3->2 @10
+edge 6 is: 3->4 @2
+edge 5 is: 4->3 @2
+edge 6 is: 4->5 @3
+edge 7 is: 4->6 @8
+edge 6 is: 5->4 @3
+edge 7 is: 5->6 @3
+edge 7 is: 6->5 @3
+edge 8 is: 6->4 @8
+
+
+
+// HOW TO FIND PATH IN GRAPTH USING BREADTH FIRST SEARCH
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+bool isPathAvailable(vector<vector<edge*>> graph, int sourceNode, int destNode, vector<bool> &visitedVertice){
+    
+    if(sourceNode==destNode){
+        cout<<sourceNode<<" "<<destNode<<endl;
+        return true;
+    }
+    
+    for(int i=0; i<graph[sourceNode].size(); i++){
+        edge* ans = graph[sourceNode][i];
+        if(visitedVertice[ans->destination]==false){
+            cout<<sourceNode<<" "<<destNode<<endl;
+            visitedVertice[ans->destination]=true;
+            return isPathAvailable(graph, ans->destination, destNode, visitedVertice);
+        }
+    }
+    return false;
+}
+
+int main()
+{
+    //        40     2
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|  10  |      | 3 \
+    //     1------2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,10));
+    graph[3].push_back(new edge(3,2,10));
+    // graph[3].push_back(new edge(3,4,2));
+    // graph[4].push_back(new edge(4,3,2));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    graph[6].push_back(new edge(6,4,8));
+
+    
+    int sourceNode, destNode;
+    cout<<"Enter source and destination node of path: ";
+    cin>>sourceNode>>destNode;
+    
+    vector<bool> visitedVertice(vertices, false);
+    visitedVertice[sourceNode]=true;
+    
+    if(isPathAvailable(graph, sourceNode, destNode, visitedVertice)){
+        cout<<"Path available";
+    }
+    else{
+        cout<<"Path Not available";
+    }
+    
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Enter source and destination node of path: 4 6
+4 6
+5 6
+6 6
+Path available
+
+
+
+// How to Find All Paths in Graph using Depth First Search
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+void printAllPaths(vector<vector<edge*>> graph, int sourceNode, int destNode, vector<bool> &visitedVertice, vector<int> &pathTracking){
+    
+    if(sourceNode==destNode){
+        for(int i=0; i<pathTracking.size(); i++){
+            cout<<pathTracking[i]<<"->";
+        }
+        cout<<endl;
+        return;
+    }
+    
+    for(int i=0; i<graph[sourceNode].size(); i++){
+        edge* ans = graph[sourceNode][i];
+        if(visitedVertice[ans->destination]==false){
+            visitedVertice[ans->destination]=true;
+            pathTracking.push_back(ans->destination);
+            printAllPaths(graph, ans->destination, destNode, visitedVertice, pathTracking);
+            visitedVertice[ans->destination]=false;
+            pathTracking.pop_back();
+        }
+    }
+
+}
+
+int main()
+{
+    //        40     2
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|  10  |      | 3 \
+    //     1------2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,2));
+    graph[4].push_back(new edge(4,3,2));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    graph[6].push_back(new edge(6,4,8));
+
+    
+    int sourceNode, destNode;
+    cout<<"Enter source and destination node of path: ";
+    cin>>sourceNode>>destNode;
+    
+    vector<bool> visitedVertice(vertices, false);
+    visitedVertice[sourceNode]=true;
+    vector<int> pathTracking;
+    pathTracking.push_back(sourceNode);
+    
+    printAllPaths(graph, sourceNode, destNode, visitedVertice, pathTracking);
+    
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Enter source and destination node of path: 6 0
+6->5->4->3->0->
+6->5->4->3->2->1->0->
+6->4->3->0->
+6->4->3->2->1->0->
+
+
+
+// Easily Solve Graph Problems with DFS!
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+string smallestPath = "";
+int smallestPathDist = INT_MAX;
+string largestPath = "";
+int largestPathDist = INT_MIN;
+string justSmallestPath = "";
+int justSmallestPathDist = INT_MIN;
+string justLargestPath = "";
+int justLargestPathDist = INT_MAX;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+void printAllPaths(vector<vector<edge*>> graph, int sourceNode, int destNode, vector<bool> &visitedVertice, string path, int distanceTravelled, int distance){
+    
+    if(sourceNode==destNode){
+        cout<<path<<endl;
+        if(distanceTravelled<smallestPathDist){
+            smallestPath=path;
+            smallestPathDist=distanceTravelled;
+        }
+        if(distanceTravelled>largestPathDist){
+            largestPath=path;
+            largestPathDist=distanceTravelled;
+        }
+        if(distanceTravelled<distance && distanceTravelled>justSmallestPathDist){
+            justSmallestPath=path;
+            justSmallestPathDist=distanceTravelled;
+        }
+        if(distanceTravelled>distance && distanceTravelled<justLargestPathDist){
+            justLargestPath=path;
+            justLargestPathDist=distanceTravelled;
+        }
+        return;
+    }
+    
+    for(int i=0; i<graph[sourceNode].size(); i++){
+        edge* ans = graph[sourceNode][i];
+        if(visitedVertice[ans->destination]==false){
+            visitedVertice[ans->destination]=true;
+            printAllPaths(graph, ans->destination, destNode, visitedVertice, path + to_string(ans->destination), distanceTravelled + ans->edgeWeight, distance);
+            visitedVertice[ans->destination]=false;
+        }
+    }
+
+}
+
+int main()
+{
+    //        40     2
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|  10  |      | 3 \
+    //     1------2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,40));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,40));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,2));
+    graph[4].push_back(new edge(4,3,2));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    graph[6].push_back(new edge(6,4,8));
+
+    
+    int sourceNode, destNode, distance;
+    cout<<"Enter source node, destination node & distance: ";
+    cin>>sourceNode>>destNode>>distance;
+    
+    vector<bool> visitedVertice(vertices, false);
+    visitedVertice[sourceNode]=true;
+    string path=to_string(sourceNode);
+    int distanceTravelled = 0;
+    
+    printAllPaths(graph, sourceNode, destNode, visitedVertice, path, distanceTravelled, distance);
+    cout<<"smallest Path is: "<<smallestPath<<" @"<<smallestPathDist<<endl;
+    cout<<"largest Path is: "<<largestPath<<" @"<<largestPathDist<<endl;
+    cout<<"just smallest Path is: "<<justSmallestPath<<" @"<<justSmallestPathDist<<endl;
+    cout<<"just largest Path is: "<<justLargestPath<<" @"<<justLargestPathDist;
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Enter source node, destination node & distance: 0 6 40
+0123456
+012346
+03456
+0346
+smallest Path is: 0123456 @38
+largest Path is: 0346 @50
+just smallest Path is: 0123456 @38
+just largest Path is: 03456 @48
+
+
+
+// Get Connected Components of Graphs 
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+void allConnectedComponents(vector<vector<edge*>> graph, int sourceNode, vector<bool> &visitedVertice, vector<int> &component){
+
+    for(int j=0; j<graph[sourceNode].size(); j++){
+        edge* ans = graph[sourceNode][j];
+        if(visitedVertice[ans->destination]==false){
+            component.push_back(ans->destination);
+            visitedVertice[ans->destination]=true;
+            allConnectedComponents(graph, ans->destination, visitedVertice, component);
+        }
+    }
+    
+}
+
+int main()
+{
+    //              
+    //     0      3      4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1      2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    graph[6].push_back(new edge(6,4,8));
+    
+    vector<bool> visitedVertice(vertices, false);
+    vector<vector<int>> components;
+    
+    for(int i=0; i<vertices; i++){
+        if(visitedVertice[i]==false){
+            vector<int> component;
+            allConnectedComponents(graph, i, visitedVertice, component);
+            components.push_back(component);
+        }
+    }
+    cout<<"Total connected components are: "<<components.size()<<endl;
+    for(int i=0; i<components.size(); i++){
+        for(int j=0; j<components[i].size(); j++){
+            cout<<components[i][j]<<",";
+        }
+        cout<<endl;
+    }
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Total connected components are: 3
+1,0,
+3,2,
+5,4,6,
+
+
+
+// Is Graph Connected
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+void allConnectedComponents(vector<vector<edge*>> graph, int sourceNode, vector<bool> &visitedVertice, vector<int> &component){
+
+    for(int j=0; j<graph[sourceNode].size(); j++){
+        edge* ans = graph[sourceNode][j];
+        if(visitedVertice[ans->destination]==false){
+            component.push_back(ans->destination);
+            visitedVertice[ans->destination]=true;
+            allConnectedComponents(graph, ans->destination, visitedVertice, component);
+        }
+    }
+    
+}
+
+int main()
+{
+    //              
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1------2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[1].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,10));
+    graph[4].push_back(new edge(4,3,3));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    graph[6].push_back(new edge(6,4,8));
+    
+    vector<bool> visitedVertice(vertices, false);
+    vector<vector<int>> components;
+    
+    for(int i=0; i<vertices; i++){
+        if(visitedVertice[i]==false){
+            vector<int> component;
+            allConnectedComponents(graph, i, visitedVertice, component);
+            components.push_back(component);
+        }
+    }
+    
+    if(components.size()>1){
+        cout<<"Not connected";
+    }
+    else{
+        cout<<"Connected";
+    }
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Connected
+
+
+
+
+// Count Number of Islands using Graphs
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+void getIsland(int row, int col, vector<vector<int>> surface, vector<vector<bool>> &visited){
+    
+    if(row<0 || col<0 || row>=visited.size() || col>=visited[0].size() || visited[row][col]==true || surface[row][col]==1){
+        return;
+    }
+    
+    visited[row][col]=true;
+    getIsland(row-1, col, surface, visited);
+    getIsland(row, col-1, surface, visited);
+    getIsland(row+1, col, surface, visited);
+    getIsland(row, col+1, surface, visited);
+    
+}
+
+int noOfIslands(vector<vector<int>> surface, vector<vector<bool>> &visited){
+    int count=0;
+    for(int i=0; i<surface.size(); i++){
+        for(int j=0; j<surface[i].size(); j++){
+            if(visited[i][j]==false && surface[i][j]==0){
+                count++;
+                getIsland(i, j, surface, visited);
+            }
+        }
+    }
+    return count;
+}
+
+int main()
+{
+    vector<vector<int>> surface{
+        {0,0,1,1,1,1,1,1},
+        {0,0,1,1,1,1,1,1},
+        {1,1,1,1,1,1,1,0},
+        {1,1,0,0,0,0,1,0},
+        {1,1,1,1,1,0,1,0},
+        {1,1,1,1,1,0,1,0},
+        {1,1,1,1,1,1,1,0},
+        {1,1,1,1,1,1,1,0},
+    };
+    // 0-land, 1-water
+    vector<vector<bool>> visited(surface.size(), vector<bool> (surface[0].size(), false));
+    
+    cout<<"No. if islands are: "<<noOfIslands(surface, visited);
+    
+    return 0;
+}
+eg.
+No. if islands are: 3
+
+
+
+// Perfect Friends Problem using Graphs
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+void allConnectedComponents(vector<vector<edge*>> graph, int sourceNode, vector<bool> &visitedVertice, vector<int> &component){
+
+    for(int j=0; j<graph[sourceNode].size(); j++){
+        edge* ans = graph[sourceNode][j];
+        if(visitedVertice[ans->destination]==false){
+            component.push_back(ans->destination);
+            visitedVertice[ans->destination]=true;
+            allConnectedComponents(graph, ans->destination, visitedVertice, component);
+        }
+    }
+    
+}
+
+int main()
+{
+    //              
+    //     0      3      4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1      2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    graph[6].push_back(new edge(6,4,8));
+    
+    vector<bool> visitedVertice(vertices, false);
+    vector<vector<int>> components;
+    
+    for(int i=0; i<vertices; i++){
+        if(visitedVertice[i]==false){
+            vector<int> component;
+            allConnectedComponents(graph, i, visitedVertice, component);
+            components.push_back(component);
+        }
+    }
+    cout<<"Total connected components are: "<<components.size()<<endl;
+    int friendsComps = 0;
+    for(int i=0; i<components.size(); i++){
+        for(int j=i+1; j<components.size(); j++){
+            friendsComps += components[i].size()*components[j].size();
+        }
+    }
+    cout<<"Total number of perfect friend components are: "<<friendsComps;
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Total connected components are: 3
+Total number of perfect friend components are: 16
+
+
+
+
+// Hamiltonian Path & Cycles in Graphs and Graph Theory
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+void hamiltonianPathandCycle(int sourceNode, int currNode, vector<vector<edge*>> graph, vector<bool> &visitedVertice, string path){
+    
+    if(path.size()==visitedVertice.size()){
+        for(int i=0; i<graph[currNode].size(); i++){
+            edge* ans = graph[currNode][i];
+            if(ans->destination==sourceNode){
+                cout<<"Hamiltonian cycle: "<<path<<endl;
+                return;
+            }
+        }
+        cout<<"Hamiltonian path: "<<path<<endl;
+        return;
+    }
+    
+    for(int i=0; i<graph[currNode].size(); i++){
+        edge* ans = graph[currNode][i];
+        if(visitedVertice[ans->destination]==false){
+            visitedVertice[ans->destination]=true;
+            hamiltonianPathandCycle(sourceNode, ans->destination, graph, visitedVertice, path+to_string(ans->destination));
+            visitedVertice[ans->destination]=false;
+        }
+    }
+    
+}
+
+int main()
+{
+    //              
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1------2------5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices, sourceNode;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    cout<<"Enter source node: ";
+    cin>>sourceNode;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[2].push_back(new edge(2,5,10));
+    graph[3].push_back(new edge(3,0,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,10));
+    graph[4].push_back(new edge(4,3,3));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,2,3));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,4,8));
+    graph[6].push_back(new edge(6,5,3));
+    
+    vector<bool> visitedVertice(vertices, false);
+    string path = to_string(sourceNode);
+    visitedVertice[sourceNode]=true;
+    
+    hamiltonianPathandCycle(sourceNode, sourceNode, graph, visitedVertice, path);
+    
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Enter source node: 0
+Hamiltonian path: 0123456
+Hamiltonian path: 0123465
+Hamiltonian cycle: 0125643
+Hamiltonian cycle: 0346521
+
+
+
+// Introduction to Breadth First Traversal (BFS) in Graphs
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+struct pairs{
+    int currNode;
+    string path;
+    pairs(int currNode, string path){
+        this->currNode = currNode;
+        this->path = path;
+    }
+};
+
+int main()
+{
+    //              
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1------2      5----6
+    
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    int vertices, sourceNode;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    cout<<"Enter source node: ";
+    cin>>sourceNode;
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,10));
+    graph[4].push_back(new edge(4,3,3));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,4,8));
+    graph[6].push_back(new edge(6,5,3));
+    
+    std::queue<pairs*> qu;
+    qu.push(new pairs(sourceNode, to_string(sourceNode)));
+    
+    vector<bool> visitedOrNot(graph.size(), false);
+    
+    while(qu.size()!=0){
+        // rmwa startegy = remove, mark done, work(print), add neighbours
+        pairs* ans = qu.front();
+        qu.pop();
+        if(visitedOrNot[ans->currNode]==false){
+            visitedOrNot[ans->currNode]=true;
+            cout<<ans->currNode<<"@"<<ans->path<<endl;         // 2  21
+        }
+        
+        for(int i=0; i<graph[ans->currNode].size(); i++){                       // 3 0 
+            edge* ed = graph[ans->currNode][i];
+            if(visitedOrNot[ed->destination]==false){
+                qu.push(new pairs(ed->destination, ans->path + to_string(ed->destination)));
+            }
+        }
+    }
+    
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Enter source node: 1
+1@1
+0@10
+2@12
+3@103
+4@1034
+5@10345
+6@10346
+
+
+
+// Is a Graph Cyclic? | Graph Data Structure
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+struct pairs{
+    int currNode;
+    string path;
+    pairs(int currNode, string path){
+        this->currNode = currNode;
+        this->path = path;
+    }
+};
+
+bool isCyclic(vector<vector<edge*>> graph, queue<pairs*> qu, vector<bool> &visitedOrNot){
+    
+    while(qu.size()!=0){
+        // rmwa startegy = remove, mark done, work(print), add neighbours
+        pairs* ans = qu.front();
+        qu.pop();
+        if(visitedOrNot[ans->currNode]==false){
+            visitedOrNot[ans->currNode]=true;
+            // cout<<ans->currNode<<"@"<<ans->path<<endl;   
+        }
+        else{
+            return true;
+        }
+        
+        for(int i=0; i<graph[ans->currNode].size(); i++){                       // 3 0 
+            edge* ed = graph[ans->currNode][i];
+            if(visitedOrNot[ed->destination]==false){
+                qu.push(new pairs(ed->destination, ans->path + to_string(ed->destination)));
+            }
+        }
+    }
+    
+    return false;
+}
+
+int main()
+{
+    //              
+    //     0      3      4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1      2      5----6
+    
+    //     0      3      4  
+    //     |    10|     3|  
+    //   10|      |      | 3 
+    //     1      2      5----6
+    
+    int vertices;
+    bool ans;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[4].push_back(new edge(4,5,3));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,5,3));
+    
+    
+    
+    
+    vector<bool> visitedOrNot(vertices, false);
+    
+    for(int i=0; i<vertices; i++){
+        if(visitedOrNot[i]==false){
+            std::queue<pairs*> qu;
+            qu.push(new pairs(i, to_string(i)));
+            ans = isCyclic(graph, qu, visitedOrNot);
+            if(ans==true){
+                cout<<"Cyclic";
+                break;
+            }
+        }
+    }
+    if(ans==false){
+        cout<<"Not Cyclic";
+    }
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Not Cyclic
+
+
+
+
+// Is Bipartite or not -- NOT WORKING
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+struct pairs{
+    int currNode;
+    int level;
+    pairs(int currNode, int level){
+        this->currNode = currNode;
+        this->level = level;
+    }
+};
+
+bool isBipartite(vector<vector<edge*>> graph, int src, vector<int> &visitedAtWhichLevel){
+    std::queue<pairs*> qu;
+    qu.push(new pairs(src, 0));
+    
+    while(qu.size()!=0){
+        // rmwa startegy = remove, mark done, work(print), add neighbours
+        pairs* ans = qu.front();
+        qu.pop();
+        if(visitedAtWhichLevel[ans->currNode]!=-1){
+            if(ans->level!=visitedAtWhichLevel[ans->currNode]){
+                return false;
+            }
+        }
+        else{
+            visitedAtWhichLevel[ans->currNode]=ans->level;
+        }
+        
+        for(int i=0; i<graph[ans->currNode].size(); i++){                       // 3 0 
+            edge* ed = graph[ans->currNode][i];
+            if(visitedAtWhichLevel[ed->destination]!=-1){
+                qu.push(new pairs(ed->destination, ans->level+1));
+            }
+        }
+    }
+    
+    return true;
+}
+
+int main()
+{
+    //              
+    //     0      3      4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1      2      5----6
+    
+    //     0      3      4  
+    //     |    10|     3|  
+    //   10|      |      | 3 
+    //     1      2      5----6
+    
+    int vertices;
+    bool ans;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[4].push_back(new edge(4,5,3));
+    // graph[4].push_back(new edge(4,6,3));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    // graph[6].push_back(new edge(6,4,3));
+    graph[6].push_back(new edge(6,5,3));
+    
+    vector<int> visitedAtWhichLevel(vertices, -1);
+    
+    for(int i=0; i<vertices; i++){
+        if(visitedAtWhichLevel[i]==-1){
+            ans = isBipartite(graph, i, visitedAtWhichLevel);
+            if(ans==false){
+                cout<<"No Bipartite";
+                break;
+            }
+        }
+    }
+    if(ans==true){
+        cout<<"Bipartite";
+    }
+    return 0;
+}
+
+
+
+
+
+// Spread Infection | Graphs
+
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+struct pairs{
+    int currNode;
+    int level;
+    pairs(int currNode, int level){
+        this->currNode = currNode;
+        this->level = level;
+    }
+};
+
+
+int main()
+{
+    //              
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|      |      | 3 \
+    //     1------2      5----6
+    
+    int vertices, sourceNode, Time;
+    bool ans;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    cout<<"Enter source node: ";
+    cin>>sourceNode;
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,10));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,10));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,10));
+    graph[4].push_back(new edge(4,3,3));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,3));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,4,3));
+    graph[6].push_back(new edge(6,5,3));
+
+    vector<bool> visitedOrNot(vertices, false);
+    queue<pairs*> qu;
+    qu.push(new pairs(sourceNode, 1));
+    int count=0;
+    
+    while(qu.size()!=0){
+        // rmwa startegy = remove, mark done, work(print), add neighbours
+        pairs* ans = qu.front();
+        qu.pop();
+        cout<<ans->currNode<<" "<<ans->level<<endl;
+        if(visitedOrNot[ans->currNode]==false){
+            visitedOrNot[ans->currNode]=true;
+          
+        }
+        count++;
+        for(int i=0; i<graph[ans->currNode].size(); i++){                
+            edge* ed = graph[ans->currNode][i];
+            if(visitedOrNot[ed->destination]==false){
+                qu.push(new pairs(ed->destination, ans->level+1));
+            }
+        }
+    }
+    cout<<count<<endl;
+    
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Enter source node: 6
+6 1
+4 2
+5 2
+3 3
+5 3
+0 4
+2 4
+1 5
+1 5
+9
+
+
+
+// Dijkstra Algorithm in Graphs | Single Source Shortest Path in Weights 
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int destination;
+    int edgeWeight;
+    
+    edge(int source, int destination, int edgeWeight){
+        this->source = source;
+        this->destination = destination;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+struct pairs{
+    int currNode;
+    string psf;
+    int dsf;
+    pairs(int currNode, string psf, int dsf){
+        this->currNode = currNode;
+        this->psf = psf;
+        this->dsf = dsf;
+    }
+};
+
+struct comparator{
+    bool operator()(pairs* p1, pairs* p2){
+        if(p1->dsf > p2->dsf){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+};
+
+int main()
+{
+    //        40     2  
+    //     0------3------4  
+    //     |    10|     3|  \8
+    //   10|  10  |      | 3 \
+    //     1------2      5----6
+    
+    int vertices, sourceNode, Time;
+    bool ans;
+    cout<<"Enter number of vertices: ";
+    cin>>vertices;
+    cout<<"Enter source node: ";
+    cin>>sourceNode;
+    vector<vector<edge*>> graph;
+    vector<edge*> vectedge{};
+    
+    
+    for(int i=0; i<vertices; i++){
+        graph.push_back(vectedge);
+    }
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,40));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,10));
+    graph[3].push_back(new edge(3,0,40));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,2));
+    graph[4].push_back(new edge(4,3,2));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,4,8));
+    graph[6].push_back(new edge(6,5,3));
+
+    vector<bool> visitedOrNot(vertices, false);
+    priority_queue<pairs*, vector<pairs*>, comparator> qu;
+    qu.push(new pairs(sourceNode, to_string(sourceNode) + "", 0));
+    
+    while(qu.size()!=0){
+        // rmwa startegy = remove, mark done, work(print), add neighbours
+        pairs* ans = qu.top();
+        qu.pop();
+        
+        if(visitedOrNot[ans->currNode]==false){
+            visitedOrNot[ans->currNode]=true;
+        }
+        else{
+            continue;
+        }
+        cout<<ans->currNode<<" "<<ans->psf<<" "<<ans->dsf<<endl;
+        
+        for(int i=0; i<graph[ans->currNode].size(); i++){                
+            edge* ed = graph[ans->currNode][i];
+            if(visitedOrNot[ed->destination]==false){
+                qu.push(new pairs(ed->destination, ans->psf + to_string(ed->destination), ans->dsf+ed->edgeWeight));
+            }
+        }
+    }
+
+    return 0;
+}
+eg.
+Enter number of vertices: 7
+Enter source node: 6
+6 6 0
+5 65 3
+4 654 6
+3 6543 8
+2 65432 18
+1 654321 28
+0 6543210 38
+
+
+// Prim's Algorithm - Graphs | Minimum Spanning Tree(MST) in Graphs | Code and Implementation
+// Minimum spanning tree = subgraph + Tree(connected & acyclic) + spanning(all vertices available)
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int dest;
+    int edgeWeight;
+    edge(int source, int dest, int edgeWeight){
+        this->source = source;
+        this->dest = dest;
+        this->edgeWeight = edgeWeight;
+    }
+};
+
+struct pairs{
+    int currNode;
+    int prevNode;
+    int dsf;
+    pairs(int currNode, int prevNode, int dsf){
+        this->currNode = currNode;
+        this->prevNode = prevNode;
+        this->dsf = dsf;
+    }
+};
+
+struct comparator{
+    bool operator()(pairs* p1, pairs* p2){
+        if(p1->dsf > p2->dsf){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+};
+
+int main(){
+    
+    //        40     2  
+    //     0------3------4  
+    //     |    50|     3|  \8
+    //   10|  10  |      | 3 \
+    //     1------2      5----6
+    
+    
+    int sourceNode;
+    cout<<"Enter source node: ";
+    cin>>sourceNode;
+    vector<vector<edge*>> graph(7, vector<edge*>());
+    
+    graph[0].push_back(new edge(0,1,10));
+    graph[0].push_back(new edge(0,3,40));
+    graph[1].push_back(new edge(1,0,10));
+    graph[1].push_back(new edge(1,2,10));
+    graph[2].push_back(new edge(2,1,10));
+    graph[2].push_back(new edge(2,3,50));
+    graph[3].push_back(new edge(3,0,40));
+    graph[3].push_back(new edge(3,2,10));
+    graph[3].push_back(new edge(3,4,2));
+    graph[4].push_back(new edge(4,3,2));
+    graph[4].push_back(new edge(4,5,3));
+    graph[4].push_back(new edge(4,6,8));
+    graph[5].push_back(new edge(5,4,3));
+    graph[5].push_back(new edge(5,6,3));
+    graph[6].push_back(new edge(6,4,8));
+    graph[6].push_back(new edge(6,5,3));
+    
+    vector<bool> visitedOrNot(7, false);
+    priority_queue<pairs*, vector<pairs*>, comparator> pqu;
+    pqu.push(new pairs(0, -1, 0));
+    
+    while(pqu.size()!=0){
+        pairs* ans = pqu.top();
+        pqu.pop();
+        
+        if(visitedOrNot[ans->currNode]!=true){
+            visitedOrNot[ans->currNode] = true;
+        }
+        else{
+            continue;
+        }
+        
+        if(ans->prevNode!=-1){
+            cout<<ans->prevNode<<" "<<ans->currNode<<" "<<ans->dsf<<endl;
+        }
+        
+        for(int i=0; i<graph[ans->currNode].size(); i++){
+            edge* ed = graph[ans->currNode][i];
+            if(visitedOrNot[ed->dest]!=true){
+                pqu.push(new pairs(ed->dest, ans->currNode, ed->edgeWeight));
+            }
+        }
+    }
+    
+    return 0;
+}
+eg.
+Enter source node: 0
+0 1 10
+1 2 10
+0 3 40
+3 4 2
+4 5 3
+5 6 3
+
+
+// Topological Sort Algorithm with DFS | Course Schedule in JAVA | Code and Implementation
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int dest;
+    edge(int source, int dest){
+        this->source = source;
+        this->dest = dest;
+    }
+};
+
+vector<bool> visitedOrNot(7, false);
+vector<int> arr;
+
+void topologicalSort(int currNode, vector<vector<edge*>> graph){
+    
+    if(visitedOrNot[currNode]==true){
+        return;
+    }
+    
+    edge* ans = graph[currNode][0];
+    if(graph[currNode].size()==1 && ans->dest==-1){
+        arr.push_back(currNode);
+        return;
+    }
+    
+    for(int i=0; i<graph[currNode].size(); i++){
+        edge* ans = graph[currNode][i];
+        if(visitedOrNot[ans->dest]==false){
+            topologicalSort(ans->dest, graph);
+        }
+        visitedOrNot[ans->dest] = true;
+    }
+    arr.push_back(currNode);
+    
+    return;
+}
+
+int main(){
+    
+    //     0------>3<------4  
+    //     |       /\     | \
+    //     |       |      |  \
+    //    \/       |     \/  \/
+    //     1------>2      5---->6
+    
+    
+    vector<vector<edge*>> graph(7, vector<edge*>());
+    
+    graph[0].push_back(new edge(0,1));
+    graph[0].push_back(new edge(0,3));
+    graph[1].push_back(new edge(1,2));
+    graph[2].push_back(new edge(2,3));
+    graph[3].push_back(new edge(3,-1));
+    graph[4].push_back(new edge(4,3));
+    graph[4].push_back(new edge(4,5));
+    graph[4].push_back(new edge(4,6));
+    graph[5].push_back(new edge(5,6));
+    graph[6].push_back(new edge(6,-1));
+    
+    for(int i=0; i<7; i++){
+        topologicalSort(i, graph);
+    }
+    
+    cout<<endl;
+    for(int i=0; i<arr.size(); i++){
+        cout<<arr[i]<<" ";
+    }
+    
+    return 0;
+}
+eg.
+3 2 1 0 6 5 4 

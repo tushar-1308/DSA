@@ -1,0 +1,548 @@
+// Largest Square Submatrix of all 1's | Dynamic Programming
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    std::vector<vector<int>> array{
+        {0,1,0,1,0,1},
+        {1,0,1,0,1,0},
+        {0,1,1,1,1,0},
+        {0,0,1,1,1,0},
+        {1,1,1,1,1,1}
+    };
+    int largestSquareSubmatrixOf1 = INT_MIN;
+    
+    vector<vector<int>> submatrix(array.size(), vector<int>(array[0].size()));
+    
+    for(int i=array.size()-1; i>=0; i--){
+        for(int j=array[i].size()-1; j>=0; j--){
+            if((i==array.size()-1 || j==array[i].size()-1)){
+                submatrix[i][j]=array[i][j];
+            }
+            else{
+                if(array[i][j]==0){
+                    submatrix[i][j]=0;
+                }
+                else{
+                    submatrix[i][j] = min(submatrix[i][j+1], min(submatrix[i+1][j], submatrix[i+1][j+1])) + 1;
+                }
+            }
+            
+            if(submatrix[i][j] > largestSquareSubmatrixOf1){
+                largestSquareSubmatrixOf1 = submatrix[i][j];
+            }
+        }
+    }
+    
+    for(int i=0; i<submatrix.size(); i++){
+        for(int j=0; j<submatrix[i].size(); j++){
+            cout<<submatrix[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+    
+    cout<<"Largest Square Submatrix Of 1's possible in array is: "<<largestSquareSubmatrixOf1;
+    
+    return 0;
+} 
+eg.
+0 1 0 1 0 1 
+1 0 1 0 1 0 
+0 1 3 2 1 0 
+0 0 2 2 1 0 
+1 1 1 1 1 1 
+Largest Square Submatrix Of 1's possible in array is: 3
+
+
+// Print all Paths with Minimum Jumps Dynamic Programming | Jump Game - II Solution
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+map<int, vector<string>> pathsOfNStep;
+int minimumJump = INT_MAX;
+
+void allPathsWdMinJumps(int currPos, vector<int> stairJumps, string ans, int jumpsTaken){
+    
+    if(currPos>=stairJumps.size()){
+        return;
+    }
+    
+    if(currPos==stairJumps.size()-1){
+        
+        if(jumpsTaken<minimumJump){
+            minimumJump = jumpsTaken;
+        }
+        
+        if(pathsOfNStep.find(jumpsTaken)!=pathsOfNStep.end()){
+            pathsOfNStep[jumpsTaken].push_back(ans);
+        }
+        else{
+            vector<string> vect{
+                ans
+            };
+            pathsOfNStep[jumpsTaken] = vect;
+        }
+        
+    }
+    
+    for(int i=1; i<=stairJumps[currPos]; i++){
+        allPathsWdMinJumps(currPos+i, stairJumps, ans+to_string(currPos+i)+"->", jumpsTaken+1);
+    }
+    
+}
+
+int main()
+{
+    int stairs;
+    cout<<"Enter no of stairs: ";
+    cin>>stairs;
+    
+    std::vector<int> stairJumps;
+    for(int i=0; i<stairs; i++){
+        int jump;
+        cin>>jump;
+        stairJumps.push_back(jump);
+    }
+    
+    int jumpsTaken = 0;
+    string ans = to_string(0) + "->";
+    allPathsWdMinJumps(0, stairJumps, ans, jumpsTaken);
+    
+    map<int, vector<string>>::iterator itr;
+    itr = pathsOfNStep.find(minimumJump);
+    for(int i=0; i<itr->second.size(); i++){
+        cout<<itr->second[i]<<endl;
+    }
+    
+    vector<int> dp(stairs);
+    if(stairJumps[stairs-1]>0){
+        dp[stairs-1] = 1;
+    }
+    else{
+        dp[stairs-1] = 0;
+    }
+    
+    for(int i=stairs-2; i>=0; i--){
+        if(stairJumps[i]==0){
+            dp[i] = -1;
+        }
+        else{
+            int minJump = INT_MAX;
+            for(int j=1; j<=stairJumps[i]; j++){
+                if(i+j<dp.size() && dp[i+j]<minJump && dp[i+j]!=-1){
+                    minJump = dp[i+j];
+                }
+                else if(i+j>=dp.size()){
+                    dp[i] = 1;
+                    break;
+                }
+            }
+            dp[i] = minJump+1;
+        }
+    }
+    
+    for(int i=0; i<dp.size(); i++){
+        cout<<dp[i]<<" ";
+    }
+    
+    return 0;
+} 
+eg.
+Enter no of stairs: 10
+3 3 0 2 1 2 4 2 0 0
+0->3->5->6->9->
+0->3->5->7->9->
+4 4 -1 3 3 2 1 1 -1 0 
+
+
+
+// Print All Minimum Cost Paths Dynamic Programming | Minimum Cost Path
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Pair{
+    string psf;
+    int i;
+    int j;
+    Pair(string psf, int i, int j){
+        this->psf = psf;
+        this->i = i;
+        this->j = j;
+    }
+};
+
+int main()
+{
+    vector<vector<int>> maze{
+        {2,6,4,1,3},
+        {9,1,1,0,5},
+        {0,7,5,2,0},
+        {4,3,0,4,7},
+        {2,0,1,4,1}
+    };
+    
+    vector<vector<int>> DPArray(maze.size(), vector<int>(maze[0].size()));
+    
+    for(int i=maze.size()-1; i>=0; i--){
+        for(int j=maze[i].size()-1; j>=0; j--){
+            if(j==maze[i].size()-1){
+                if(i==maze.size()-1){
+                    DPArray[i][j] = maze[i][j];
+                }
+                else{
+                    DPArray[i][j] = maze[i][j] + DPArray[i+1][j];
+                }
+            }
+            else if(i==maze.size()-1){
+                DPArray[i][j] = maze[i][j] + DPArray[i][j+1];
+            }
+            else{
+                DPArray[i][j] = maze[i][j] + min(DPArray[i+1][j], DPArray[i][j+1]);
+            }
+        }
+    }
+    cout<<"By DP approach: "<<DPArray[0][0]<<endl;
+    
+    std::queue<Pair*> qu;
+    qu.push(new Pair("", 0, 0));
+    
+    while(qu.size()!=0){
+        Pair* ans = qu.front();
+        qu.pop();
+        if(ans->i==maze.size()-1 && ans->j==maze[0].size()-1){
+            cout<<ans->psf<<endl;
+        }
+        else if(ans->i==maze.size()-1){
+            qu.push(new Pair(ans->psf + "H", ans->i, ans->j+1));
+        }
+        else if(ans->j==maze[ans->i].size()-1){
+            qu.push(new Pair(ans->psf + "V", ans->i+1, ans->j));
+        }
+        else{
+            if(DPArray[ans->i][ans->j+1] > DPArray[ans->i+1][ans->j]){
+                qu.push(new Pair(ans->psf + "V", ans->i+1, ans->j));
+            }
+            else if(DPArray[ans->i][ans->j+1] < DPArray[ans->i+1][ans->j]){
+                qu.push(new Pair(ans->psf + "H", ans->i, ans->j+1));
+            }
+            else{
+                qu.push(new Pair(ans->psf + "H", ans->i+1, ans->j));
+                qu.push(new Pair(ans->psf + "V", ans->i, ans->j+1));
+            }
+        }
+    }
+    
+    return 0;
+}
+eg.
+By DP approach: 20
+HVHHVHVV     // 2 paths are not printing, total 3 paths exists
+
+
+
+// Print Subsets with Target Sum Dynamic Programming | Subset Sum Problem  || NOT WORKING 
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Pair{
+    int i;
+    int j;
+    string psf;
+    Pair(int i, int j, string psf){
+        this->i = i;
+        this->j = j;
+        this->psf = psf;
+    }
+};
+
+void targetSumSubset(int i, vector<int> elements, int ans, string val){
+    
+    if(i==elements.size()){
+        if(ans==10){
+            cout<<val<<endl;
+        }
+        return;
+    }
+    
+    targetSumSubset(i+1, elements, ans + elements[i], val + to_string(elements[i]) +" ");
+    targetSumSubset(i+1, elements, ans, val);
+
+}
+
+int main()
+{
+    vector<int> elements{
+        4,2,7,1,3
+    };
+    int tsum;
+    cout<<"Enter target sum: ";
+    cin>>tsum;
+    int ans = 0;
+    targetSumSubset(0, elements, ans, "");
+    
+    vector<vector<bool>> DPArray(elements.size()+1, vector<bool>(tsum + 1));
+    
+    for(int i=0; i<elements.size()+1; i++){
+        for(int j=0; j<tsum+1; j++){
+            if(i==0 && j==0){
+                DPArray[i][j]=true;
+            }
+            else if(i==0){
+                DPArray[i][j]=false;
+            }
+            else if(j==0){
+                DPArray[i][j]=true;
+            }
+            else{
+                if(DPArray[i-1][j]==true){
+                    DPArray[i][j]=true;
+                }
+                else{
+                    int score = elements[i-1];
+                    if(j>=score){
+                        if(DPArray[i-1][j-score]==true || DPArray[i-1][j]==true){
+                            DPArray[i][j]=true;
+                        }
+                        else{
+                            DPArray[i][j]=false;
+                        }
+                    }
+                    else{
+                        DPArray[i][j] = DPArray[i-1][j];
+                    }
+                }
+            }
+        }
+    }
+    
+    std::queue<Pair*> qu;
+    qu.push(new Pair(elements.size(), tsum, ""));
+    
+    while(qu.size()!=0){
+        Pair* ans = qu.front();
+        qu.pop();
+        // cout<<ans->i<<" "<<ans->j<<" "<<ans->psf<<endl;
+        if(ans->i==0){
+            cout<<ans->psf<<endl;
+        }
+        if(ans->j - elements[ans->i-1]>=0 && DPArray[ans->i][ans->j]==true){
+            qu.push(new Pair(ans->i-1, ans->j - elements[ans->i-1], ans->psf + to_string(ans->i)));
+            qu.push(new Pair(ans->i-1, ans->j, ans->psf));
+        }
+    }
+    
+    return 0;
+}
+eg.
+Enter target sum: 10
+4 2 1 3 
+2 7 1 
+7 3 
+
+
+// Print All Longest Increasing Subsequences Dynamic Programming | Explanation with Code
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct Pair{
+    int ind;
+    string psf;
+    Pair(int ind, string psf){
+        this->ind = ind;
+        this->psf = psf;
+    }
+};
+
+int main(){
+    int n, elem;
+    cout<<"Enter no of elements: ";
+    cin>>n;
+    vector<int> elements(n);
+    for(int i=0; i<n; i++){
+        cin>>elem;
+        elements[i] = elem;
+    }
+    
+    vector<int> LIS(n);
+    LIS[0] = 1;
+    map<int, vector<int>> mp;
+    vector<int> ans{
+        elements[0]
+    };
+    mp[0] = ans;
+    
+    for(int i=1; i<n; i++){
+        int maxLIS = 0;
+        vector<int> ans;
+        for(int j=0; j<i; j++){
+            if(elements[j]<elements[i] && maxLIS<=mp[j].size()){
+                maxLIS = mp[j].size();
+                ans = mp[j];
+            }
+        }
+        LIS[i] = maxLIS+1;
+        ans.push_back(elements[i]);
+        mp[i] = ans;
+    }
+    
+    // map<int, vector<int>>::iterator itr;
+    // itr = mp.begin();
+    // while(itr!=mp.end()){
+    //     cout<<itr->first<<": ";
+    //     for(int i=0; i<itr->second.size(); i++){
+    //         cout<<itr->second[i]<<", ";
+    //     }
+    //     cout<<endl;
+    //     itr++;
+    // }
+    
+    int maxValInd = -1;
+    int maxVal = INT_MIN;
+    for(int i=0; i<n; i++){
+        if(LIS[i]>maxVal){
+            maxValInd = i;
+            maxVal = LIS[i];
+        }
+    }
+    
+    std::queue<Pair*> qu;
+    qu.push(new Pair(maxValInd, to_string(elements[maxValInd])));
+    
+    while(qu.size()!=0){
+        Pair* ans = qu.front();
+        qu.pop();
+        
+        if(ans->ind==0){
+            cout<<ans->psf<<endl;
+        }
+        
+        for(int i=0; i<ans->ind; i++){
+            if(LIS[i]==LIS[ans->ind]-1 && elements[i]<elements[ans->ind]){
+                qu.push(new Pair(i, to_string(elements[i]) + " " + ans->psf));
+            }
+        }
+        
+    }
+    
+}
+eg.
+Enter no of elements: 10
+10 22 42 33 21 50 41 60 80 3
+10 22 42 50 60 80
+10 22 33 50 60 80
+10 22 33 41 60 80
+
+
+
+// Kadane's Algorithm for Maximum Sum Subarray | Dynamic Programming
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int size, elem;
+    cout<<"Enter size of array: ";
+    cin>>size;
+    int arr[size];
+    for(int i=0; i<size; i++){
+        cin>>elem;
+        arr[i] = elem;
+    }
+    
+    int currSum = arr[0];
+    int maxSum = arr[0];
+    for(int i=1; i<sizeof(arr)/sizeof(arr[0]); i++){
+        if(currSum>0){
+            currSum += arr[i];
+        }
+        else{
+            currSum = arr[i];
+        }
+        maxSum = max(maxSum, currSum);
+    }
+    cout<<"Maximum sum of subarray is: "<<maxSum;
+    return 0;
+}
+eg.
+Enter size of array: 18
+4 3 -2 6 -14 7 -1 4 5 7 -10 2 9 -10 -5 -9 6 1
+Maximum sum of subarray is: 23
+
+
+
+// Dutch National Flag Algorithm | Sort 0,1,2 array
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int size, elem;
+    cout<<"Enter size of array: ";
+    cin>>size;
+    int arr[size];
+    for(int i=0; i<size; i++){
+        cin>>elem;
+        arr[i] = elem;
+    }
+    
+    int low = 0;
+    int mid = 0;
+    int high = size-1;
+    
+    while(mid!=high){
+        if(arr[mid]==0){
+            int temp = arr[mid];
+            arr[mid] = arr[low];
+            arr[low] = temp;
+            mid++;
+            low++;
+        }
+        else if(arr[mid]==1){
+            mid++;
+        }
+        else{
+            int temp = arr[mid];
+            arr[mid] = arr[high];
+            arr[high] = temp;
+            high--;
+        }
+    }
+    
+    cout<<"Sorted 0,1,2 array is: ";
+    for(int i=0; i<size; i++){
+        cout<<arr[i]<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter size of array: 10
+1 1 2 0 0 1 2 2 1 0
+Sorted 0,1,2 array is: 0 0 0 1 1 1 1 2 2 2

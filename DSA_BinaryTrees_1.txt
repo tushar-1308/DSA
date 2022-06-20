@@ -1,0 +1,725 @@
+// 33,38,45
+
+
+// ROOT TO LEAF PATH
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+bool found = false;
+BinaryTreeNode* rootNode = NULL;
+
+// PREORDER
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+void FindRootToLeafPath(BinaryTreeNode* root, vector<int> &rootPath){
+
+    // PREORDER
+    
+    rootPath.push_back(root->data);
+    
+    if(root->leftChild == NULL && root->rightChild == NULL){
+        for(int i=0; i<rootPath.size(); i++){
+            cout<<rootPath[i]<<" ";
+        }
+        cout<<endl;
+        rootPath.pop_back();
+        return;
+    }
+    
+    FindRootToLeafPath(root->leftChild, rootPath);
+    FindRootToLeafPath(root->rightChild, rootPath);
+    rootPath.pop_back();
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /    \     */                            
+    //       12     37        62    57                                     
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+    
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,57,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    vector<int> rootPath;
+    FindRootToLeafPath(temp, rootPath);
+    return 0;
+}
+eg.
+50 25 12 37 30 40 75 62 60 70 57 
+50 25 12 
+50 25 37 30 
+50 25 37 40 
+50 75 62 60 
+50 75 62 70 
+50 75 57 
+
+
+
+// ROOT TO LEAF PATH WITH SUM BETWEEN RANGE
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+bool found = false;
+BinaryTreeNode* rootNode = NULL;
+
+// PREORDER
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+void FindRootToLeafPath(BinaryTreeNode* root, vector<int> &rootPath, int minsum, int maxsum){
+
+    rootPath.push_back(root->data);
+    
+    if(root->leftChild == NULL && root->rightChild == NULL){
+        int sum = 0;
+        for(int i=0; i<rootPath.size(); i++){
+            sum+=rootPath[i];
+        }
+        if(sum>minsum && sum<maxsum){
+            for(int i=0; i<rootPath.size(); i++){
+                cout<<rootPath[i]<<" ";
+            }
+        }
+        cout<<endl;
+        rootPath.pop_back();
+        return;
+    }
+    
+    FindRootToLeafPath(root->leftChild, rootPath, minsum, maxsum);
+    FindRootToLeafPath(root->rightChild, rootPath, minsum, maxsum);
+    rootPath.pop_back();
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /    \     */                            
+    //       12     37        62    87                                     
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+    
+
+    int minsum, maxsum;
+    cout<<"Enter minimum and maximum sum: ";
+    cin>>minsum>>maxsum;
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,87,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    vector<int> rootPath;
+    FindRootToLeafPath(temp, rootPath, minsum, maxsum);
+    return 0;
+}
+eg.
+Enter minimum and maximum sum: 150 250
+50 25 12 37 30 40 75 62 60 70 87 
+
+
+50 25 37 40 
+50 75 62 60 
+
+50 75 87 
+
+
+
+// Tilt of Binary Tree
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+bool found = false;
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+void sumofSubTree(BinaryTreeNode* root, int &sum){
+    if(root==NULL){
+        return;
+    }
+    sum+=root->data;
+    sumofSubTree(root->leftChild, sum);
+    sumofSubTree(root->rightChild, sum);
+}
+
+int FindTiltValue(BinaryTreeNode* root){
+    int sumOfLeftSubTree = 0;
+    sumofSubTree(root->leftChild, sumOfLeftSubTree);
+    int sumOfRightSubTree = 0;
+    sumofSubTree(root->rightChild, sumOfRightSubTree);
+    
+    return abs(sumOfRightSubTree - sumOfLeftSubTree);
+}
+
+void TiltOfBinaryTree(BinaryTreeNode* root, vector<int> &answer){
+
+    if(root->leftChild==NULL && root->rightChild==NULL){
+        answer.push_back(0);
+        return;
+    }
+    
+    if(root->leftChild==NULL || root->rightChild==NULL){
+        if(root->leftChild==NULL){
+            answer.push_back(root->rightChild->data);
+        }
+        else{
+            answer.push_back(root->leftChild->data);
+        }
+        return;
+    }
+    
+    
+    
+    TiltOfBinaryTree(root->leftChild, answer);
+    TiltOfBinaryTree(root->rightChild, answer);
+    
+    int ans = FindTiltValue(root);
+    answer.push_back(ans);
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /    \     */                            
+    //       12     37        62    87                                     
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+    
+
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,87,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    vector<int> answer;
+    TiltOfBinaryTree(temp, answer);
+    cout<<endl;
+    int sum = 0;
+    for(int i=0; i<answer.size(); i++){
+        cout<<answer[i]<<" ";
+        sum+=answer[i];
+    }
+    cout<<endl<<"Tilt of the binary tree is:  "<<sum;
+    return 0;
+}
+eg.
+50 25 12 37 30 40 75 62 60 70 87 
+
+0 0 0 10 95 0 0 10 0 105 210 
+Tilt of the binary tree is:  430
+
+
+
+// Is Binary Tree Balanced or not
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+// void sumofSubTree(BinaryTreeNode* root, int &sum){
+//     if(root==NULL){
+//         return;
+//     }
+//     sum+=root->data;
+//     sumofSubTree(root->leftChild, sum);
+//     sumofSubTree(root->rightChild, sum);
+// }
+
+void findHeight(BinaryTreeNode* root, int &height, int sum){
+    
+    if(root->leftChild==NULL && root->rightChild==NULL){
+        return;
+    }
+    
+    if(root->leftChild!=NULL || root->rightChild!=NULL){
+        sum+=1;
+        height=sum;
+    }
+    
+    if(root->leftChild!=NULL){
+        findHeight(root->leftChild, height, sum);
+    }
+    if(root->rightChild!=NULL){
+        findHeight(root->rightChild, height, sum);
+    }
+    sum-=1;
+}
+
+void isBalancedBinaryTree(BinaryTreeNode* root, bool &balancedOrNot){
+    if(root->leftChild==NULL && root->rightChild==NULL){
+        return;
+    }
+    
+    if(root->leftChild==NULL || root->rightChild==NULL){
+        int heightOfRightSubtree = 0;
+        int heightOfLeftSubtree = 0;
+        if(root->leftChild==NULL){
+            heightOfRightSubtree = 1;
+            findHeight(root->rightChild, heightOfRightSubtree, 1);
+        }
+        else{
+            heightOfLeftSubtree = 1;
+            findHeight(root->leftChild, heightOfLeftSubtree, 1);
+        }
+        
+        if(heightOfLeftSubtree>1 || heightOfRightSubtree>1){
+            cout<<heightOfLeftSubtree<<" "<<heightOfRightSubtree<<endl;
+            balancedOrNot = false;
+        }
+        return;
+    }
+    
+    isBalancedBinaryTree(root->leftChild, balancedOrNot);
+    isBalancedBinaryTree(root->rightChild, balancedOrNot);
+
+    int heightOfRightSubtree = 1;
+    findHeight(root->rightChild, heightOfRightSubtree, 1);
+    int heightOfLeftSubtree = 1;
+    findHeight(root->leftChild, heightOfLeftSubtree, 1);
+    
+    if(abs(heightOfLeftSubtree - heightOfRightSubtree)>1){
+        cout<<heightOfLeftSubtree<<" "<<heightOfRightSubtree<<endl;
+        balancedOrNot = false;
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /    \      */                            
+    //       12     37        62    87                                     
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+    //          /
+    //         28
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,28,-1,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,87,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    bool balancedOrNot = true;
+    isBalancedBinaryTree(temp, balancedOrNot);
+    if(balancedOrNot){
+        cout<<"Balanced";
+    }
+    else{
+        cout<<"Unbalanced";
+    }
+    return 0;
+}
+eg.
+50 25 12 37 30 40 75 62 60 70 
+2 0
+Unbalanced
+
+
+
+// LARGEST BINARY SEARCH SUBTREE
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+int MaximumInLeftSubtree(BinaryTreeNode* root){
+    if(root==NULL){
+        return INT_MIN;
+    }
+    if(root->rightChild==NULL){
+        return root->data;
+    }
+    else{
+        return MaximumInLeftSubtree(root->rightChild);
+    }
+}
+
+int MinimumInRightSubtree(BinaryTreeNode* root){
+    if(root==NULL){
+        return INT_MAX;
+    }
+    if(root->leftChild==NULL){
+        return root->data;
+    }
+    else{
+        return MinimumInRightSubtree(root->leftChild);
+    }
+}
+
+void isBstorNot(BinaryTreeNode* root, bool &isBST){
+    
+    if(root->leftChild==NULL && root->rightChild==NULL){
+        return;
+    }
+    
+    int maxInLST = MaximumInLeftSubtree(root->leftChild);
+    int minInRST = MinimumInRightSubtree(root->rightChild);
+    
+    if(root->data<maxInLST || root->data>minInRST){
+        isBST = false;
+        return;
+    }
+    else{
+        isBstorNot(root->leftChild, isBST);
+        isBstorNot(root->rightChild, isBST);
+    }
+}
+
+void sizeOfBST(BinaryTreeNode* root, int &size){
+    
+    if(root->leftChild!=NULL){
+        size+=1;
+        sizeOfBST(root->leftChild, size);
+    }
+    if(root->rightChild!=NULL){
+        size+=1;
+        sizeOfBST(root->rightChild, size);
+    }  
+}
+
+void LargestBSTSubtree(BinaryTreeNode* root, vector<int> &BSTnodes){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    if(root->leftChild==NULL && root->rightChild==NULL){
+        BSTnodes.push_back(root->data);
+        return;
+    }
+    
+    LargestBSTSubtree(root->leftChild, BSTnodes);
+    LargestBSTSubtree(root->rightChild, BSTnodes);
+    
+
+    bool isBST = true;
+    isBstorNot(root, isBST);
+    
+    if(isBST){
+        int size = 1;
+        sizeOfBST(root, size);
+        cout<<root->data<<":"<<size<<" ";
+        BSTnodes.push_back(root->data);
+    }
+    
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /    \      */                            
+    //       12     37        62    72                                     
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,72,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    vector<int> BSTnodes;
+    LargestBSTSubtree(temp, BSTnodes);
+    cout<<endl;
+    for(int i=0; i<BSTnodes.size(); i++){
+        cout<<BSTnodes[i]<<" ";
+    }
+    return 0;
+}
+eg.
+50 25 12 37 30 40 75 62 60 70 72 
+37:3 25:5 62:3 
+12 30 40 37 25 60 70 62 72 
+
+

@@ -1,0 +1,4176 @@
+// Unattempteds: 43
+
+
+// INORDER MORRIS TRAVERSAL | O(1) Space | O(N) Time
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* rightMostNodeOfLeftChild(BinaryTreeNode* temp, BinaryTreeNode* root, bool &cycle){
+    
+    while(root->rightChild!=NULL){
+        if(root->rightChild==temp){
+            cycle = true;
+            break;
+        }
+        root = root->rightChild;
+    }
+    return root;
+}
+
+void InOrderMorrisTraversal(BinaryTreeNode* root){
+    //                   60                         
+    //             /           \                   
+    //            /             \                          
+    //           20              70          
+    /*         /   \            /  \      */ 
+    //       10     40         0    90     
+    //            /   \            /     
+    //           30   50         80 
+    if(root==NULL){
+        return ;
+    }
+    // cout<<endl;
+    // cout<<"CN: "<<root->data<<" ";
+    
+    if(root->leftChild==NULL){
+        cout<<root->data<<" ";
+        // cout<<"RMCN: "<<root->rightChild->data<<" "; 
+        InOrderMorrisTraversal(root->rightChild);                              
+        return;
+    }
+    
+    // cout<<"LCN: "<<root->leftChild->data<<" ";
+    bool cycle = false;
+    BinaryTreeNode* rightMostNode = rightMostNodeOfLeftChild(root, root->leftChild, cycle);
+    if(cycle==true){
+        return;
+    }
+    // cout<<"RMCN: "<<rightMostNode->data<<" ";
+    rightMostNode->rightChild = root;
+    // cout<<"RMCN NN: "<<rightMostNode->rightChild->data<<" ";
+    
+    InOrderMorrisTraversal(root->leftChild);
+    cout<<root->data<<" ";
+    InOrderMorrisTraversal(root->rightChild);
+    
+}
+
+int main(){
+    
+    //                   60                                                
+    //             /           \                               
+    //            /             \                                      
+    //           20              70                               
+    /*         /   \            /  \      */                            
+    //       10     40         0    90                                     
+    //            /   \            /                                             
+    //           30   50         80                                    
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        60,20,10,-1,40,30,-1,50,-1,-1,-1,70,0,-1,90,80,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    InOrderMorrisTraversal(temp);
+    return 0;
+}
+eg.
+10 20 30 40 50 60 0 70 80 90
+10 20 30 40 50 60 0 70 80 90
+
+
+
+// PREORDER MORRIS TRAVERSAL | O(1) Space | O(N) Time
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* rightMostNodeOfLeftChild(BinaryTreeNode* temp, BinaryTreeNode* root, bool &cycle){
+    
+    while(root->rightChild!=NULL){
+        if(root->rightChild==temp){
+            cycle = true;
+            break;
+        }
+        root = root->rightChild;
+    }
+    return root;
+}
+
+void PreOrderMorrisTraversal(BinaryTreeNode* root){
+    //                   60                         
+    //             /           \                   
+    //            /             \                          
+    //           20              70          
+    /*         /   \            /  \      */ 
+    //       10     40         0    90     
+    //            /   \            /     
+    //           30   50         80 
+    if(root==NULL){
+        return ;
+    }
+    // cout<<endl;
+    // cout<<"CN: "<<root->data<<" ";
+    
+    if(root->leftChild==NULL){
+        cout<<root->data<<" ";
+        // cout<<"RMCN: "<<root->rightChild->data<<" "; 
+        PreOrderMorrisTraversal(root->rightChild);                              
+        return;
+    }
+    
+    // cout<<"LCN: "<<root->leftChild->data<<" ";
+    bool cycle = false;
+    BinaryTreeNode* rightMostNode = rightMostNodeOfLeftChild(root, root->leftChild, cycle);
+    if(cycle==true){
+        return;
+    }
+    // cout<<"RMCN: "<<rightMostNode->data<<" ";
+    rightMostNode->rightChild = root;
+    // cout<<"RMCN NN: "<<rightMostNode->rightChild->data<<" ";
+    
+    cout<<root->data<<" ";
+    PreOrderMorrisTraversal(root->leftChild);
+    PreOrderMorrisTraversal(root->rightChild);
+    
+}
+
+int main(){
+    
+    //                   60                                                
+    //             /           \                               
+    //            /             \                                      
+    //           20              70                               
+    /*         /   \            /  \      */                            
+    //       10     40         0    90                                     
+    //            /   \            /                                             
+    //           30   50         80                                    
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        60,20,10,-1,40,30,-1,50,-1,-1,-1,70,0,-1,90,80,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    PreOrderMorrisTraversal(temp);
+    return 0;
+}
+eg.
+60 20 10 40 30 50 70 0 90 80 
+60 20 10 40 30 50 70 0 90 80 
+
+
+
+
+// CAMERAS IN BINARY TREE | LEETCODE 968
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mirrors = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+// -1 if required mirror
+// 0 if mirror is placed at same position
+// 1 if covered by child node 
+
+int NodesCoveredByMirrors(BinaryTreeNode* root){
+
+    if(root==NULL){
+        return 1;
+    }
+    
+    int lvalue = NodesCoveredByMirrors(root->leftChild);
+    int rvalue = NodesCoveredByMirrors(root->rightChild);
+    
+    if(lvalue==-1 || rvalue==-1){
+        mirrors++;
+        return 0;
+    }
+    
+    if(lvalue==0 || rvalue==0){
+        return 1;
+    }
+    
+    return -1;
+    
+}
+
+int MinimumMirrorsRequired(BinaryTreeNode* root){
+    if(NodesCoveredByMirrors(root)==-1){
+        mirrors++;
+    }
+    return mirrors;
+}
+
+int main(){
+    
+    //                   60                                                
+    //             /           \                               
+    //            /             \                                      
+    //           20              70                               
+    /*         /   \            /  \      */                            
+    //       10     40        65    90                                     
+    //            /   \            /                                             
+    //           30   50         80                                    
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        60,20,10,-1,40,30,-1,50,-1,-1,-1,70,65,-1,90,80,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    cout<<"Minimum mirrors required to cover all nodes(1 mirror covers its parent and both child nodes only): "<<endl;
+    cout<<MinimumMirrorsRequired(temp);
+    return 0;
+}
+eg.
+60 20 10 40 30 50 70 65 90 80 
+Minimum mirrors required to cover all nodes(1 mirror covers its parent and both child nodes only): 
+4
+
+
+
+// HOUSE ROBBERS | LEETCODE 337
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct HouseRobberyScenarios{
+    int withRobbery = 0;
+    int withoutRobbery = 0;
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    Print(root->rightChild);
+    cout<<root->data<<" ";
+}
+
+HouseRobberyScenarios* HouseRobbery(BinaryTreeNode* root){
+
+    if(root==NULL){
+        return new HouseRobberyScenarios();
+    }
+
+    HouseRobberyScenarios*  lSubtreeMaximumValue = HouseRobbery(root->leftChild);
+    HouseRobberyScenarios*  rSubtreeMaximumValue = HouseRobbery(root->rightChild);
+    
+    HouseRobberyScenarios* myAns = new HouseRobberyScenarios();
+    myAns->withRobbery = root->data + lSubtreeMaximumValue->withoutRobbery 
+                                    + rSubtreeMaximumValue->withoutRobbery;
+    myAns->withoutRobbery = max(lSubtreeMaximumValue->withRobbery, lSubtreeMaximumValue->withoutRobbery)
+                          + max(rSubtreeMaximumValue->withRobbery, rSubtreeMaximumValue->withoutRobbery);
+    
+    
+    return myAns;
+    
+}
+
+int MaximumMoney(BinaryTreeNode* root){
+    
+    HouseRobberyScenarios* ans = HouseRobbery(root);
+    
+    return max(ans->withRobbery, ans->withoutRobbery);
+    
+}
+
+int main(){
+    
+    //                   60                                                
+    //             /           \                               
+    //            /             \                                      
+    //           20              70                               
+    /*         /   \            /  \      */                            
+    //       10     40        65    90                                     
+    //            /   \            /                                             
+    //           30   50         80                                    
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        60,20,10,-1,40,30,-1,50,-1,-1,-1,70,65,-1,90,80,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    cout<<"Maximum money by robbering not adjacent houses is: ";
+    cout<<MaximumMoney(temp);
+    return 0;
+}
+eg.
+10 30 50 40 20 65 80 90 70 60 
+Maximum money by robbering not adjacent houses is: 305
+
+
+
+
+// MAXIMUM ZIGZAG PATH | LEETCODE 1372
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct ZigZagScenario{
+    int forwardSlope = -1;
+    int backwardSlope = -1;
+    int maxlen = 0;
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+    
+}
+
+// Recommended
+ZigZagScenario* LongestZigZagPath01(BinaryTreeNode* root){
+
+    if(root==NULL){
+        return new ZigZagScenario();
+    }
+
+    ZigZagScenario*  lSubtreeMaximumZigZagPath = LongestZigZagPath01(root->leftChild);
+    ZigZagScenario*  rSubtreeMaximumZigZagPath = LongestZigZagPath01(root->rightChild);
+    
+    ZigZagScenario* myAns = new ZigZagScenario();
+    myAns->forwardSlope = lSubtreeMaximumZigZagPath->backwardSlope + 1;
+    myAns->backwardSlope = rSubtreeMaximumZigZagPath->forwardSlope + 1;
+    myAns->maxlen = max(max(lSubtreeMaximumZigZagPath->maxlen, rSubtreeMaximumZigZagPath->maxlen),
+                    max(lSubtreeMaximumZigZagPath->backwardSlope+1, rSubtreeMaximumZigZagPath->forwardSlope+1));
+    
+    
+    return myAns;
+    
+}
+
+// Not Recommended
+int maxLength=0;
+vector<int> LongestZigZagPath02(BinaryTreeNode* root){
+
+    if(root==NULL){
+        return {-1,-1};
+    }
+
+    vector<int>  lSubtreeMaximumZigZagPath = LongestZigZagPath02(root->leftChild);
+    vector<int>  rSubtreeMaximumZigZagPath = LongestZigZagPath02(root->rightChild);
+    
+    maxLength = max(maxLength, max(lSubtreeMaximumZigZagPath[1]+1, rSubtreeMaximumZigZagPath[0]+1));
+    
+    return {lSubtreeMaximumZigZagPath[1]+1, rSubtreeMaximumZigZagPath[0]+1};
+    
+}
+
+int ZigZag(BinaryTreeNode* root){
+    
+    // ZigZagScenario* ans = LongestZigZagPath01(root);
+    // return ans->maxlen;
+    
+    LongestZigZagPath02(root);
+    
+    return maxLength;
+    
+}
+
+int main(){
+    
+    //                   60                                                
+    //             /           \                               
+    //            /             \                                      
+    //           20              70                               
+    /*         /   \            /  \      */                            
+    //       10     40        65    90                                     
+    //            /   \            /                                             
+    //           30   50         80   
+    //                          /  \
+    //                         0   100
+    //                            /
+    //                           95          
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        60,20,10,-1,40,30,-1,50,-1,-1,-1,70,65,-1,90,80,0,-1,100,95,-1,-1,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    cout<<"Longest zig-zag path is: ";
+    cout<<ZigZag(temp);
+    return 0;
+}
+eg.
+10 20 30 40 50 60 65 70 0 80 95 100 90 
+Longest zig-zag path is: 4
+
+
+
+
+// BST OR NOT USING INORDER TRAVERSAL | LEETCODE 98
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+BinaryTreeNode* previous = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+    
+}
+
+bool isBST(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return true;
+    }
+    
+    if(!isBST(root->leftChild)){
+        return false;
+    }
+    
+    if(previous!=NULL && previous->data > root->data){
+        return false;
+    }
+    previous = root;
+    if(!isBST(root->rightChild)){
+        return false;
+    }
+    
+    return true;
+}
+
+int main(){
+    
+    //                   60                                                
+    //             /           \                               
+    //            /             \                                      
+    //           20              70                               
+    /*         /   \            /  \      */                            
+    //       10     40        65    90                                     
+    //            /   \            /                                             
+    //           30   50         80   
+    //                          /  \
+    //                         0   100     
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        60,20,10,-1,40,30,-1,50,-1,-1,-1,70,65,-1,90,80,0,-1,100,-1,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    if(isBST(temp)){
+        cout<<"BST";
+    }
+    else{
+        cout<<"Not a BST";
+    }
+    return 0;
+}
+eg.
+10 20 30 40 50 60 65 70 0 80 100 90 
+Not a BST
+
+
+
+// Recover Binary Search Tree | Using Morris Traversal With O(1) Space | Leetcode 99 Solution
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+BinaryTreeNode* previous = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* rightMostNodeOfLeftChild(BinaryTreeNode* temp, BinaryTreeNode* root){
+    
+    while(root->rightChild!=NULL && root->rightChild!=temp){
+        root = root->rightChild;
+    }
+    return root;
+}
+
+void InOrderMorrisTraversal(BinaryTreeNode* root){
+    BinaryTreeNode* A = NULL;
+    BinaryTreeNode* B = NULL;
+    while(root!=NULL){
+        if(root->leftChild==NULL){
+            cout<<root->data<<" ";
+            if(previous!=NULL && previous->data > root->data){
+                if(A==NULL){
+                    A = previous;
+                }
+                B = root;
+            }
+            previous = root;
+            root = root->rightChild;
+        }
+        else{
+            BinaryTreeNode* rmc = rightMostNodeOfLeftChild(root, root->leftChild);
+            if(rmc->rightChild==NULL){
+                rmc->rightChild = root;
+                root = root->leftChild;
+            }
+            else{
+                rmc->rightChild = NULL;
+                cout<<root->data<<" ";
+                if(previous->data > root->data){
+                    if(A==NULL){
+                        A = previous;
+                    }
+                    B = root;
+                }
+                previous = root;
+                root = root->rightChild;
+            }
+        }
+    }
+    if(A!=NULL){
+        int temp = A->data;
+        A->data = B->data;
+        B->data = temp;
+    }
+}
+
+int main(){
+    
+    //                   60                                                
+    //             /           \                               
+    //            /             \                                      
+    //           20              70                               
+    /*         /   \            /  \      */                            
+    //       10     40        65    90                                     
+    //            /   \            /                                             
+    //           30   50         80                                    
+
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        60,20,10,-1,40,65,-1,50,-1,-1,-1,70,30,-1,90,80,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      // PREORDER & POSTORDER
+    cout<<endl;
+    InOrderMorrisTraversal(temp);
+    cout<<endl;
+    Print(temp);
+    return 0;
+}
+eg.
+10 20 65 40 50 60 30 70 80 90 
+10 20 65 40 50 60 30 70 80 90 
+10 20 30 40 50 60 65 70 80 90 
+
+
+
+// CONSTRUCT BST FROM INORDER AND PREORDER | LEETCODE 105
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* BTFromPreAndInorder(vector<int> PreOrder, vector<int> InOrder, int psi, int pei, int isi, int iei){
+    
+    if(psi>pei || isi>iei){
+        return NULL;
+    }
+    
+    //                   0                                                
+    //             /           \                               
+    //            /             \                                      
+    //           1               2                              
+    /*         /   \            /  \      */                            
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                                            
+    //    7   8  9   10      11                                    
+
+    // vector<int> PreOrder{0,1,3,7,8,4,9,10,2,5,11,6};
+    // vector<int> InOrder{7,3,8,1,9,4,10,0,11,5,2,6};
+    
+    int idx = isi;
+    while(PreOrder[psi]!=InOrder[idx]){
+        idx++;
+    }
+    
+    BinaryTreeNode* rootNode = new BinaryTreeNode(InOrder[idx]);
+    
+    int LSTpsi = psi+1;
+    int LSTpei = psi+idx-isi;
+    int LSTisi = isi;
+    int LSTiei = idx-1;
+    int RSTpsi = psi+idx-isi+1;
+    int RSTpei = pei;
+    int RSTisi = idx+1;
+    int RSTiei = iei;
+    
+    rootNode->leftChild = BTFromPreAndInorder(PreOrder, InOrder, LSTpsi, LSTpei, LSTisi, LSTiei);
+    rootNode->rightChild = BTFromPreAndInorder(PreOrder, InOrder, RSTpsi, RSTpei, RSTisi, RSTiei); 
+ 
+    return rootNode;
+    
+}
+
+int main(){
+    
+    //                   0                                                
+    //             /           \                               
+    //            /             \                                      
+    //           1               2                              
+    /*         /   \            /  \      */                            
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                                            
+    //    7   8  9   10      11                                    
+
+    vector<int> PreOrder{0,1,3,7,8,4,9,10,2,5,11,6};
+    vector<int> InOrder{7,3,8,1,9,4,10,0,11,5,2,6};
+    
+    BinaryTreeNode* temp = BTFromPreAndInorder(PreOrder, InOrder, 0, PreOrder.size()-1, 0, InOrder.size()-1);
+    
+    Print(temp);
+    return 0;
+}
+eg.
+7 3 8 1 9 4 10 0 11 5 2 6 
+
+
+
+// CONSTRUCT BST FROM INORDER AND POSTORDER | LEETCODE 106
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* BTFromPostAndInorder(vector<int> PostOrder, vector<int> InOrder, int psi, int pei, int isi, int iei){
+    
+    if(psi>pei || isi>iei){
+        return NULL;
+    }
+    
+    //                   0                                                
+    //             /           \                               
+    //            /             \                                      
+    //           1               2                              
+    /*         /   \            /  \      */                            
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                                            
+    //    7   8  9   10      11                                    
+
+    // vector<int> PostOrder {7,8,3,9,10,4,1,11,5,6,2,0};
+    // vector<int> InOrder {7,3,8,1,9,4,10,0,11,5,2,6};
+    
+    int idx = isi;
+    while(PostOrder[pei]!=InOrder[idx]){
+        idx++;
+    }
+    // idx = 7
+    BinaryTreeNode* rootNode = new BinaryTreeNode(InOrder[idx]);
+    
+    int LSTpsi = psi;
+    int LSTpei = psi+idx-isi-1;
+    int LSTisi = isi;
+    int LSTiei = idx-1;
+    int RSTpsi = psi+idx-isi;
+    int RSTpei = pei-1;
+    int RSTisi = idx+1;
+    int RSTiei = iei;
+    
+    rootNode->leftChild = BTFromPostAndInorder(PostOrder, InOrder, LSTpsi, LSTpei, LSTisi, LSTiei);
+    rootNode->rightChild = BTFromPostAndInorder(PostOrder, InOrder, RSTpsi, RSTpei, RSTisi, RSTiei); 
+ 
+    return rootNode;
+    
+}
+
+int main(){
+    
+    //                   0                                                
+    //             /           \                               
+    //            /             \                                      
+    //           1               2                              
+    /*         /   \            /  \      */                            
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                                            
+    //    7   8  9   10      11                                    
+
+    vector<int> PostOrder {7,8,3,9,10,4,1,11,5,6,2,0};
+    vector<int> InOrder {7,3,8,1,9,4,10,0,11,5,2,6};
+    
+    BinaryTreeNode* temp = BTFromPostAndInorder(PostOrder, InOrder, 0, PostOrder.size()-1, 0, InOrder.size()-1);
+    
+    Print(temp);
+    return 0;
+}
+eg.
+7 3 8 1 9 4 10 0 11 5 2 6 
+
+
+
+
+// CONSTRUCT BST FROM INORDER AND LEVELORDER
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* BTFromLevelAndInorder(vector<int> LevelOrder, vector<int> InOrder){
+    
+    if(InOrder.size()==0 || LevelOrder.size()==0){
+        return NULL;
+    }
+    
+    //                   0                                                
+    //             /           \                               
+    //            /             \                                      
+    //           1               2                              
+    /*         /   \            /  \      */                            
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                                            
+    //    7   8  9   10      11                                    
+
+    // vector<int> LevelOrder {0,1,2,3,4,5,6,7,8,9,10,11};
+    // vector<int> InOrder {7,3,8,1,9,4,10,0,11,5,2,6};
+    
+    vector<int> LSTInOrder;
+    vector<int> RSTInOrder;
+    
+    int elem = LevelOrder[0];
+    int idx=0;
+    
+    while(elem!=InOrder[idx]){
+        LSTInOrder.push_back(InOrder[idx]);
+        idx++;
+    }
+    for(int i=idx+1; i<InOrder.size(); i++){
+        RSTInOrder.push_back(InOrder[i]);
+    }
+    
+    vector<int>::iterator itr;
+    vector<int> LSTLevelOrder;
+    vector<int> RSTLevelOrder;
+    
+    for(int i=1; i<LevelOrder.size(); i++){
+        itr = find(LSTInOrder.begin(), LSTInOrder.end(), LevelOrder[i]);
+        if(itr!=LSTInOrder.end()){
+            LSTLevelOrder.push_back(LevelOrder[i]);
+        }
+        else{
+            RSTLevelOrder.push_back(LevelOrder[i]);
+        }
+    }
+    
+    BinaryTreeNode* rootNode = new BinaryTreeNode(elem);
+    
+    rootNode->leftChild = BTFromLevelAndInorder(LSTLevelOrder, LSTInOrder);
+    rootNode->rightChild = BTFromLevelAndInorder(RSTLevelOrder, RSTInOrder); 
+ 
+    return rootNode;
+    
+}
+
+int main(){
+    
+    //                   0                                                
+    //             /           \                               
+    //            /             \                                      
+    //           1               2                              
+    /*         /   \            /  \      */                            
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                                            
+    //    7   8  9   10      11                                    
+
+    vector<int> LevelOrder {0,1,2,3,4,5,6,7,8,9,10,11};
+    vector<int> InOrder {7,3,8,1,9,4,10,0,11,5,2,6};
+    
+    BinaryTreeNode* temp = BTFromLevelAndInorder(LevelOrder, InOrder);
+    
+    Print(temp);
+    return 0;
+}
+eg.
+0 1 3 7 8 4 9 10 2 5 11 6 
+
+
+
+// CONSTRUCT BT FROM PREORDER AND POSTORDER | LEETCODE 889
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* BTFromPreAndPostorder(vector<int> PreOrder, vector<int> PostOrder, int prsi, int prei, int posi, int poei){
+    
+    
+    //                   0                                  
+    //             /           \                             
+    //            /             \                                      
+    //           1               2                      
+    /*         /   \            /  \      */                
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                          
+    //    7   8  9   10      11                           
+
+    // vector<int> PreOrder {0,1,3,7,8,4,9,10,2,5,11,6};
+    // vector<int> PostOrder {7,8,3,9,10,4,1,11,5,6,2,0};
+    
+    if(prsi>prei || posi>poei){
+        return NULL;
+    }
+    
+    BinaryTreeNode* rootNode = new BinaryTreeNode(PreOrder[prsi]);
+    if(prsi==prei || posi==poei){
+        return rootNode;
+    }
+    
+    int idx = posi;
+    while(PostOrder[idx]!=PreOrder[prsi+1]){
+        idx++;
+    }
+    
+    int LSTprsi = prsi+1;
+    int LSTprei = prsi+idx-posi+1;
+    int RSTprsi = prsi+idx-posi+2;
+    int RSTprei = prei;
+    int LSTposi = posi;
+    int LSTpoei = idx;
+    int RSTposi = idx+1;
+    int RSTpoei = poei-1;
+    
+    cout<<"Pre LST: ";
+    for(int i=LSTprsi; i<=LSTprei; i++){
+        cout<<PreOrder[i]<<" ";
+    }
+    cout<<" RST: ";
+    for(int i=RSTprsi; i<=RSTprei; i++){
+        cout<<PreOrder[i]<<" ";
+    }
+    cout<<endl;
+    cout<<"Post LST: ";
+    for(int i=LSTposi; i<=LSTpoei; i++){
+        cout<<PostOrder[i]<<" ";
+    }
+    cout<<" RST: ";
+    for(int i=RSTposi; i<=RSTpoei; i++){
+        cout<<PostOrder[i]<<" ";
+    }
+    cout<<endl<<endl;
+    
+    rootNode->leftChild = BTFromPreAndPostorder(PreOrder, PostOrder, LSTprsi, LSTprei, LSTposi, LSTpoei);
+    rootNode->rightChild = BTFromPreAndPostorder(PreOrder, PostOrder, RSTprsi, RSTprei, RSTposi, RSTpoei); 
+ 
+    return rootNode;
+    
+}
+
+int main(){
+    
+    //                   0                                                
+    //             /           \                               
+    //            /             \                                      
+    //           1               2                              
+    /*         /   \            /  \      */                            
+    //       3     4           5    6                                     
+    //     /  \   /  \        /                                            
+    //    7   8  9   10      11                                    
+
+    vector<int> PreOrder {0,1,3,7,8,4,9,10,2,5,11,6};
+    vector<int> PostOrder {7,8,3,9,10,4,1,11,5,6,2,0};
+    
+    
+    BinaryTreeNode* temp = BTFromPreAndPostorder(PreOrder, PostOrder, 0, PreOrder.size()-1, 0, PostOrder.size()-1);
+    
+    Print(temp);
+    return 0;
+}
+eg.
+Pre LST: 1 3 7 8 4 9 10  RST: 2 5 11 6 
+Post LST: 7 8 3 9 10 4 1  RST: 11 5 6 2 
+
+Pre LST: 3 7 8  RST: 4 9 10 
+Post LST: 7 8 3  RST: 9 10 4 
+
+Pre LST: 7  RST: 8 
+Post LST: 7  RST: 8 
+
+Pre LST: 9  RST: 10 
+Post LST: 9  RST: 10 
+
+Pre LST: 5 11  RST: 6 
+Post LST: 11 5  RST: 6 
+
+Pre LST: 11  RST: 
+Post LST: 11  RST: 
+
+7 3 8 1 9 4 10 0 11 5 2 6 
+
+
+
+// Construct Binary Search Tree From InOrder Traversal
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+BinaryTreeNode* BSTFromInOrder(vector<int> InOrder, int low, int high){
+
+    if(low>high){
+        return NULL;
+    }
+    
+    int mid = (low+high)/2;
+
+    BinaryTreeNode* rootNode = new BinaryTreeNode(InOrder[mid]);
+    
+    rootNode->leftChild = BSTFromInOrder(InOrder, low, mid-1);
+    rootNode->rightChild = BSTFromInOrder(InOrder, mid+1, high); 
+ 
+    return rootNode;
+    
+}
+
+int main(){
+    
+    vector<int> InOrder {0,1,2,3,4,5,6,7,8,9,10};
+
+    BinaryTreeNode* temp = BSTFromInOrder(InOrder, 0, InOrder.size()-1);
+    
+    Print(temp);
+    return 0;
+}
+eg.
+0 1 2 3 4 5 6 7 8 9 10
+
+
+
+// Construct Binary Search Tree From PreOrder Traversal | Leetcode 1008 Solution
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+int idx=0;
+BinaryTreeNode* BSTFromPreOrder(vector<int> PreOrder, int minimum, int maximum){
+
+    if(minimum>PreOrder[idx] || maximum<PreOrder[idx] || idx>=PreOrder.size()){
+        return NULL;
+    }
+
+    BinaryTreeNode* rootNode = new BinaryTreeNode(PreOrder[idx]);
+    idx++;
+    rootNode->leftChild = BSTFromPreOrder(PreOrder, minimum, rootNode->data);
+    rootNode->rightChild = BSTFromPreOrder(PreOrder, rootNode->data, maximum); 
+ 
+    return rootNode;
+    
+}
+
+int main(){
+    
+    vector<int> PreOrder {30,20,10,15,25,23,39,35,42};
+
+    BinaryTreeNode* temp = BSTFromPreOrder(PreOrder, INT_MIN, INT_MAX);
+    
+    Print(temp);
+    return 0;
+}
+eg.
+10 15 20 23 25 30 35 39 42 
+
+
+
+// Construct Binary Search Tree From PostOrder Traversal
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+vector<int> PostOrder {15,10,23,25,20,35,42,39,30};
+int idx=PostOrder.size()-1;
+
+BinaryTreeNode* BSTFromPostOrder(vector<int> PostOrder, int minimum, int maximum){
+
+    if(minimum>PostOrder[idx] || maximum<PostOrder[idx] || idx<0){
+        return NULL;
+    }
+
+    BinaryTreeNode* rootNode = new BinaryTreeNode(PostOrder[idx]);
+    idx--;
+    
+    rootNode->rightChild = BSTFromPostOrder(PostOrder, rootNode->data, maximum); 
+    rootNode->leftChild = BSTFromPostOrder(PostOrder, minimum, rootNode->data);
+    
+    return rootNode;
+    
+}
+
+int main(){
+
+    BinaryTreeNode* temp = BSTFromPostOrder(PostOrder, INT_MIN, INT_MAX);
+    
+    Print(temp);
+    return 0;
+}
+eg.
+10 15 20 23 25 30 35 39 42 
+
+
+
+
+// Construct Binary Search Tree From LevelOrder Traversal
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct Pair{
+    BinaryTreeNode* root;
+    int leftrange;
+    int rightrange;
+    Pair(BinaryTreeNode* root, int leftrange, int rightrange){
+        this->root = root;
+        this->leftrange = leftrange;
+        this->rightrange = rightrange;
+    }
+};
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+
+}
+
+int idx=0;
+BinaryTreeNode* root = NULL;
+
+void BSTFromLevelOrder(vector<int> LevelOrder, queue<Pair*> &qpr){
+
+    if(idx>=LevelOrder.size()){
+        return;
+    }
+
+    // cout<<idx<<" ";
+    int val = LevelOrder[idx++];
+    // cout<<val<<" ";
+    BinaryTreeNode* rootNode = new BinaryTreeNode(val);
+
+    
+    Pair* compare = qpr.front();
+   
+    // cout<<compare->leftrange<<" "<<compare->leftrange<<endl;
+    
+    // cout<<qpr.size()<<" ";
+    
+    if(root==NULL){
+        root = rootNode;
+    }
+    else{
+        if(val>compare->root->data && val>compare->leftrange && val<compare->rightrange){
+            compare->root->rightChild = rootNode;
+        }
+        else if(val<compare->root->data && val>compare->leftrange && val<compare->rightrange){
+            compare->root->leftChild = rootNode;
+        }
+        else{
+            idx--;
+        }
+    }
+    qpr.pop();
+    // cout<<"pop: "<<qpr.size()<<" "<<val<<" ";
+    qpr.push(new Pair(rootNode, compare->leftrange, val));
+    // cout<<"1st push: "<<qpr.size()<<" "<<val<<" ";
+    qpr.push(new Pair(rootNode, val, compare->rightrange));
+    // cout<<"2nd push: "<<qpr.size()<<endl;
+    
+    BSTFromLevelOrder(LevelOrder, qpr);
+    
+}
+
+int main(){
+
+    vector<int> LevelOrder {50,12,17,72,54,23,14,9,76,67,19};
+    queue<Pair*> qpr;
+    qpr.push(new Pair(NULL, INT_MIN, INT_MAX));
+    BSTFromLevelOrder(LevelOrder, qpr);
+    
+    Print(root);
+    return 0;
+}
+eg.
+12 17 50
+
+
+
+// Serailize and Deserialize of Binary Tree Part 1(Only Serialize) | Leetcode 297 Solution In Hindi
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    Print(root->leftChild);
+    cout<<root->data<<" ";
+    Print(root->rightChild);
+}
+
+void Serialize(BinaryTreeNode* root, string &str){
+    
+    if(root==NULL){
+        str+="NULL,";
+        return;
+    }
+    
+    str += to_string(root->data) + ",";
+    Serialize(root->leftChild, str);
+    Serialize(root->rightChild, str);
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+    
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      
+    cout<<endl;
+    string str = "";
+    Serialize(temp, str);
+    cout<<str;
+    return 0;
+}
+eg.
+12 25 30 37 40 50 60 62 70 75 
+50,25,12,NULL,NULL,37,30,NULL,NULL,40,NULL,NULL,75,62,60,NULL,NULL,70,NULL,NULL,NULL,
+
+
+
+
+
+// Serailize and Deserialize of Binary Tree Part 2(Both Serialize & Deserialize) | Leetcode 297 Solution In Hindi
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int idx=0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void Serialize(BinaryTreeNode* root, string &str){
+    
+    if(root==NULL){
+        str+="NULL,";
+        return;
+    }
+    
+    str += to_string(root->data) + ",";
+    Serialize(root->leftChild, str);
+    Serialize(root->rightChild, str);
+}
+
+BinaryTreeNode* Deserialize(vector<string> nodes, int &idx){
+    
+    BinaryTreeNode* newNode = NULL;
+    
+    if(nodes[idx]=="NULL"){
+        return NULL;
+    }
+    else{
+        newNode = new BinaryTreeNode(stoi(nodes[idx]));
+    }
+    idx++;
+    newNode->leftChild = Deserialize(nodes, idx);
+    idx++;
+    newNode->rightChild = Deserialize(nodes, idx);
+    
+    return newNode;
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+    
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    Print(temp);      
+    cout<<endl;
+    string str = "";
+    Serialize(temp, str);
+    cout<<"Serialize: "<<str<<endl;
+    
+    vector<string> nodes;
+    string tempstr="";
+    for(int i=0; i<str.size(); i++){
+        if(str[i]!=','){
+            tempstr+=str[i];
+        }
+        else{
+            nodes.push_back(tempstr);
+            tempstr="";
+        }
+    }
+    
+    cout<<endl;
+    BinaryTreeNode* ans = Deserialize(nodes, idx);
+    cout<<"Deserialize: ";
+    Print(ans);
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 40 75 62 60 70 
+Serialize: 50,25,12,NULL,NULL,37,30,NULL,NULL,40,NULL,NULL,75,62,60,NULL,NULL,70,NULL,NULL,NULL,
+
+Deserialize: 50 25 12 37 30 40 75 62 60 70 
+
+
+
+// Left View of Binary Tree
+// Hint: first node of every level
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void LeftView(queue<BinaryTreeNode*> answer){
+    
+    if(answer.size()==0){
+        return;
+    }
+    BinaryTreeNode* temp = answer.front();
+    cout<<temp->data<<" ";
+    queue<BinaryTreeNode*> demo;
+    while(answer.size()!=0){
+        BinaryTreeNode* temp = answer.front();
+        if(temp->leftChild!=NULL){
+            demo.push(temp->leftChild);
+        }
+        if(temp->rightChild!=NULL){
+            demo.push(temp->rightChild);
+        }
+        answer.pop();
+    }
+    answer = demo;
+    LeftView(answer);
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60  70                                          
+    
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    queue<BinaryTreeNode*> answer;
+    answer.push(temp);
+    cout<<"LeftView: ";
+    LeftView(answer);
+    return 0;
+}
+eg.
+50 25 12 37 30 40 75 62 60 70 
+LeftView: 50 25 12 30 
+
+
+
+// Right View of Binary Tree
+// Hint: last node of every level
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void RightView(queue<BinaryTreeNode*> answer){
+    
+    if(answer.size()==0){
+        return;
+    }
+    BinaryTreeNode* temp = answer.back();
+    cout<<temp->data<<" ";
+    queue<BinaryTreeNode*> demo;
+    while(answer.size()!=0){
+        BinaryTreeNode* temp = answer.front();
+        if(temp->leftChild!=NULL){
+            demo.push(temp->leftChild);
+        }
+        if(temp->rightChild!=NULL){
+            demo.push(temp->rightChild);
+        }
+        answer.pop();
+    }
+    answer = demo;
+    RightView(answer);
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60  70  
+    //                         / 
+    //                        65
+    
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    queue<BinaryTreeNode*> answer;
+    answer.push(temp);
+    cout<<"RightView: ";
+    RightView(answer);
+    return 0;
+}
+eg.
+50 25 12 37 30 40 75 62 60 70 65 
+RightView: 50 75 62 70 65 
+
+
+
+// Width Of Shadow Of A Binary Tree
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mini = 0;
+int maxi = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void widthOfShadowOfBT(BinaryTreeNode* root, int value){
+    
+    if(value<mini){
+        mini = value;
+    }
+    if(value>maxi){
+        maxi = value;
+    }
+
+    if(root->leftChild!=NULL){
+        widthOfShadowOfBT(root->leftChild, value-1);
+    }
+    if(root->rightChild!=NULL){
+        widthOfShadowOfBT(root->rightChild, value+1);
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    widthOfShadowOfBT(temp, 0);
+    cout<<mini<<" "<<maxi<<endl;
+    cout<<"Shadow width: "<<maxi-mini+1;
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+-3 2
+Shadow width: 6
+
+
+
+// VERTICAL ORDER TRAVERSAL OF BINARY TREE | METHOD 1
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct QueuePair{
+    BinaryTreeNode* root;
+    int value;
+    QueuePair(BinaryTreeNode* temp, int val){
+        root = temp;
+        value = val;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mini = 0;
+int maxi = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void VerticalOrderOfBT(map<int, vector<int>> &mp, queue<QueuePair*> &qp){
+    
+    if(qp.size()==0){
+        return;
+    }
+    
+    map<int, vector<int>>::iterator itr;
+    int size = qp.size();
+    
+    queue<QueuePair*> demo;
+    
+    while(size!=0){
+        QueuePair* answer = qp.front();
+        int val = answer->value;
+        int nodeval = answer->root->data;
+        
+        if(answer->root->leftChild!=NULL){
+            demo.push(new QueuePair(answer->root->leftChild, val-1));
+        }
+        if(answer->root->rightChild!=NULL){
+            demo.push(new QueuePair(answer->root->rightChild, val+1));
+        }
+        
+        itr = mp.find(val);
+        if(itr==mp.end()){
+            mp[val] = {nodeval};
+        }
+        else{
+            itr->second.push_back(nodeval);
+        }
+        qp.pop();
+        size--;
+    }
+    
+    qp = demo;
+    VerticalOrderOfBT(mp, qp);
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    queue<QueuePair*> qp;
+    qp.push(new QueuePair(temp, 0));
+    map<int, vector<int> > mp;
+    map<int, vector<int> >::iterator itr;
+    
+    VerticalOrderOfBT(mp, qp);
+    
+    for(auto itr=mp.begin(); itr!=mp.end(); itr++){
+        cout<<itr->first<<": ";
+        for(int i=0; i<itr->second.size(); i++){
+            cout<<itr->second[i]<<" ";
+        }
+        cout<<endl;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+-3: 28 
+-2: 12 29 
+-1: 25 30 60 
+0: 50 37 62 65 
+1: 75 40 70 
+2: 72 
+
+
+
+// VERTICAL ORDER TRAVERSAL OF BINARY TREE | METHOD 2
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct QueuePair{
+    BinaryTreeNode* root;
+    int value;
+    QueuePair(BinaryTreeNode* temp, int val){
+        root = temp;
+        value = val;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mini = 0;
+int maxi = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void widthOfShadowOfBT(BinaryTreeNode* root, int value){
+    
+    if(value<mini){
+        mini = value;
+    }
+    if(value>maxi){
+        maxi = value;
+    }
+
+    if(root->leftChild!=NULL){
+        widthOfShadowOfBT(root->leftChild, value-1);
+    }
+    if(root->rightChild!=NULL){
+        widthOfShadowOfBT(root->rightChild, value+1);
+    }
+}
+
+void VerticalOrderOfBT(vector<vector<int>> &vect, queue<QueuePair*> &qp){
+    
+    while(qp.size()!=0){
+        QueuePair* answer = qp.front();
+        int val = answer->value;
+        int nodeval = answer->root->data;
+        if(answer->root->leftChild!=NULL){
+            qp.push(new QueuePair(answer->root->leftChild, val-1));
+        }
+        if(answer->root->rightChild!=NULL){
+            qp.push(new QueuePair(answer->root->rightChild, val+1));
+        }
+        
+        vect[val].push_back(nodeval);
+        qp.pop();
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    widthOfShadowOfBT(temp, 0);
+    int size = maxi - mini + 1; 
+    cout<<mini<<" "<<maxi<<" size: "<<size<<endl;
+    
+    queue<QueuePair*> qp;
+    qp.push(new QueuePair(temp, 0-mini));       
+    vector<vector<int>> vect(size);
+    
+    VerticalOrderOfBT(vect, qp);
+    
+    for(int i=0; i<vect.size(); i++){
+        cout<<i<<": ";
+        for(int j=0; j<vect[i].size(); j++){
+            cout<<vect[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+-3 2 size: 6
+0: 28 
+1: 12 29 
+2: 25 30 60 
+3: 50 37 62 65 
+4: 75 40 70 
+5: 72
+
+
+
+// BOTTOM VIEW OF BINARY TREE
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct QueuePair{
+    BinaryTreeNode* root;
+    int value;
+    QueuePair(BinaryTreeNode* temp, int val){
+        root = temp;
+        value = val;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mini = 0;
+int maxi = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void widthOfShadowOfBT(BinaryTreeNode* root, int value){
+    
+    if(value<mini){
+        mini = value;
+    }
+    if(value>maxi){
+        maxi = value;
+    }
+
+    if(root->leftChild!=NULL){
+        widthOfShadowOfBT(root->leftChild, value-1);
+    }
+    if(root->rightChild!=NULL){
+        widthOfShadowOfBT(root->rightChild, value+1);
+    }
+}
+
+void BottomViewOfBT(vector<int> &vect, queue<QueuePair*> &qp){
+    
+    while(qp.size()!=0){
+        QueuePair* answer = qp.front();
+        int val = answer->value;
+        int nodeval = answer->root->data;
+        if(answer->root->leftChild!=NULL){
+            qp.push(new QueuePair(answer->root->leftChild, val-1));
+        }
+        if(answer->root->rightChild!=NULL){
+            qp.push(new QueuePair(answer->root->rightChild, val+1));
+        }
+        
+        vect[val] = nodeval;
+        qp.pop();
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    widthOfShadowOfBT(temp, 0);
+    int size = maxi - mini + 1; 
+    cout<<mini<<" "<<maxi<<" size: "<<size<<endl;
+    
+    queue<QueuePair*> qp;
+    qp.push(new QueuePair(temp, 0-mini));       
+    vector<int> vect(size);
+    
+    BottomViewOfBT(vect, qp);
+    
+    for(int i=0; i<vect.size(); i++){
+        cout<<i<<": "<<vect[i]<<endl;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+-3 2 size: 6
+0: 28
+1: 29
+2: 60
+3: 65
+4: 70
+5: 72
+
+
+
+// TOP VIEW OF BINARY TREE
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct QueuePair{
+    BinaryTreeNode* root;
+    int value;
+    QueuePair(BinaryTreeNode* temp, int val){
+        root = temp;
+        value = val;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mini = 0;
+int maxi = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void widthOfShadowOfBT(BinaryTreeNode* root, int value){
+    
+    if(value<mini){
+        mini = value;
+    }
+    if(value>maxi){
+        maxi = value;
+    }
+
+    if(root->leftChild!=NULL){
+        widthOfShadowOfBT(root->leftChild, value-1);
+    }
+    if(root->rightChild!=NULL){
+        widthOfShadowOfBT(root->rightChild, value+1);
+    }
+}
+
+void TopViewOfBT(vector<int> &vect, queue<QueuePair*> &qp){
+    
+    while(qp.size()!=0){
+        QueuePair* answer = qp.front();
+        int val = answer->value;
+        int nodeval = answer->root->data;
+        if(answer->root->leftChild!=NULL){
+            qp.push(new QueuePair(answer->root->leftChild, val-1));
+        }
+        if(answer->root->rightChild!=NULL){
+            qp.push(new QueuePair(answer->root->rightChild, val+1));
+        }
+        if(vect[val]==INT_MIN){
+            vect[val] = nodeval;
+        }
+        qp.pop();
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    widthOfShadowOfBT(temp, 0);
+    int size = maxi - mini + 1; 
+    cout<<mini<<" "<<maxi<<" size: "<<size<<endl;
+    
+    queue<QueuePair*> qp;
+    qp.push(new QueuePair(temp, 0-mini));       
+    vector<int> vect(size, INT_MIN);
+    
+    TopViewOfBT(vect, qp);
+    
+    for(int i=0; i<vect.size(); i++){
+        cout<<i<<": "<<vect[i]<<endl;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+-3 2 size: 6
+0: 28
+1: 12
+2: 25
+3: 50
+4: 75
+5: 72
+
+
+
+// Diagonal Order Of BinaryTree
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void DiagonalOrderOfBT(vector<vector<int>> &vect, queue<BinaryTreeNode*> &qp){
+    
+    if(qp.size()==0){
+        return;
+    }
+    vector<int> answer;
+    int size = qp.size();
+    
+    while(size!=0){
+        BinaryTreeNode* root = qp.front();
+        while(root!=NULL){
+            answer.push_back(root->data);
+            if(root->leftChild!=NULL){
+                qp.push(root->leftChild);
+            }
+            root = root->rightChild;
+        }
+        qp.pop();
+        size--;
+    }
+    vect.push_back(answer);
+    DiagonalOrderOfBT(vect, qp);
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /                /   \
+    //       29                65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    queue<BinaryTreeNode*> qp;
+    qp.push(temp);       
+    vector<vector<int>> vect;
+    
+    DiagonalOrderOfBT(vect, qp);
+    
+    for(int i=0; i<vect.size(); i++){
+        cout<<i<<": ";
+        for(int j=0; j<vect[i].size(); j++){
+            cout<<vect[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+0: 50 75 
+1: 25 37 40 62 70 72 
+2: 12 30 60 65 
+3: 29 
+4: 28
+
+
+
+// Vertical Order Sum Using BFS
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct QueuePair{
+    BinaryTreeNode* root;
+    int value;
+    QueuePair(BinaryTreeNode* temp, int val){
+        root = temp;
+        value = val;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mini = 0;
+int maxi = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void widthOfShadowOfBT(BinaryTreeNode* root, int value){
+    
+    if(value<mini){
+        mini = value;
+    }
+    if(value>maxi){
+        maxi = value;
+    }
+
+    if(root->leftChild!=NULL){
+        widthOfShadowOfBT(root->leftChild, value-1);
+    }
+    if(root->rightChild!=NULL){
+        widthOfShadowOfBT(root->rightChild, value+1);
+    }
+}
+
+void VerticalOrderOfBT(vector<int> &vect, queue<QueuePair*> &qp){
+    
+    while(qp.size()!=0){
+        QueuePair* answer = qp.front();
+        int val = answer->value;
+        int nodeval = answer->root->data;
+        if(answer->root->leftChild!=NULL){
+            qp.push(new QueuePair(answer->root->leftChild, val-1));
+        }
+        if(answer->root->rightChild!=NULL){
+            qp.push(new QueuePair(answer->root->rightChild, val+1));
+        }
+        
+        vect[val] += nodeval;
+        qp.pop();
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    widthOfShadowOfBT(temp, 0);
+    int size = maxi - mini + 1; 
+    cout<<mini<<" "<<maxi<<" size: "<<size<<endl;
+    
+    queue<QueuePair*> qp;
+    qp.push(new QueuePair(temp, 0-mini));       
+    vector<int> vect(size);
+    
+    VerticalOrderOfBT(vect, qp);
+    
+    for(int i=0; i<vect.size(); i++){
+        cout<<vect[i]<<endl;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+-3 2 size: 6
+28
+41
+115
+214
+185
+72
+
+
+
+// Vertical Order Sum Using Recursion Method 2
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+int mini = 0;
+int maxi = 0;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void widthOfShadowOfBT(BinaryTreeNode* root, int value){
+    
+    if(value<mini){
+        mini = value;
+    }
+    if(value>maxi){
+        maxi = value;
+    }
+
+    if(root->leftChild!=NULL){
+        widthOfShadowOfBT(root->leftChild, value-1);
+    }
+    if(root->rightChild!=NULL){
+        widthOfShadowOfBT(root->rightChild, value+1);
+    }
+}
+
+void VerticalOrderOfBT(BinaryTreeNode* root, int idx, vector<int> &vect){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    vect[idx] += root->data;
+    VerticalOrderOfBT(root->leftChild, idx-1, vect);
+    VerticalOrderOfBT(root->rightChild, idx+1, vect);
+    
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    widthOfShadowOfBT(temp, 0);
+    int size = maxi - mini + 1; 
+    cout<<mini<<" "<<maxi<<" size: "<<size<<endl;
+    
+    vector<int> vect(size);
+    
+    VerticalOrderOfBT(temp, 0-mini, vect);
+    
+    for(int i=0; i<vect.size(); i++){
+        cout<<vect[i]<<endl;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+-3 2 size: 6
+28
+41
+115
+214
+185
+72
+
+
+
+// All Node At Distance K | Intution And Optimized Solution |Leetcode 863 Solution
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+bool nodeToRootPath(BinaryTreeNode* root, int elem, vector<BinaryTreeNode*> &vect){
+    
+    if(root==NULL){
+        return false;
+    }
+    if(root->data==elem){
+        vect.push_back(root);
+        return true;
+    }
+    bool ans = nodeToRootPath(root->leftChild, elem, vect) || nodeToRootPath(root->rightChild, elem, vect);
+    if(ans){
+        vect.push_back(root);
+    }
+    return ans;
+}
+
+void AtKDistanceFarAnswer(int distance, BinaryTreeNode* root, BinaryTreeNode* blockNode, vector<int> &answer){
+    
+    if(root==NULL || root==blockNode || distance<0){
+        return;
+    }
+    if(distance==0){
+        answer.push_back(root->data);
+        return;
+    }
+    AtKDistanceFarAnswer(distance-1, root->leftChild, blockNode, answer);
+    AtKDistanceFarAnswer(distance-1, root->rightChild, blockNode, answer);
+    
+}
+
+void AtKDistanceFar(vector<BinaryTreeNode*> vect, int distanceAway, vector<int> &answer){
+    
+    for(int i=0; i<vect.size(); i++){
+        if(i!=0){
+            AtKDistanceFarAnswer(distanceAway-i, vect[i], vect[i-1], answer);
+        }
+        else{
+            AtKDistanceFarAnswer(distanceAway-i, vect[i], NULL, answer);
+        }
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    vector<BinaryTreeNode*> vect;
+    
+    nodeToRootPath(temp, 50, vect);
+    
+    cout<<"Node to root path: ";
+    for(int i=0; i<vect.size(); i++){
+        cout<<vect[i]->data<<" ";
+    }
+    cout<<endl;
+    
+    vector<int> answer;
+    AtKDistanceFar(vect, 3, answer);
+    
+    cout<<"At K distance far nodes: ";
+    for(int i=0; i<answer.size(); i++){
+        cout<<answer[i]<<" ";
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+Node to root path: 50 
+At K distance far nodes: 30 40 60 70 
+
+
+
+// Burning Tree | Very Important Question For Amazon
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+int maximumBurningTime = INT_MIN;
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+bool nodeToRootPath(BinaryTreeNode* root, int elem, vector<BinaryTreeNode*> &vect){
+    
+    if(root==NULL){
+        return false;
+    }
+    if(root->data==elem){
+        vect.push_back(root);
+        return true;
+    }
+    bool ans = nodeToRootPath(root->leftChild, elem, vect) || nodeToRootPath(root->rightChild, elem, vect);
+    if(ans){
+        vect.push_back(root);
+    }
+    return ans;
+}
+
+void BurningTreeTime(BinaryTreeNode* root, BinaryTreeNode* blockNode, int BurningTime){
+    
+    if(root==NULL || root==blockNode){
+        BurningTime-=1;
+        return;
+    }
+    if(BurningTime > maximumBurningTime){
+        maximumBurningTime = BurningTime;
+    }
+    BurningTreeTime(root->leftChild, blockNode, BurningTime+1);
+    BurningTreeTime(root->rightChild, blockNode, BurningTime+1);
+    
+}
+
+void BurningTree(vector<BinaryTreeNode*> vect){
+    
+    BurningTreeTime(vect[0], NULL, 0);
+    for(int i=1; i<vect.size(); i++){
+        BurningTreeTime(vect[i], vect[i-1], i);
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    vector<BinaryTreeNode*> vect;
+    
+    nodeToRootPath(temp, 65, vect);
+    
+    cout<<"Node to root path: ";
+    for(int i=0; i<vect.size(); i++){
+        cout<<vect[i]->data<<" ";
+    }
+    cout<<endl;
+    
+    BurningTree(vect);
+    
+    cout<<"Maximum Burning Time is: "<<maximumBurningTime;
+    
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+Node to root path: 65 70 62 75 50 
+Maximum Burning Time is: 9
+
+
+
+
+// Burning Tree 2
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+map<int, vector<int>> maximumBurningTime;
+map<int, vector<int>>::iterator itr;
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+bool nodeToRootPath(BinaryTreeNode* root, int elem, vector<BinaryTreeNode*> &vect){
+    
+    if(root==NULL){
+        return false;
+    }
+    if(root->data==elem){
+        vect.push_back(root);
+        return true;
+    }
+    bool ans = nodeToRootPath(root->leftChild, elem, vect) || nodeToRootPath(root->rightChild, elem, vect);
+    if(ans){
+        vect.push_back(root);
+    }
+    return ans;
+}
+
+void BurningTreeTime(BinaryTreeNode* root, BinaryTreeNode* blockNode, int BurningTime){
+    
+    if(root==NULL || root==blockNode){
+        BurningTime-=1;
+        return;
+    }
+    itr = maximumBurningTime.find(BurningTime);
+    if(itr!=maximumBurningTime.end()){
+        itr->second.push_back(root->data);
+    }
+    else{
+        vector<int> vect{root->data};
+        maximumBurningTime[BurningTime] = vect;
+    }
+    BurningTreeTime(root->leftChild, blockNode, BurningTime+1);
+    BurningTreeTime(root->rightChild, blockNode, BurningTime+1);
+    
+}
+
+void BurningTree(vector<BinaryTreeNode*> vect){
+    
+    BurningTreeTime(vect[0], NULL, 0);
+    for(int i=1; i<vect.size(); i++){
+        BurningTreeTime(vect[i], vect[i-1], i);
+    }
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    std::stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    vector<BinaryTreeNode*> vect;
+    
+    nodeToRootPath(temp, 65, vect);
+    
+    cout<<"Node to root path: ";
+    for(int i=0; i<vect.size(); i++){
+        cout<<vect[i]->data<<" ";
+    }
+    cout<<endl;
+    
+    BurningTree(vect);
+
+    for(auto itr=maximumBurningTime.begin(); itr!=maximumBurningTime.end(); itr++){
+        cout<<itr->first<<": ";
+        for(int i=0; i<itr->second.size(); i++){
+            cout<<itr->second[i]<<", ";
+        }
+        cout<<endl;
+    }
+    
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+Node to root path: 65 70 62 75 50 
+0: 65, 
+1: 70, 
+2: 72, 62, 
+3: 60, 75, 
+4: 50, 
+5: 25, 
+6: 12, 37, 
+7: 30, 40, 
+8: 29, 
+9: 28,
+
+
+
+// Maximum Width Of Binary Tree at Specific Level
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+struct queueNode{
+    BinaryTreeNode* root;
+    int nodeValue;
+    queueNode(BinaryTreeNode* temp ,int val){
+        nodeValue = val;
+        root = temp;
+    }
+};
+
+int maximumWidthAtSpecificLevel = INT_MIN;
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void maximumWidth(queue<queueNode*> &qu){
+    
+    if(qu.size()==0){
+        return;
+    }
+    
+    int lowInd = INT_MAX;
+    int maxInd = INT_MIN;
+    
+    int size = qu.size();
+    while(size!=0){
+        queueNode* front = qu.front();
+        if(front->nodeValue<lowInd){
+            lowInd = front->nodeValue;
+        }
+        if(front->nodeValue>maxInd){
+            maxInd = front->nodeValue;
+        }
+        if(front->root->leftChild!=NULL){
+            qu.push(new queueNode(front->root->leftChild, 2*front->nodeValue + 1));
+        }
+        if(front->root->rightChild!=NULL){
+            qu.push(new queueNode(front->root->rightChild, 2*front->nodeValue + 2));
+        }
+        qu.pop();
+        size--;
+    }
+    
+    if(maxInd - lowInd + 1 > maximumWidthAtSpecificLevel){
+        maximumWidthAtSpecificLevel = maxInd - lowInd + 1;
+        cout<<lowInd<<" "<<maxInd<<" "<<maximumWidthAtSpecificLevel<<endl;
+    }
+    
+    maximumWidth(qu);
+    
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    std::queue<queueNode*> qu;
+    qu.push(new queueNode(temp, 0));
+    
+    maximumWidth(qu);
+
+    cout<<"Ans: "<<maximumWidthAtSpecificLevel;
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+0 0 1
+1 2 2
+3 5 3
+9 12 4
+19 26 8
+Ans: 8
+
+
+
+// Convert Binary Search Tree to Sorted Doubly Linked List | Using Stack Method | Leetcode 426 Solution
+// vice versa can also be done
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct BinaryTreeNode{
+    int data;
+    BinaryTreeNode* leftChild;
+    BinaryTreeNode* rightChild;
+    BinaryTreeNode(int val){
+        data = val;
+        leftChild = NULL;
+        rightChild =NULL;
+    }
+};
+
+BinaryTreeNode* rootNode = NULL;
+
+void Print(BinaryTreeNode* root){
+    
+    if(root==NULL){
+        return;
+    }
+    
+    cout<<root->data<<" ";
+    Print(root->leftChild);
+    Print(root->rightChild);
+}
+
+void convertBSTtoDLL(BinaryTreeNode* temp, stack<BinaryTreeNode*> &st){
+    
+    while(!st.empty()){
+        BinaryTreeNode* currNode = st.top();
+        st.pop();
+        if(currNode->rightChild!=NULL){
+            st.push(currNode->rightChild);
+            while(currNode->rightChild->leftChild!=NULL){
+                st.push(currNode->rightChild->leftChild);
+                currNode->rightChild->leftChild = currNode->rightChild->leftChild->leftChild;
+            }
+        }
+        temp->rightChild = currNode;
+        currNode->leftChild = temp;
+        temp = currNode;
+    }
+    
+}
+
+int main(){
+    
+    //                   50                                                
+    //             /           \                               
+    //            /             \                                      
+    //           25              75                               
+    /*         /   \           /         */                            
+    //       12     37        62                                         
+    //            /   \      /  \                                                
+    //           30   40    60   70  
+    //         /               /   \
+    //       29               65    72
+    //      /
+    //    28
+    
+    // Actual scenario is this(comma separated nodes means at same position):
+    //  -3  -2    -1     0      1     2      lines 
+    //   |   |     |     |      |     |
+    //                  50
+    //            25           75
+    //      12         37,62  
+    //          30,60         40,70
+    //      29          65           72
+    //  28              
+
+    BinaryTreeNode* temp = NULL;
+    vector<int> nodeValues{
+        50,25,12,-1,37,30,29,28,-1,-1,-1,40,-1,-1,-1,75,62,60,-1,70,65,-1,72,-1,-1,-1,-1,-1
+    };
+    
+    stack<BinaryTreeNode*> nodeData;
+    
+    for(int i=0; i<nodeValues.size(); i++){
+        if(nodeValues[i]==-1){
+            nodeData.pop();
+        }
+        else{
+            BinaryTreeNode* newNode = new BinaryTreeNode(nodeValues[i]);
+            if(nodeData.size()==0){
+                rootNode = newNode;
+                temp = rootNode;
+            }
+            else{
+                if(nodeData.top()->leftChild==NULL){
+                    nodeData.top()->leftChild = newNode;
+                }
+                else if(nodeData.top()->rightChild==NULL){
+                    nodeData.top()->rightChild = newNode;
+                }
+                else{
+                    cout<<"Invalid binary tree";
+                    return -1;
+                }
+            }
+            nodeData.push(newNode);
+        }
+    }
+    
+    Print(temp);      
+    cout<<endl;
+    
+    BinaryTreeNode* demoNode = new BinaryTreeNode(-1);
+    stack<BinaryTreeNode*> st;
+    while(temp!=NULL){
+        st.push(temp);
+        temp = temp->leftChild;
+    }
+    
+    BinaryTreeNode* demo = demoNode;
+    convertBSTtoDLL(demo, st);
+    
+    demoNode = demoNode->rightChild;
+    while(demoNode!=NULL){
+        cout<<demoNode->data<<" ";
+        demoNode = demoNode->rightChild;
+    }
+    
+    return 0;
+}
+eg.
+50 25 12 37 30 29 28 40 75 62 60 70 65 72 
+12 25 28 29 30 37 40 50 60 62 65 70 72 75 

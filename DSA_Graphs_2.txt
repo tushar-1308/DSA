@@ -1,0 +1,511 @@
+// Number of Enclaves || Graph theory
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void numberOfEnclaves(int i, int j, vector<vector<int>> &vect){
+    
+    if(i<0 || i>=vect.size() || j<0 || j>=vect[0].size() || vect[i][j]==0){
+        return;
+    }
+    
+    vect[i][j]=0;
+    numberOfEnclaves(i, j-1, vect);
+    numberOfEnclaves(i-1, j, vect);
+    numberOfEnclaves(i, j+1, vect);
+    numberOfEnclaves(i+1, j, vect);
+    
+    return;
+}
+
+int main(){
+    
+    //     0 0 0 1 0
+    //     0 1 1 0 0
+    //     0 1 0 1 1 
+    //     0 0 1 1 0
+    //     0 0 1 0 0
+    
+    int row, col, elem;
+    cout<<"Enter row and columns: ";
+    cin>>row>>col;
+    
+    vector<vector<int>> vect(row, vector<int>(col));
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cin>>elem;
+            vect[i][j] = elem;
+        }
+    }
+    
+    for(int i=0; i<vect.size(); i++){
+        for(int j=0; j<vect[i].size(); j++){
+            if((i==0 || i==vect.size()-1 || j==0 || j==vect[i].size()-1) && vect[i][j]==1){
+                numberOfEnclaves(i, j, vect);
+            }
+        }
+    }
+    
+    cout<<endl;
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout<<vect[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+    
+    return 0;
+}
+eg.
+Enter row and columns: 5 5 
+0 0 0 1 0
+0 1 1 0 0
+0 1 0 1 1
+0 0 1 1 0
+0 0 1 0 0
+
+0 0 0 0 0 
+0 1 1 0 0 
+0 1 0 0 0 
+0 0 0 0 0 
+0 0 0 0 0 
+
+
+
+// Number of distinct island || Graph theory
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void numberOfDistinctIslands(int i, int j, vector<vector<int>> &vect, string &ans){
+    
+    if(i<0 || i>=vect.size() || j<0 || j>=vect[0].size() || vect[i][j]==0){
+        ans = ans.substr(0, ans.size()-1);
+        return;
+    }
+    
+    vect[i][j]=0;
+    ans += "L";
+    numberOfDistinctIslands(i, j-1, vect, ans);
+    ans += "T";
+    numberOfDistinctIslands(i-1, j, vect, ans);
+    ans += "R";
+    numberOfDistinctIslands(i, j+1, vect, ans);
+    ans += "B";
+    numberOfDistinctIslands(i+1, j, vect, ans);
+    
+}
+
+int main(){
+    
+    //     1 1 0 0 0
+    //     1 0 0 0 0
+    //     0 0 0 1 1 
+    //     0 0 0 1 0
+    //     0 1 0 0 0
+    
+    int row, col, elem;
+    cout<<"Enter row and columns: ";
+    cin>>row>>col;
+    
+    vector<vector<int>> vect(row, vector<int>(col));
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cin>>elem;
+            vect[i][j] = elem;
+        }
+    }
+    
+    set<string> distinctIslands;
+    set<string>::iterator itr;
+    for(int i=0; i<vect.size(); i++){
+        for(int j=0; j<vect[i].size(); j++){
+            if(vect[i][j]==1){
+                string ans = "C";
+                numberOfDistinctIslands(i, j, vect, ans);
+                distinctIslands.insert(ans);
+            }
+        }
+    }
+    
+    cout<<endl;
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cout<<vect[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+    
+    itr=distinctIslands.begin();
+    while(itr!=distinctIslands.end()){
+        cout<<*itr<<" ";
+        itr++;
+    }
+    return 0;
+}
+eg.
+Enter row and columns: 5 5
+1 1 0 0 0 
+1 0 0 0 0
+0 0 0 1 1
+0 0 0 1 0
+0 1 0 0 0 
+
+0 0 0 0 0 
+0 0 0 0 0 
+0 0 0 0 0 
+0 0 0 0 0 
+0 0 0 0 0 
+C CRB 
+
+
+// Rotten oranges || Graph theory
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct pairs{
+    int i;
+    int j;
+    pairs(int i, int j){
+        this->i = i;
+        this->j = j;
+    }
+};
+
+void rottenOranges(int i, int j, vector<vector<int>> &vect, queue<pairs*> &qu){
+    
+    if(j-1>=0 && vect[i][j-1]==1){
+        vect[i][j-1]=2;
+        qu.push(new pairs(i, j-1));
+    }
+    if(i-1>=0 && vect[i-1][j]==1){
+        vect[i-1][j]=2;
+        qu.push(new pairs(i-1, j));
+    }
+    if(j+1<vect[0].size() && vect[i][j+1]==1){
+        vect[i][j+1]=2;
+        qu.push(new pairs(i, j+1));
+    }
+    if(i+1<vect.size() && vect[i+1][j]==1){
+        vect[i+1][j]=2;
+        qu.push(new pairs(i+1, j));
+    }
+    
+}
+
+int main(){
+    
+    //     2 0 1 0 1
+    //     1 1 1 0 0
+    //     0 0 0 0 0 
+    //     0 0 1 1 1
+    //     0 1 1 2 0
+    //     2: rotten orange, 1: fresh orange, 0: no orange
+    //     rotten orange rotted all its neighbour fresh oranges in 1hr
+    
+    int row, col, elem;
+    cout<<"Enter row and columns: ";
+    cin>>row>>col;
+    
+    vector<vector<int>> vect(row, vector<int>(col));
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            cin>>elem;
+            vect[i][j] = elem;
+        }
+    }
+    
+    std::queue<pairs*> qu;
+    for(int i=0; i<vect.size(); i++){
+        for(int j=0; j<vect[i].size(); j++){
+            if(vect[i][j]==2){
+                qu.push(new pairs(i, j));
+            }
+        }
+    }
+    
+    int hours = 0;
+    while(qu.size()!=0){
+        int qsize = qu.size();
+        for(int i=0; i<qsize; i++){
+            pairs* ans = qu.front();
+            qu.pop();
+            rottenOranges(ans->i, ans->j, vect, qu);
+        }
+        hours++;
+    }
+    
+    hours--;
+    for(int i=0; i<row; i++){
+        for(int j=0; j<col; j++){
+            if(vect[i][j]==1){
+                hours = -1;
+                break;
+            }
+        }
+    }
+    
+    cout<<hours<<endl;
+    return 0;
+}
+eg.
+Enter row and columns: 5 5
+2 0 1 0 1
+1 1 1 0 0
+0 0 0 0 0
+0 0 1 1 1 
+0 1 1 2 0
+-1
+
+
+// Sliding Puzzle || Graph theory || NOT WORKING
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct pairs{
+    string currStr;
+    int swappingDone;
+    pairs(string currStr, int swappingDone){
+        this->currStr = currStr;
+        this->swappingDone = swappingDone;
+    }
+};
+
+void slidingPuzzle(pairs* ans, queue<pairs*> &qu, map<int, vector<int>> indexExchange, string desiredStr, bool &flag){
+    
+    int zeroInd = 0;
+    for(int i=0; i<ans->currStr.size(); i++){
+        if(ans->currStr[i]=='0'){
+            zeroInd = i;
+        }
+    }
+    
+    cout<<zeroInd<<" ";
+    
+    vector<int> indexes = indexExchange[zeroInd];
+    for(int i=0; i<indexes.size(); i++){
+        if(ans->swappingDone != indexes[i]){
+            char c = ans->currStr[zeroInd];
+            ans->currStr[zeroInd] = ans->currStr[indexes[i]];
+            ans->currStr[indexes[i]] = c;
+            if(ans->currStr == desiredStr){
+                cout<<"string found: "<<ans->currStr;
+                flag = true;
+                return;
+            }
+            qu.push(new pairs(ans->currStr, zeroInd));
+        }
+    }
+    
+    return;
+}
+
+int main(){
+    
+    vector<vector<int>> currArr{
+        {4,1,2},
+        {5,0,3}
+    };
+    
+    vector<vector<int>> desiredArr{
+        {1,2,3},
+        {4,5,0}
+    };
+    
+    map<int, vector<int>> indexExchange;
+    indexExchange[0] = {1,3};
+    indexExchange[1] = {0,2,4};
+    indexExchange[2] = {1,5};
+    indexExchange[3] = {0,4};
+    indexExchange[4] = {1,3,5};
+    indexExchange[5] = {2,4};
+    
+    string currStr = "";
+    string desiredStr = "";
+    
+    for(int i=0; i<desiredArr.size(); i++){
+        for(int j=0; j<desiredArr[i].size(); j++){
+            currStr += to_string(currArr[i][j]);
+            desiredStr += to_string(desiredArr[i][j]);
+        }
+    }
+    
+    std::queue<pairs*> qu;
+    qu.push(new pairs(currStr, -1));
+
+    while(qu.size()!=0){
+        int qsize = qu.size();
+        for(int i=0; i<qsize; i++){
+            bool flag = false;
+            pairs* ans = qu.front();
+            qu.pop();
+            slidingPuzzle(ans, qu, indexExchange, desiredStr, flag);
+            if(flag==true){
+                return 0;
+            }
+        }
+    }
+
+    return 0;
+}
+eg.
+
+
+
+// Kahn's Algorithm | Topological Sort | Advanced Graphs
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int dest;
+    edge(int source, int dest){
+        this->source = source;
+        this->dest = dest;
+    }
+};
+
+int main(){
+    
+    //     0------>2<------1  
+    //     |              |
+    //     |              |
+    //    \/             \/
+    //     3------>4----->5
+    
+    
+    vector<vector<edge*>> graph(6, vector<edge*>());
+    
+    graph[0].push_back(new edge(0,2));
+    graph[0].push_back(new edge(0,3));
+    graph[1].push_back(new edge(1,2));
+    graph[1].push_back(new edge(1,5));
+    graph[2].push_back(new edge(2,-1));
+    graph[3].push_back(new edge(3,4));
+    graph[4].push_back(new edge(4,5));
+    graph[5].push_back(new edge(5,-1));
+    
+    vector<int> dependies(6, 0);
+    
+    for(int i=0; i<6; i++){
+        for(int j=0; j<graph[i].size(); j++){
+            edge* ans = graph[i][j];
+            if(ans->dest!=-1){
+                dependies[ans->dest]+=1;
+            }
+        }
+    }
+    
+    for(int j=0; j<dependies.size(); j++){
+        cout<<dependies[j]<<" ";
+    }
+    cout<<endl;
+    
+    std::queue<int> indexes;
+    for(int j=0; j<dependies.size(); j++){
+        // cout<<dependies[j]<<" ";
+        if(dependies[j]==0){
+            // cout<<j<<" ";
+            indexes.push(j);
+        }
+    }
+    
+    while(indexes.size()!=0){
+        int ind = indexes.front();
+        cout<<ind<<" ";
+        indexes.pop();
+        for(int i=0; i<graph[ind].size(); i++){
+            edge* ans = graph[ind][i];
+            if(dependies[ans->dest]<=0){
+                continue;
+            }
+            dependies[ans->dest] -= 1;
+            if(dependies[ans->dest]==0){
+                indexes.push(ans->dest);
+            }
+        }
+    }
+    
+    return 0;
+}
+eg.
+0 0 2 1 1 2 
+0 1 3 2 4 5 
+
+
+// Bellman ford | Advanced Graphs
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int source;
+    int dest;
+    int weight;
+    edge(int source, int dest, int weight){
+        this->source = source;
+        this->dest = dest;
+        this->weight = weight;
+    }
+};
+
+int main(){
+    
+    //         6       2
+    //     0------>3------>4  
+    //     |       /\      |
+    //  4  |       | -8    | 3
+    //    \/       |      \/
+    //     1------>2------>5
+    //        7       -2
+    
+    
+    vector<edge*> graph;
+    
+    graph.push_back(new edge(0,1,4));
+    graph.push_back(new edge(1,2,7));
+    graph.push_back(new edge(2,3,-8));
+    graph.push_back(new edge(0,3,6));
+    graph.push_back(new edge(2,5,-2));
+    graph.push_back(new edge(3,4,2));
+    graph.push_back(new edge(4,5,3));
+    
+    vector<int> distances(6, INT_MAX);
+    distances[0] = 0;
+    
+    for(int i=0; i<5; i++){
+        for(int j=0; j<graph.size(); j++){
+            edge* ans = graph[j];
+            if(ans->source!=INT_MAX && ans->dest!=INT_MAX){
+                distances[ans->dest] = min(distances[ans->source] + ans->weight, distances[ans->dest]);
+            }
+        }
+    }
+    
+    for(int i=0; i<distances.size(); i++){
+        cout<<distances[i]<<" ";
+    }
+    
+    return 0;
+}
+eg.
+0 4 11 3 5 8

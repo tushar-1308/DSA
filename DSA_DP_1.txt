@@ -1,0 +1,1722 @@
+Not done - 32,33
+
+// Introduction to Dynamic Programming (DP) | Memoization in Dynamic Programming Algorithm
+// DP Tabulation techique stages
+// 1. Storage & Meaning
+// 2. Direction of problem 
+// 3. Trvael & Solve
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int fibbo(int n){
+    if(n==0 || n==1){
+        return n;
+    }
+    return fibbo(n-1) + fibbo(n-2);
+}
+
+int fibboDP(int n, int arr[]){
+    if(n==0 || n==1){
+        return n;
+    }
+    if(arr[n]!=0){
+        return arr[n];
+    }
+    
+    int fib1 = fibboDP(n-1, arr);
+    int fib2 = fibboDP(n-2, arr);
+    arr[n] = fib1 + fib2;
+    
+    return fib1+fib2;
+    
+}
+
+int main()
+{
+    int arr[] = {0,0,0,0,0,0,0,0,0,0,0};
+    int ans = fibbo(10);
+    int answer = fibboDP(10, arr);
+    cout<<answer;
+    return 0;
+}
+eg.
+55
+
+
+// Climbing Stairs - Dynamic Programming using Tabulation | Recursive Staircase Problem
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int climbStairs(int n){
+    if(n==0){
+        return 1;
+    }
+    else if(n<0){
+        return 0;
+    }
+    return climbStairs(n-1) + climbStairs(n-2) + climbStairs(n-3);
+}
+
+int climbStairsDP(int n, int arr[]){
+    if(n==0){
+        return 1;
+    }
+    else if(n<0){
+        return 0;
+    }
+    if(arr[n]!=0){
+        return arr[n];
+    }
+    int climbStairsDP1 = climbStairsDP(n-1, arr);
+    int climbStairsDP2 = climbStairsDP(n-2, arr);
+    int climbStairsDP3 = climbStairsDP(n-3, arr);
+    arr[n] = climbStairsDP1 + climbStairsDP2 + climbStairsDP3;
+    
+    return climbStairsDP1 + climbStairsDP2 + climbStairsDP3;
+    
+}
+
+int main()
+{
+    int arr[]= {0,0,0,0,0,0,0,0,0,0,0};
+    int ans = climbStairs(10);
+    int answer = climbStairsDP(10, arr);
+    cout<<ans<<endl;
+    cout<<answer;
+    return 0;
+}
+eg.
+274
+274
+
+
+// Climbing Stairs with Jumps using Dynamic Programming | Recursive Staircase Problem
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int climbStairsWithVariableJumps(int ind, vector<int> jumps){
+    if(ind == jumps.size()){
+        return 1;
+    }
+    else if(ind > jumps.size()){
+        return 0;
+    }
+    
+    int ans = 0;
+    for(int i=1; i<=jumps[ind]; i++){
+        ans += climbStairsWithVariableJumps(ind+i, jumps);
+    }
+    return ans;
+}
+
+int climbStairsWithVariableJumpsDP(int ind, vector<int> jumps, vector<int> arr){
+    if(ind == jumps.size()){
+        return 1;
+    }
+    else if(ind > jumps.size()){
+        return 0;
+    }
+    
+    if(arr[ind]!=0){
+        return arr[ind];
+    }
+    
+    int ans = 0;
+    for(int i=1; i<=jumps[ind]; i++){
+        ans += climbStairsWithVariableJumpsDP(ind+i, jumps, arr);
+    }
+    arr[ind] = ans;
+    
+    return arr[ind];
+    
+}
+
+int main()
+{
+    int n;
+    cout<<"Enter no. of stairs: ";
+    cin>>n;
+    vector<int> jumps(n);
+    cout<<"Enter stair jumps: ";
+    for(int i=0; i<n; i++){
+        cin>>jumps[i];
+    }
+    
+    vector<int> arr(n+1, 0);
+    int ans = climbStairsWithVariableJumps(0, jumps);
+    int answer = climbStairsWithVariableJumpsDP(0, jumps, arr);
+    
+    cout<<ans<<endl;
+    cout<<answer;
+    return 0;
+}
+eg.
+Enter no. of stairs: 6
+Enter stair jumps: 3 3 0 2 2 3
+8
+8
+
+
+// Climbing Stairs with Minimum Moves | Dynamic Programming Problem Explained
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int n;
+    cout<<"Enter no. of stairs: ";
+    cin>>n;
+    vector<int> jumps(n);
+    cout<<"Enter stair jumps: ";
+    for(int i=0; i<n; i++){
+        cin>>jumps[i];
+    }
+    
+    vector<int> arr(n+1, 0);
+    for(int i=n-1; i>=0; i--){
+        if(jumps[i]>0){
+            int ans = INT_MAX;
+            for(int j=1; j<=jumps[i]; j++){
+                if(arr[i+j]!=-1 && i+j<arr.size()){
+                    ans = min(ans, arr[i+j]);
+                }
+            }
+            if(ans!=INT_MAX){
+                arr[i]=ans+1;
+            }
+            else{
+                arr[i]=-1;
+            }
+        }
+        else{
+            arr[i]=-1;
+        }
+    }
+    
+    for(int i=0; i<arr.size(); i++){
+        cout<<arr[i]<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter no. of stairs: 10
+Enter stair jumps: 3 2 4 2 0 2 3 1 2 2
+4 4 3 4 -1 3 2 2 1 1 0 
+
+
+// Minimum Cost Path Dynamic Programming Explained with Code
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int minAns = INT_MAX;
+
+void minimumCostPath(int i, int j, vector<vector<int>> maze, int &ans){
+    
+    if(i>=maze.size() || j>=maze[0].size()){
+        return;
+    }
+    ans += maze[i][j];
+    if(i==maze.size()-1 && j==maze[0].size()-1){
+        if(ans<minAns){
+            minAns = ans;
+        }
+    }
+    
+    minimumCostPath(i, j+1, maze, ans);
+    minimumCostPath(i+1, j, maze, ans);
+    ans -= maze[i][j];
+}
+
+int main()
+{
+    vector<vector<int>> maze{
+        {2,8,4,1,6,4,2},
+        {6,0,9,5,3,8,5},
+        {1,4,3,4,0,6,5},
+        {6,4,7,2,4,6,1},
+        {1,0,3,7,1,2,7},
+        {1,5,3,2,3,0,9},
+        {2,2,5,1,9,8,2}
+    };
+    
+    int ans = 0;
+    minimumCostPath(0, 0, maze, ans);
+    cout<<"By recursive approach: "<<minAns<<endl;
+    
+    vector<vector<int>> DPArray(maze.size(), vector<int>(maze[0].size()));
+    for(int i=maze.size()-1; i>=0; i--){
+        for(int j=maze[i].size()-1; j>=0; j--){
+            if(j==maze[i].size()-1){
+                if(i==maze.size()-1){
+                    DPArray[i][j] = maze[i][j];
+                }
+                else{
+                    DPArray[i][j] = maze[i][j] + DPArray[i+1][j];
+                }
+            }
+            else if(i==maze.size()-1){
+                DPArray[i][j] = maze[i][j] + DPArray[i][j+1];
+            }
+            else{
+                DPArray[i][j] = maze[i][j] + min(DPArray[i+1][j], DPArray[i][j+1]);
+            }
+        }
+    }
+    cout<<"By DP approach: "<<DPArray[0][0];
+    return 0;
+}
+eg.
+By recursive approach: 36
+By DP approach: 36
+
+
+
+// Path with Maximum Gold - Dynamic Programming | Goldmine Problem Explained
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int maxGold = INT_MIN;
+
+void pathWithMaximumGold(int i, int j, vector<vector<int>> goldmine, int &ans){
+    
+    if(i<0 || i>=goldmine.size() || j>=goldmine.size()){
+        return;
+    }
+    
+    ans += goldmine[i][j];
+    if(j==goldmine[0].size()-1){
+        if(ans>maxGold){
+            maxGold = ans;
+        }
+    }
+    
+    pathWithMaximumGold(i-1, j+1, goldmine, ans);
+    pathWithMaximumGold(i, j+1, goldmine, ans);
+    pathWithMaximumGold(i+1, j+1, goldmine, ans);
+    ans -= goldmine[i][j];
+}
+
+int main()
+{
+    vector<vector<int>> goldmine{
+        {0,1,4,2,8,2},
+        {4,3,6,5,0,4},
+        {1,2,4,1,4,6},
+        {2,0,7,3,2,2},
+        {3,1,5,9,2,4},
+        {2,7,0,8,5,1}
+    };
+    
+    for(int i=0; i<goldmine.size(); i++){
+        int ans = 0;
+        pathWithMaximumGold(i, 0, goldmine, ans);
+    }
+    cout<<"By recursive approach: "<<maxGold<<endl;
+    
+    vector<vector<int>> DPArray(goldmine.size(), vector<int>(goldmine[0].size()));
+    
+    for(int j=goldmine[0].size()-1; j>=0; j--){
+        for(int i=goldmine.size()-1; i>=0; i--){
+            if(j==goldmine[i].size()-1){
+                DPArray[i][j] = goldmine[i][j];
+            }
+            else{
+                if(i==0){
+                    DPArray[i][j] = goldmine[i][j] + max(DPArray[i][j+1], DPArray[i+1][j+1]);
+                }
+                else if(i==goldmine.size()-1){
+                    DPArray[i][j] = goldmine[i][j] + max(DPArray[i-1][j+1], DPArray[i][j+1]);
+                }
+                else{
+                    DPArray[i][j] = goldmine[i][j] + max(max(DPArray[i-1][j+1], DPArray[i][j+1]), DPArray[i+1][j+1]);
+                }
+            }
+        }
+    }
+    int maxGoldDP = INT_MIN;
+    for(int i=0; i<DPArray.size(); i++){
+        if(DPArray[i][0]>maxGoldDP){
+            maxGoldDP = DPArray[i][0];
+        }
+    }
+    cout<<"By DP approach: "<<maxGoldDP;
+    return 0;
+}
+eg.
+By recursive approach: 33
+By DP approach: 33
+
+
+
+// PERMUTATION AND COMBINATION(DUPLICACY) = 1D
+// WHEN NO DUPLICACY REQUIRED = 2D
+// PERMUTATION -> EVERY COIN IS UTILIZE AT CURRENT PLACE FIRST, THEN AT NEXT PLACE AND SO ON
+// COMBINATION -> CURRENT COIN IS UTILIZE FIRST AT ALL PLACES, THEN NEXT COIN AND SO ON
+
+
+// Target Sum Subsets Dynamic Programming | Subset Sum Problem
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+void targetSumSubset(int i, vector<int> elements, int ans, string val){
+    
+    if(i==elements.size()){
+        if(ans==10){
+            cout<<val<<endl;
+        }
+        return;
+    }
+    
+    targetSumSubset(i+1, elements, ans + elements[i], val + to_string(elements[i]) +" ");
+    targetSumSubset(i+1, elements, ans, val);
+
+}
+
+int main()
+{
+    vector<int> elements{
+        4,2,7,1,3
+    };
+    int tsum;
+    cout<<"Enter target sum: ";
+    cin>>tsum;
+    int ans = 0;
+    targetSumSubset(0, elements, ans, "");
+    
+    vector<vector<bool>> DPArray(elements.size()+1, vector<bool>(tsum + 1));
+    
+    for(int i=0; i<elements.size()+1; i++){
+        for(int j=0; j<tsum+1; j++){
+            if(i==0 && j==0){
+                DPArray[i][j]=true;
+            }
+            else if(i==0){
+                DPArray[i][j]=false;
+            }
+            else if(j==0){
+                DPArray[i][j]=true;
+            }
+            else{
+                if(DPArray[i-1][j]==true){
+                    DPArray[i][j]=true;
+                }
+                else{
+                    int score = elements[i-1];
+                    if(j>=score){
+                        if(DPArray[i-1][j-score]==true){
+                            DPArray[i][j]=true;
+                        }
+                        else{
+                            DPArray[i][j]=false;
+                        }
+                    }
+                    else{
+                        DPArray[i][j] = DPArray[i-1][j];
+                    }
+                }
+            }
+        }
+    }
+    
+    cout<<"By DP approach: "<<DPArray[elements.size()][tsum];
+    
+    return 0;
+}
+eg.
+Enter target sum: 10
+4 2 1 3 
+2 7 1 
+7 3 
+By DP approach: 1
+
+
+
+// PERMUTATION AND COMBINATION(DUPLICACY) = 1D
+// WHEN NO DUPLICACY REQUIRED = 2D
+// PERMUTATION -> EVERY COIN IS UTILIZE AT CURRENT PLACE FIRST, THEN AT NEXT PLACE AND SO ON
+// COMBINATION -> CURRENT COIN IS UTILIZE FIRST AT ALL PLACES, THEN NEXT COIN AND SO ON
+
+// Coin Change Combination Problem Dynamic Programming Explained | Coin Change Minimum Number of Coins
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+void coinChange(int currSum, int currInd, vector<int> coins, int sum, string val){
+
+    if(currInd==coins.size()){
+        if(currSum==sum){
+            cout<<val<<endl;
+        }
+        return;
+    }
+    
+    for(int i=sum/coins[currInd]; i>=1; i--){
+        string ans = "";
+        for(int j=0; j<i; j++){
+            ans += to_string(coins[currInd]) +" ";
+        }
+        coinChange(currSum + i*coins[currInd], currInd+1, coins, sum, val + ans);
+    }
+    
+    coinChange(currSum, currInd+1, coins, sum, val);
+    
+}
+
+int main()
+{
+
+    vector<int> coins{
+        2,3,5,6
+    };
+    int sum;
+    cout<<"Enter the sum: ";
+    cin>>sum;
+    coinChange(0, 0, coins, sum, "");
+    
+    std::map<int, vector<string>> combinationDP;
+    vector<string> vect{
+        "."
+    };
+    combinationDP[0]=vect;
+    
+    for(int i=0; i<coins.size(); i++){
+        for(int j=coins[i]; j<=sum; j++){
+            if(combinationDP.find(j-coins[i])!=combinationDP.end()){
+                vector<string> vect;
+                for(int k=0; k<combinationDP[j-coins[i]].size(); k++){
+                    vect.push_back(combinationDP[j-coins[i]][k] + to_string(coins[i]));
+                }
+                if(combinationDP.find(j)!=combinationDP.end()){
+                    for(int k=0; k<vect.size(); k++){
+                        combinationDP[j].push_back(vect[k]);
+                    }
+                }
+                else{
+                    combinationDP[j]=vect;
+                }
+            }
+            else{
+                vector<string> vect;
+                combinationDP[j-coins[i]] = vect;
+            }
+        }
+    }
+    
+    vector<string> ans = combinationDP[sum];
+    cout<<"By DP approach: ";
+    for(int i=0; i<ans.size(); i++){
+        cout<<ans[i]<<" ";
+    }
+    
+    return 0;
+}
+
+eg.
+Enter the sum: 10
+2 2 2 2 2 
+2 2 3 3 
+2 2 6 
+2 3 5 
+5 5 
+By DP approach: .22222 .2233 .235 .55 .226 
+
+
+
+
+// Coin Change Permutations Problem Dynamic Programming | Total Number of Ways to Get Amount
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+
+void coinChange(int currSum, vector<int> coins, int sum, string val){
+    
+    if(currSum>sum){
+        return;
+    }
+    else if(currSum==sum){
+        cout<<val<<endl;
+        return;
+    }
+    
+    coinChange(currSum+coins[0], coins, sum, val + to_string(coins[0]) +" ");
+    coinChange(currSum+coins[1], coins, sum, val + to_string(coins[1]) +" ");
+    coinChange(currSum+coins[2], coins, sum, val + to_string(coins[2]) +" ");
+    coinChange(currSum+coins[3], coins, sum, val + to_string(coins[3]) +" ");
+}
+
+int main()
+{
+
+    vector<int> coins{
+        2,3,5,6
+    };
+    int sum;
+    cout<<"Enter the sum: ";
+    cin>>sum;
+    coinChange(0, coins, sum, "");
+    
+    std::map<int, vector<string>> combinationDP;
+    vector<string> vect{
+        "."
+    };
+    combinationDP[0]=vect;
+    
+    for(int i=1; i<=sum; i++){
+        for(int j=0; j<coins.size(); j++){
+            if(i-coins[j]>=0 && combinationDP.find(i-coins[j])!=combinationDP.end()){
+                vector<string> vect;
+                for(int k=0; k<combinationDP[i-coins[j]].size(); k++){
+                    vect.push_back(combinationDP[i-coins[j]][k] + to_string(coins[j]));
+                }
+                if(combinationDP.find(i)!=combinationDP.end()){
+                    for(int k=0; k<vect.size(); k++){
+                        combinationDP[i].push_back(vect[k]);
+                    }
+                }
+                else{
+                    combinationDP[i]=vect;
+                }
+            }
+            else{
+                vector<string> vect;
+                combinationDP[i-coins[j]] = vect;
+            }
+        }
+    }
+    
+    vector<string> ans = combinationDP[sum];
+    cout<<"By DP approach: ";
+    for(int i=0; i<ans.size(); i++){
+        cout<<ans[i]<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter the sum: 10
+2 2 2 2 2 
+2 2 3 3 
+2 2 6 
+2 3 2 3 
+2 3 3 2 
+2 3 5 
+2 5 3 
+2 6 2 
+3 2 2 3 
+3 2 3 2 
+3 2 5 
+3 3 2 2 
+3 5 2 
+5 2 3 
+5 3 2 
+5 5 
+6 2 2 
+By DP approach: .22222 .3322 .622 .3232 .2332 .532 .352 .262 .3223 .2323 .523 .2233 .253 .325 .235 .55 .226 
+
+
+
+// 0-1 Knapsack Problem Dynamic Programming Solved with Code | Dynamic Programming Interview Questions
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int maxVal = INT_MIN;
+
+void knapsack01(int ind, int currVal, int currWeight, vector<int> elementValues, vector<int> elementWeights, int bagWeight){
+    
+    if(ind==elementValues.size()){
+        cout<<currVal<<" ";
+        if(currWeight<=bagWeight && currVal>maxVal){
+            maxVal = currVal;
+        }
+        return;
+    }
+    
+    knapsack01(ind+1, currVal + elementValues[ind], currWeight + elementWeights[ind], elementValues, elementWeights, bagWeight);
+    knapsack01(ind+1, currVal, currWeight, elementValues, elementWeights, bagWeight);
+
+}
+
+int main()
+{
+    int n, bagWeight;
+    vector<int> elementValues;
+    vector<int> elementWeights;
+    
+    cout<<"Enter number of elements: ";
+    cin>>n;
+
+    cout<<"Enter element values: ";
+    for(int i=0; i<n; i++){
+        int ans;
+        cin>>ans;
+        elementValues.push_back(ans);
+    }
+    cout<<"Enter element weights: ";
+    for(int i=0; i<n; i++){
+        int ans;
+        cin>>ans;
+        elementWeights.push_back(ans);
+    }
+    cout<<"Enter bag weight: ";
+    cin>>bagWeight;
+    
+    int currVal=0;
+    int currWeight=0;
+    knapsack01(0, currVal, currWeight, elementValues, elementWeights, bagWeight);
+    cout<<endl<<"Maximum value possible under bagWeight is: "<<maxVal<<endl;
+    
+    
+    
+    vector<vector<int>> DPArray(elementValues.size()+1, vector<int>(bagWeight + 1));
+    
+    for(int i=0; i<elementValues.size()+1; i++){
+        for(int j=0; j<bagWeight+1; j++){
+            if(i==0 || j==0){
+                DPArray[i][j]=0;
+            }
+            else{
+                if(j - elementWeights[i-1]<0){
+                    DPArray[i][j] = DPArray[i-1][j];
+                }
+                else{
+                    DPArray[i][j] = max(DPArray[i-1][j], DPArray[i-1][j-elementWeights[i-1]] + elementValues[i-1]);
+                }
+            }
+        }
+    }
+    
+    cout<<"By DP approach Maximum value possible under bagWeight is: "<<DPArray[elementValues.size()][bagWeight];
+    
+    return 0;
+} 
+eg.
+Enter number of elements: 5
+Enter element values: 15 14 10 45 30
+Enter element weights: 2 5 1 3 4
+Enter bag weight: 7
+114 84 69 39 104 74 59 29 100 70 55 25 90 60 45 15 99 69 54 24 89 59 44 14 85 55 40 10 75 45 30 0 
+Maximum value possible under bagWeight is: 75
+By DP approach Maximum value possible under bagWeight is: 75
+
+
+
+
+// Unbounded Knapsack using Dynamic Programming Explained with Code
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int maxVal = INT_MIN;
+
+void unboundedKnapsack(int currVal, int currWeight, vector<int> elementValues, vector<int> elementWeights, int bagWeight){
+
+    if(currWeight<=bagWeight){
+        if(currVal>maxVal){
+           maxVal = currVal; 
+        }
+    }
+    else{
+        return;
+    }
+    
+    for(int i=0; i<elementValues.size(); i++){
+        unboundedKnapsack(currVal + elementValues[i], currWeight + elementWeights[i], elementValues, elementWeights, bagWeight);
+    }
+    
+}
+
+int main()
+{
+    int n, bagWeight;
+    vector<int> elementValues;
+    vector<int> elementWeights;
+    
+    cout<<"Enter number of elements: ";
+    cin>>n;
+
+    cout<<"Enter element values: ";
+    for(int i=0; i<n; i++){
+        int ans;
+        cin>>ans;
+        elementValues.push_back(ans);
+    }
+    cout<<"Enter element weights: ";
+    for(int i=0; i<n; i++){
+        int ans;
+        cin>>ans;
+        elementWeights.push_back(ans);
+    }
+    cout<<"Enter bag weight: ";
+    cin>>bagWeight;
+    
+    int currVal=0;
+    int currWeight=0;
+    unboundedKnapsack(currVal, currWeight, elementValues, elementWeights, bagWeight);
+    cout<<endl<<"Maximum value possible under bagWeight is: "<<maxVal<<endl;
+    
+    
+    vector<int> DPArray(bagWeight + 1, 0);
+    
+    for(int i=1; i<DPArray.size(); i++){
+        for(int j=0; j<elementWeights.size(); j++){
+            if(elementWeights[j]<=i){
+                DPArray[i] = max(DPArray[i], elementValues[j] + DPArray[i - elementWeights[j]]);
+            }
+        }
+    }
+    
+    for(int i=0; i<DPArray.size(); i++){
+        cout<<DPArray[i]<<" ";
+    }
+    
+    cout<<endl<<"By DP approach Maximum value possible under bagWeight is: "<<DPArray[DPArray.size()-1];
+    
+    return 0;
+} 
+eg.
+Enter number of elements: 5
+Enter element values: 15 14 10 45 30
+Enter element weights: 2 5 1 3 4
+Enter bag weight: 7
+
+Maximum value possible under bagWeight is: 100
+0 10 20 45 55 65 90 100 
+By DP approach Maximum value possible under bagWeight is: 100
+
+
+
+// Count Binary Strings | Binary Strings with no consecutive 0's | Dynamic Programming
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int totalStrings = 0;
+
+void countBinaryStrngsWdNoConsctv0(int ind, string ans, int n){
+
+    if(ind>0 && ans[ind]=='0' && ans[ind-1]=='0'){
+        return;
+    }
+    
+    if(ind==n-1){
+        // cout<<ans<<" ";
+        totalStrings++;
+        return;
+    }
+
+    countBinaryStrngsWdNoConsctv0(ind+1, ans+"0", n);
+    countBinaryStrngsWdNoConsctv0(ind+1, ans+"1", n);
+    
+}
+
+int main()
+{
+    int n;
+    
+    cout<<"Enter string size: ";
+    cin>>n;
+    
+    string ans = "";
+    countBinaryStrngsWdNoConsctv0(-1, ans, n);
+    cout<<endl<<"Total no. of Strings with no consecutive 0's of length 'n' are: "<<totalStrings<<endl;
+    
+    int ending0 = 1;
+    int ending1 = 1;
+    n--;
+    while(n--){
+        int temp = ending1;
+        ending1 = ending0 + ending1;
+        ending0 = temp;
+    }
+    cout<<"Total no. of Strings with no consecutive 0's of length 'n' by DP approach are: "<<ending0+ending1<<endl;
+    
+    return 0;
+} 
+eg.
+Enter string size: 6
+Total no. of Strings with no consecutive 0's of length 'n' are: 21
+Total no. of Strings with no consecutive 0's of length 'n' by DP approach are: 21
+
+
+
+// Arrange Buildings Dynamic Programming | Dynamic Programming Tutorials with Code
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int totalWays = 0;
+
+void waysToArrngBuldngAndSpaceAt1Side(int ind, string ans, int n){
+
+    if(ind>0 && ans[ind]=='B' && ans[ind-1]=='B'){
+        return;
+    }
+    
+    if(ind==n-1){
+        cout<<ans<<" ";
+        totalWays++;
+        return;
+    }
+
+    waysToArrngBuldngAndSpaceAt1Side(ind+1, ans+"B", n);
+    waysToArrngBuldngAndSpaceAt1Side(ind+1, ans+"S", n);
+    
+}
+
+int main()
+{
+    int n;
+    
+    cout<<"Enter street size: ";
+    cin>>n;
+    
+    string ans = "";
+    waysToArrngBuldngAndSpaceAt1Side(-1, ans, n);
+    cout<<endl<<"Total no. of ways to arrange buildings in a street are: "<<totalWays*totalWays<<endl;
+    
+    int endingB = 1;
+    int endingS = 1;
+    n--;
+    while(n--){
+        int temp = endingS;
+        endingS = endingB + endingS;
+        endingB = temp;
+    }
+    cout<<"Total no. of ways to arrange buildings in a street by DP approach are: "<<(endingB+endingS)*(endingB+endingS)<<endl;
+    
+    return 0;
+} 
+eg.
+Enter street size: 5
+BSBSB BSBSS BSSBS BSSSB BSSSS SBSBS SBSSB SBSSS SSBSB SSBSS SSSBS SSSSB SSSSS 
+Total no. of ways to arrange buildings in a street are: 169
+Total no. of ways to arrange buildings in a street by DP approach are: 169
+
+
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int totalWays = 0;
+
+int main()
+{
+    string str;
+    cout<<"Enter the string: ";
+    cin>>str;
+    map<string,char> strMap;
+    strMap.insert(pair<string, char>("1", 'a'));
+    strMap.insert(pair<string, char>("2", 'b'));
+    strMap.insert(pair<string, char>("3", 'c'));
+    strMap.insert(pair<string, char>("4", 'd'));
+    strMap.insert(pair<string, char>("5", 'e'));
+    strMap.insert(pair<string, char>("6", 'f'));
+    strMap.insert(pair<string, char>("7", 'g'));
+    strMap.insert(pair<string, char>("8", 'h'));
+    strMap.insert(pair<string, char>("9", 'i'));
+    strMap.insert(pair<string, char>("10", 'j'));
+    strMap.insert(pair<string, char>("11", 'k'));
+    strMap.insert(pair<string, char>("12", 'l'));
+    strMap.insert(pair<string, char>("13", 'm'));
+    strMap.insert(pair<string, char>("14", 'n'));
+    strMap.insert(pair<string, char>("15", 'o'));
+    strMap.insert(pair<string, char>("16", 'p'));
+    strMap.insert(pair<string, char>("17", 'q'));
+    strMap.insert(pair<string, char>("18", 'r'));
+    strMap.insert(pair<string, char>("19", 's'));
+    strMap.insert(pair<string, char>("20", 't'));
+    strMap.insert(pair<string, char>("21", 'u'));
+    strMap.insert(pair<string, char>("22", 'v'));
+    strMap.insert(pair<string, char>("23", 'w'));
+    strMap.insert(pair<string, char>("24", 'x'));
+    strMap.insert(pair<string, char>("25", 'y'));
+    strMap.insert(pair<string, char>("26", 'z'));
+    
+    if(str[0]=='0'){
+        cout<<"Invalid Input";
+        return 0;
+    }
+    
+    map<int, int> encodingMap;
+    map<int, int>::iterator itr;
+    encodingMap[0] = 1;
+    
+    for(int i=1; i<str.size(); i++){
+        string ans = "";
+        ans += str[i];
+        if(strMap.find(ans)!=strMap.end()){
+            encodingMap[i] = encodingMap[i-1];
+        }
+        else{
+            encodingMap[i] = 0;
+        }
+        
+        ans="";
+        ans+=str[i-1];
+        ans+=str[i];
+        if(strMap.find(ans)!=strMap.end()){
+            if(i>2){
+                encodingMap[i]+=encodingMap[i-2];
+            }
+            else{
+                encodingMap[i]+=1;
+            }
+        }
+    }
+    
+    itr=encodingMap.begin();
+    while(itr!=encodingMap.end()){
+        cout<<itr->first<<" "<<itr->second<<endl;
+        itr++;
+    }
+
+    cout<<"Total no of possible encoding strings are: "<<encodingMap[str.size()-1];
+    
+    return 0;
+} 
+eg.
+Enter the string: 204
+0 1
+1 1
+2 1
+Total no of possible encoding strings are: 1
+
+
+// Count Subsequences of form A^i B^j C^k | Count A+ B+ C+ Subsequences Dynamic Programming
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+void subsequences(int ind, string str, string ans){
+    
+    if(ind==str.size()){
+        if(ans.size()<3){
+            return;
+        }
+        else{
+            std::vector<char> vect{
+                ans[0]
+            };
+            for(int i=1; i<ans.size(); i++){
+                if(ans[i]!=ans[i-1]){
+                    vect.push_back(ans[i]);
+                }
+            }
+            if(vect.size()==3 && vect[0]=='a' && vect[1]=='b' && vect[2]=='c'){
+                cout<<ans<<" ";
+            }
+        }
+        
+        return;
+    }
+    
+    subsequences(ind+1, str, ans+str[ind]);
+    subsequences(ind+1, str, ans);
+}
+
+int main()
+{
+    string str;
+    cout<<"Enter the string: ";
+    cin>>str;
+    
+    string ans = "";
+    cout<<"a+b+c+ form of subsequences in "<<str<<" are: ";
+    subsequences(0, str, ans);
+    cout<<endl;
+    
+    int a = 0;
+    int ab = 0;
+    int abc = 0;
+    
+    for(int i=0; i<str.size(); i++){
+        if(str[i]=='a'){
+            a = 2*a + 1;
+        }
+        else if(str[i]=='b'){
+            ab = 2*ab + a;
+        }
+        else{
+            abc = 2*abc + ab;
+        }
+    }
+    cout<<"count of a+b+c+ form of subsequences in "<<str<<" by DP approach are: "<<abc;
+    
+    return 0;
+} 
+eg.
+Enter the string: abcabc
+a+b+c+ form of subsequences in abcabc are: abcc abc abbc abc aabc abc abc 
+count of a+b+c+ form of subsequences in abcabc by DP approach are: 7
+
+
+
+// Maximum Sum Non Adjacent Elements Dynamic Programming | Greedy Approach
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int maxSumNonAdjacent = INT_MIN;
+
+void subsetSumNonAdjacentElemsBF1(int ind, vector<int> vect, vector<int> ans){
+    
+    if(ind==vect.size()){
+        if(ans.size()==0){
+            return;
+        }
+        int sums = vect[ans[0]];
+        for(int i=1; i<ans.size(); i++){
+            if(ans[i]-ans[i-1]==1){
+                return;
+            }
+            else{
+                sums+=vect[ans[i]];
+            }
+        }
+        cout<<sums<<" ";
+        if(sums>maxSumNonAdjacent){
+            maxSumNonAdjacent = sums;
+        }
+        return;
+    }
+    
+    
+    ans.push_back(ind);
+    subsetSumNonAdjacentElemsBF1(ind+1, vect, ans);
+    ans.pop_back();
+    subsetSumNonAdjacentElemsBF1(ind+1, vect, ans);
+}
+
+void subsetSumNonAdjacentElemsBF2(int ind, vector<int> vect, vector<int> ans, bool flag){
+    
+    if(ind==vect.size()){
+        int sums = 0;
+        for(int i=0; i<ans.size(); i++){
+            sums += ans[i];
+        }
+        cout<<sums<<" ";
+        if(sums>maxSumNonAdjacent){
+            maxSumNonAdjacent = sums;
+        }
+        return;
+    }
+    
+    
+    if(flag==false){
+        ans.push_back(vect[ind]);
+        subsetSumNonAdjacentElemsBF2(ind+1, vect, ans, true);
+        ans.pop_back();
+        subsetSumNonAdjacentElemsBF2(ind+1, vect, ans, false);
+    }
+    else{
+        subsetSumNonAdjacentElemsBF2(ind+1, vect, ans, false);
+    }
+}
+
+int main()
+{
+    int n,elem;
+    cout<<"Enter the no of elements: ";
+    cin>>n;
+    vector<int> vect;
+    for(int i=0; i<n; i++){
+        cin>>elem;
+        vect.push_back(elem);
+    }
+    
+    vector<int> ans;
+    subsetSumNonAdjacentElemsBF1(0, vect, ans);
+    cout<<endl<<"Maximum sum of non adjacent elements is by Brute Force approach 1: "<<maxSumNonAdjacent<<endl;
+    
+    maxSumNonAdjacent=INT_MIN;
+    bool flag = false;
+    subsetSumNonAdjacentElemsBF2(0, vect, ans, flag);
+    cout<<endl<<"Maximum sum of non adjacent elements is by Brute Force approach 2: "<<maxSumNonAdjacent<<endl;
+    
+    
+    
+    int inc = vect[0];
+    int exc = 0;
+    for(int i=1; i<vect.size(); i++){
+        int val = inc;
+        inc = exc + vect[i];
+        exc = max(val, exc);
+    }
+    cout<<"Maximum sum of non adjacent elements DP approach is: "<<max(inc, exc);
+    
+    return 0;
+} 
+eg.
+Enter the no of elements: 5
+10 10 100 5 6
+116 110 15 16 10 15 16 10 106 100 5 6 
+Maximum sum of non adjacent elements is by Brute Force approach 1: 116
+116 110 15 16 10 15 16 10 106 100 5 6 0 
+Maximum sum of non adjacent elements is by Brute Force approach 2: 116
+Maximum sum of non adjacent elements DP approach is: 116
+
+
+
+
+// Paint House (Leetcode) Dynamic Programming | Explained with Code
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int minPaintCost = INT_MAX;
+
+void paintHouseBF(int colorInd, int houseInd, vector<vector<int>> vect, int ans){
+    
+    if(houseInd==vect.size()){
+        cout<<ans<<" ";
+        if(ans<minPaintCost){
+            minPaintCost = ans;
+        }
+        return;
+    }
+    
+    for(int i=0; i<vect[houseInd].size(); i++){
+        if(i!=colorInd){
+            paintHouseBF(i, houseInd+1, vect, ans+vect[houseInd][i]);
+        }
+    }
+}
+
+int main()
+{
+    //           house1     house2     house3    house4
+    // red         1          5          3         1
+    // green       5          8          2         2 
+    // blue        7          4          9         4 
+    
+    int houses, color, cost;
+    cout<<"Enter no of houses and colors: ";
+    cin>>houses>>color;
+    vector<vector<int>> vect(houses, vector<int>(color, 0));
+    for(int i=0; i<houses; i++){
+        for(int j=0; j<color; j++){
+            cin>>cost;
+            vect[i][j] = cost;
+        }
+    }
+    
+    int ans = 0;
+    paintHouseBF(-1, 0, vect, ans);
+    cout<<endl<<"Mini cost to paint houses with no 2 adj. houses have same color by Brute Force: "<<minPaintCost<<endl;
+    
+    
+    int lastColor1 = vect[0][0];
+    int lastColor2 = vect[0][1];
+    int lastColor3 = vect[0][2];
+    for(int i=1; i<vect.size(); i++){
+        int lc1 = lastColor1;
+        int lc2 = lastColor2;
+        lastColor1 = vect[i][0] + min(lastColor2, lastColor3);
+        lastColor2 = vect[i][1] + min(lc1, lastColor3);
+        lastColor3 = vect[i][2] + min(lc1, lc2);
+    }
+    cout<<"Mini cost to paint houses with no 2 adj. houses have same color by DP: "<<min(lastColor1, min(lastColor2, lastColor3));
+    
+    return 0;
+} 
+eg.
+Enter no of houses and colors: 4 3
+1 5 7
+5 8 4
+3 2 9
+1 2 4
+14 16 19 20 10 12 8 11 13 16 20 21 14 16 12 15 15 18 22 23 20 22 25 26 
+Mini cost to paint houses with no 2 adj. houses have same color by Brute Force: 8
+Mini cost to paint houses with no 2 adj. houses have same color by DP: 8
+
+
+
+// Paint Fence (Leetcode) Dynamic Programming | Explanation with Code
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    
+    int fences, color;
+    cout<<"Enter no of fences and colors: ";
+    cin>>fences>>color;
+    
+    int last2diff = 0;
+    int last2same = 0;
+    int total;
+    for(int i=1; i<=fences; i++){
+        if(i!=1){
+            last2same = last2diff;
+            last2diff = total*(color-1);
+        }
+        else{
+            last2same = 0;
+            last2diff = color;
+        }
+        total = last2same + last2diff;
+        cout<<last2same<<" "<<last2diff<<" "<<total<<endl;
+    }
+    cout<<"No. of ways to paint fences with "<<color<<" colors with not more than 2 consecutive colors have same color by DP: "<<total;
+    
+    return 0;
+} 
+eg.
+Enter no of fences and colors: 5 3
+0 3 3
+3 6 9
+6 18 24
+18 48 66
+48 132 180
+No. of ways to paint fences with 3 colors with not more than 2 consecutive colors have same color by DP: 180
+
+
+
+// Tiling with Dominoes Dynamic Programming | Explanation and Code
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int waysToTileSurfaceWd2cross1Tile(int length, int breadth){
+    
+    if(length==1 || length==0){
+        return 1;
+    }
+    
+    return waysToTileSurfaceWd2cross1Tile(length-1, breadth) + waysToTileSurfaceWd2cross1Tile(length-2, breadth);
+}
+
+int waysToTileSurfaceWd2cross1TileDP(int length, int breadth, vector<int> vect){
+    
+    if(length==1 || length==0){
+        vect[length] = 1;
+        return 1;
+    }
+    
+    if(vect[length]!=0){
+        return vect[length];
+    }
+    
+    int ans = waysToTileSurfaceWd2cross1Tile(length-1, breadth) + waysToTileSurfaceWd2cross1Tile(length-2, breadth);
+    vect[length] = ans;
+    
+    return ans;
+}
+
+int main()
+{
+    
+    int length;
+    cout<<"Enter length of surface: ";
+    cin>>length;
+    
+    int ans = waysToTileSurfaceWd2cross1Tile(length, 2);
+    cout<<"Total no ways to tile "<<length<<"*2 surface with 2*1 tiles are: "<<ans<<endl;
+    
+    vector<int> vect(length, 0);
+    ans = waysToTileSurfaceWd2cross1TileDP(length, 2, vect);
+    cout<<"Total no ways to tile "<<length<<"*2 surface with 2*1 tiles by DP are: "<<ans;
+    
+    // easy way
+    vector<int> dp(length+1, 0);
+    dp[1] = 1;
+    dp[2] = 2;
+    for(int i=3; i<=length; i++){
+        dp[i] = dp[i-1] + dp[i-2];
+    }
+    cout<<"Total no ways to tile "<<length<<"*2 surface with 2*1 tiles by DP are: "<<dp[length]<<endl;
+
+    return 0;
+} 
+eg.
+Enter length of surface: 4
+Total no ways to tile 4*2 surface with 2*1 tiles are: 5
+Total no ways to tile 4*2 surface with 2*1 tiles by DP are: 5
+Total no ways to tile 4*2 surface with 2*1 tiles by DP are: 5
+
+
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int waysToTileSurfaceWdMcross1Tile(int length, int breadth){
+    
+    if(breadth<length){
+        return 1;
+    }
+    
+    return waysToTileSurfaceWdMcross1Tile(length, breadth-1) + waysToTileSurfaceWdMcross1Tile(length, breadth-length);
+}
+
+int waysToTileSurfaceWdMcross1TileDP(int length, int breadth, vector<int> vect){
+    
+    if(breadth < length){
+        vect[breadth] = 1;
+        return 1;
+    }
+    
+    if(vect[breadth]!=0){
+        return vect[breadth];
+    }
+    
+    int ans = waysToTileSurfaceWdMcross1TileDP(length, breadth-1, vect) + waysToTileSurfaceWdMcross1TileDP(length, breadth-length, vect);
+    vect[breadth] = ans;
+    
+    return ans;
+}
+
+int main()
+{
+    
+    int m,n;
+    cout<<"Enter length & breadth of surface: ";
+    cin>>m>>n;
+    
+    int ans = waysToTileSurfaceWdMcross1Tile(m, n);
+    cout<<"Total no ways to tile "<<m<<"*"<<n<<" surface with "<<m<<"*1 tiles are: "<<ans<<endl;
+    
+    vector<int> vect(n, 0);
+    ans = waysToTileSurfaceWdMcross1TileDP(m, n, vect);
+    cout<<"Total no ways to tile "<<m<<"*"<<n<<" surface with "<<m<<"*1 tiles by DP are: "<<ans<<endl;
+    
+    // easy way
+    vector<int> dp(n+1, 0);
+    for(int i=1; i<m; i++){
+        dp[i]=1;
+    }
+    dp[m]=2;
+    
+    for(int i=m+1; i<=n; i++){
+        dp[i] = dp[i-1] + dp[i-m];
+    }
+    cout<<"Total no ways to tile "<<m<<"*"<<n<<" surface with "<<m<<"*1 tiles by DP are: "<<dp[n]<<endl;
+    
+    return 0;
+} 
+eg.
+Enter length & breadth of surface: 3 5
+Total no ways to tile 3*5 surface with 3*1 tiles are: 4
+Total no ways to tile 3*5 surface with 3*1 tiles by DP are: 4
+Total no ways to tile 3*5 surface with 3*1 tiles by DP are: 4
+
+
+// Friends Pairing Problem Dynamic Programming | Explanation with Code
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int friendPairing(int friends){
+    
+    if(friends<=2){
+        return friends;
+    }
+    
+    return friendPairing(friends-1) + (friends-1)*friendPairing(friends-2);
+}
+
+int main()
+{
+    int friends;
+    cout<<"Enter number of friends count: ";
+    cin>>friends;
+    
+    // Friends pairing = there can be a single friend or a pair of only 2 Friends
+    // eg. 123 = [1-23],[1-2-3],[12-3],[13-2]  (permutation is not allowed, for eg. 1-23, 1-32 & 23-1 are equal)
+    // eg. 12 = [12], [1-2]
+    
+    // easy way
+    int ans = friendPairing(friends);
+    cout<<"Total no of ways to pair friends in group by DP are: "<<ans;
+    
+    return 0;
+} 
+eg.
+Enter number of friends count: 5
+Total no of ways to pair friends in group by DP are: 26
+
+
+
+// Partition into Subsets Dynamic Programming | Explanation and Code
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int elements, subsets;
+    cout<<"Enter number of elements and subsets: ";
+    cin>>elements>>subsets;
+    
+    vector<vector<int>> vect(subsets+1, vector<int>(elements+1));
+    for(int i=0; i<vect.size(); i++){
+        for(int j=0; j<vect[i].size(); j++){
+            if(i==0 || j==0){
+                vect[i][j]=0;
+            }
+            else if(j<i){
+                vect[i][j]=0;
+            }
+            else if(i==j){
+                vect[i][j]=1;
+            }
+            else{
+                vect[i][j] = i*vect[i][j-1] + vect[i-1][j-1];
+            }
+        }
+    }
+    
+    cout<<"No of ways to divide "<<elements<<" elements into "<<subsets<<" subsets by DP is: "<<vect[subsets][elements];
+    return 0;
+} 
+eg.
+Enter number of elements and subsets: 3 2
+No of ways to divide 3 elements into 2 subsets by DP is: 3
+
+
+
+// Best Time to Buy and Sell Stocks - Two Transaction Allowed (Hard) | Dynamic Programming
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int days;
+    cout<<"Enter number of share price days: ";
+    cin>>days;
+    
+    vector<int> sharePrices;
+    for(int i=0; i<days; i++){
+        int share;
+        cin>>share;
+        sharePrices.push_back(share);
+    }
+    
+    vector<int> maximumProfitTillThisDay(days);
+    vector<int> maximumProfitAfterThisDay(days);
+    
+    int minPrice = sharePrices[0];
+    int maxProfit = 0;
+    for(int i=0; i<sharePrices.size(); i++){
+        if(sharePrices[i]<minPrice){
+            minPrice = sharePrices[i];
+        }
+        if(sharePrices[i]-minPrice > maxProfit){
+            maxProfit = sharePrices[i] - minPrice;
+        }
+        maximumProfitTillThisDay[i] = maxProfit;
+    }
+    
+    int maxPrice = sharePrices[days-1];
+    maxProfit = 0;
+    for(int i=sharePrices.size()-1; i>=0; i--){
+        if(sharePrices[i]>maxPrice){
+            maxPrice = sharePrices[i];
+        }
+        if(maxPrice - sharePrices[i] > maxProfit){
+            maxProfit = maxPrice - sharePrices[i];
+        }
+        maximumProfitAfterThisDay[i] = maxProfit;
+    }
+    
+    int maxProfAfter2trans = INT_MIN;
+    for(int i=0; i<sharePrices.size(); i++){
+        if(maxProfAfter2trans < maximumProfitTillThisDay[i] + maximumProfitAfterThisDay[i]){
+            maxProfAfter2trans = maximumProfitTillThisDay[i] + maximumProfitAfterThisDay[i];
+        }
+    }
+    cout<<maxProfAfter2trans;
+    
+    return 0;
+} 
+eg.
+Enter number of share price days: 19
+30 40 43 50 45 20 26 40 80 50 30 15 20 10 40 45 71 50 55
+121
+
+
+
+// Best Time to Buy and Sell Stocks - K Transaction Allowed Dynamic Programming
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int days, transactions;
+    cout<<"Enter number of share price days: ";
+    cin>>days;
+    
+    vector<int> sharePrices;
+    for(int i=0; i<days; i++){
+        int share;
+        cin>>share;
+        sharePrices.push_back(share);
+    }
+    
+    cout<<"Enter number of transactions allowed: ";
+    cin>>transactions;
+    
+    vector<vector<int>> vect(transactions+1, vector<int>(days, 0));
+    for(int i=1; i<vect.size(); i++){
+        int comparator = vect[i-1][0] - sharePrices[0];
+        for(int j=1; j<vect[i].size(); j++){
+            vect[i][j] = max(vect[i][j-1], comparator + sharePrices[j]);
+            comparator = max(comparator, vect[i-1][j]-sharePrices[j]);
+        }
+    }
+    
+    for(int i=0; i<vect.size(); i++){
+        for(int j=0; j<vect[i].size(); j++){
+            cout<<vect[i][j]<<" ";
+        }
+        cout<<endl;
+    }
+    
+    cout<<"Maximum profit can be generated after "<<transactions<<" transactions by DP is: "<<vect[transactions][days-1];
+    
+    return 0;
+} 
+eg.
+Enter number of share price days: 6
+9 6 7 6 3 8
+Enter number of transactions allowed: 3
+0 0 0 0 0 0 
+0 0 1 1 1 5 
+0 0 1 1 1 6 
+0 0 1 1 1 6 
+Maximum profit can be generated after 3 transactions by DP is: 6
+
+
+
+// Highway Billboard Problem Dynamic Programming - NOT WORKING
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int road, totalBoards, minDistance;
+    cout<<"Enter road length and total no of boards: ";
+    cin>>road>>totalBoards;
+    
+    cout<<"Enter boards location and revenue: ";
+    vector<int> boardsLocation;
+    vector<int> revenue;
+    for(int i=0; i<totalBoards; i++){
+        int ans;
+        cin>>ans;
+        boardsLocation.push_back(ans);
+    }
+    for(int i=0; i<totalBoards; i++){
+        int ans;
+        cin>>ans;
+        revenue.push_back(ans);
+    }
+    
+    cout<<"Enter the minimum distnce b/w boards: ";
+    cin>>minDistance;
+    
+    vector<int> maxRevenue;
+    maxRevenue.push_back(revenue[0]);
+    int lastboard = boardsLocation[0];
+    
+    for(int i=1; i<totalBoards; i++){
+        int maxVal = INT_MIN;
+        for(int j=1; j<=i; j++){
+            int rev = maxRevenue[0];
+            if(boardsLocation[j] - boardsLocation[j-1] > minDistance){
+                rev += revenue[j];
+            }
+            if(rev>maxVal){
+                maxVal = rev;
+            }
+        }
+        maxVal = max(maxVal, revenue[i]);
+        maxRevenue.push_back(maxVal);
+    }
+    
+    for(int i=0; i<maxRevenue.size(); i++){
+        cout<<maxRevenue[i]<<" ";
+    }
+    
+    return 0;
+} 

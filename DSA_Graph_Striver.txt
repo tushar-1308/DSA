@@ -1,0 +1,1178 @@
+// BFS
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    // 1------2     
+    // | \    | \      6    
+    // |  \   |   4    |
+    // |   \  | /      7
+    // 5------3 
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes+1];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+    
+    vector<int> visited(nodes+1, 0);
+    int components = 0;
+    
+    for(int i=1; i<=nodes; i++){
+        if(!visited[i]){
+            components++;
+            std::queue<int> qu;
+            qu.push(i);
+            while(qu.size()){
+                int currNode = qu.front();
+                qu.pop();
+                for(auto it: graph[currNode]){
+                    if(visited[it]!=1){
+                        visited[it]=1;
+                        qu.push(it);
+                    }
+                }
+            }
+        }
+    }
+    cout<<"Total number of components in graph is: "<<components<<endl;
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 7 8
+Enter the edges: 1 2
+1 5
+1 3
+2 3
+2 4
+3 4
+3 5
+6 7
+Total number of components in graph is: 2
+
+
+
+
+// DFS
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+void dfs(int currNode, vector<int> graph[], vector<int> &visited){
+    
+    if(visited[currNode]){
+        return;
+    }
+    
+    visited[currNode]=1;
+    for(auto it: graph[currNode]){
+        dfs(it, graph, visited);
+    }
+}
+
+int main()
+{
+    // 1------2     
+    // | \    | \      6    
+    // |  \   |   4    |
+    // |   \  | /      7
+    // 5------3 
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes+1];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+    
+    vector<int> visited(nodes+1, 0);
+    int components = 0;
+    
+    for(int i=1; i<=nodes; i++){
+        if(!visited[i]){
+            components++;
+            dfs(i, graph, visited);
+        }
+    }
+    cout<<"Total number of components in graph is: "<<components<<endl;
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 7 8
+Enter the edges: 1 2
+1 5
+1 3
+2 3
+2 4
+3 4
+3 5
+6 7
+Total number of components in graph is: 2
+
+
+
+// Cycle detection in Undirected graph using BFS
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    // eg. 1
+    // 1------2     
+    // | \    | \        
+    // |  \   |   4    
+    // |   \  | /      
+    // 5------3 
+    
+    // eg. 2
+    // 1------2     
+    // | \     \        
+    // |  \     4    
+    // |   \           
+    // 5    3 
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes+1];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+    
+    vector<int> visited(nodes+1, 0);
+    vector<int> parent(nodes+1, -1);
+    bool cycleExists = false;
+    
+    for(int i=1; i<=nodes; i++){
+        if(!visited[i]){
+            parent[i] = -1;
+            visited[i] = 1;
+            std::queue<int> qu;
+            qu.push(i);
+            while(qu.size()){
+                int currNode = qu.front();
+                qu.pop();
+                for(auto it: graph[currNode]){
+                    if(visited[it]!=1){
+                        parent[it] = currNode;
+                        visited[it]=1;
+                        qu.push(it);
+                    }
+                    else if(parent[currNode]!=it){
+                        cycleExists = true;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    if(cycleExists){
+        cout<<"Cycle Exists";
+    }
+    else{
+        cout<<"Cycle does not exists";
+    }
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 5 7
+Enter the edges: 1 2
+1 3
+1 5
+2 4
+2 3
+3 5
+3 4
+Cycle Exists
+
+
+
+
+// Cycle detection in Undirected graph using DFS
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+bool cycleExits = false;
+
+void dfs(int currNode, vector<int> graph[], vector<int> &visited, vector<int> &parent){
+    
+    visited[currNode]=1;
+    for(auto it: graph[currNode]){
+        if(!visited[it]){
+            parent[it] = currNode;
+            dfs(it, graph, visited, parent);
+        }
+        else if(parent[currNode]!=it){
+            cycleExits = true;
+            return;
+        }
+    }
+}
+
+int main()
+{
+    // eg. 1
+    // 1------2     
+    // | \    | \        
+    // |  \   |   4    
+    // |   \  | /      
+    // 5------3 
+    
+    // eg. 2
+    // 1------2     
+    // | \     \        
+    // |  \     4    
+    // |   \           
+    // 5    3 
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes+1];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+    
+    vector<int> visited(nodes+1, 0);
+    vector<int> parent(nodes+1);
+    
+    for(int i=1; i<=nodes; i++){
+        if(!visited[i]){
+            parent[i]=-1;
+            dfs(i, graph, visited, parent);
+        }
+    }
+    if(cycleExits){
+        cout<<"Cycle exists";
+    }
+    else{
+        cout<<"Cycle does not exists";
+    }
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 5 7
+Enter the edges: 1 2
+1 3
+1 5
+2 3
+2 4
+3 4
+3 5
+Cycle exists
+
+
+
+
+// Bipartite Graph (BFS) | Graph Coloring
+
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    // eg. 1
+    //         3----4     
+    //        /      |          
+    //  1---2        |     
+    //        \      |      
+    //         8----5---6---7
+    
+    // eg. 2
+    //         3----4     
+    //        /      \           
+    //  1---2          6---7     
+    //        \      /     
+    //         8----5
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes+1];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+    
+    vector<int> visited(nodes+1, 0);
+    vector<int> color(nodes+1, -1);
+    bool colorPossible = true;
+    
+    for(int i=1; i<=nodes; i++){
+        if(!visited[i]){
+            color[i] = 0;
+            visited[i] = 1;
+            std::queue<int> qu;
+            qu.push(i);
+            while(qu.size()){
+                int currNode = qu.front();
+                qu.pop();
+                for(auto it: graph[currNode]){
+                    if(visited[it]!=1){
+                        color[it] = 1-color[currNode];
+                        visited[it]=1;
+                        qu.push(it);
+                    }
+                    else if(color[it]==color[currNode]){
+                        colorPossible = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    if(colorPossible){
+        cout<<"Color is possible";
+    }
+    else{
+        cout<<"Color is not possible";
+    }
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 8 8
+Enter the edges: 1 2
+2 3
+2 8
+3 4
+8 5
+4 5
+5 6
+6 7
+Color is not possible
+
+
+
+
+
+// Bipartite Graph (DFS) | Graph Coloring
+
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+bool colorPossible = true;
+
+void dfs(int currNode, vector<int> graph[], vector<int> &visited, vector<int> &color){
+    
+    visited[currNode]=1;
+    for(auto it: graph[currNode]){
+        if(!visited[it]){
+            color[it] = 1-color[currNode];
+            dfs(it, graph, visited, color);
+        }
+        else if(color[currNode]==color[it]){
+            colorPossible = false;
+            return;
+        }
+    }
+}
+
+int main()
+{
+    // eg. 1
+    //         3----4     
+    //        /      |          
+    //  1---2        |     
+    //        \      |      
+    //         8----5---6---7
+    
+    // eg. 2
+    //         3----4     
+    //        /      \           
+    //  1---2          6---7     
+    //        \      /     
+    //         8----5
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes+1];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+    
+    vector<int> visited(nodes+1, 0);
+    vector<int> color(nodes+1);
+    
+    for(int i=1; i<=nodes; i++){
+        if(!visited[i]){
+            color[i]=0;
+            dfs(i, graph, visited, color);
+        }
+    }
+    if(colorPossible){
+        cout<<"Color is Possible";
+    }
+    else{
+        cout<<"Color is not Possible";
+    }
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 8 8
+Enter the edges: 1 2
+2 3
+2 8
+3 4
+8 5
+5 6
+6 7
+4 5
+Color is not Possible
+
+
+
+
+// Cycle Detection in Directed Graph using DFS
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+bool cycleExists = false;
+
+void dfs(int currNode, vector<int> graph[], vector<int> &visited, vector<int> &dfsVisited){
+    
+    visited[currNode]=1;
+    dfsVisited[currNode]=1;
+    
+    for(auto it: graph[currNode]){
+        if(!visited[it]){
+            // parent[it] = currNode;
+            dfs(it, graph, visited, dfsVisited);
+        }
+        else if(dfsVisited[it]){
+            cycleExists = true;
+            return;
+        }
+    }
+    dfsVisited[currNode]=0;
+}
+
+int main()
+{
+    // eg. 1
+    // 1---->2---->3--->4    
+    //       ^     |    |
+    //       |     >    >
+    //       7     6--->5
+    //     /   ^
+    //    >      \
+    //   8 -----> 9
+
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes+1];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+    }
+    
+    vector<int> visited(nodes+1, 0);
+    vector<int> dfsVisited(nodes+1, 0);
+    
+    for(int i=1; i<=nodes; i++){
+        if(!visited[i]){
+            dfs(i, graph, visited, dfsVisited);
+        }
+    }
+    if(cycleExists){
+        cout<<"Cycle exists";
+    }
+    else{
+        cout<<"Cycle does not exists";
+    }
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 9 10
+Enter the edges: 1 2
+2 3
+3 4
+3 6
+4 5
+6 5
+7 2
+7 8
+8 9
+9 7
+Cycle exists
+
+
+
+// Topological Sort (DFS)
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+stack<int> topo;
+
+void topologicaldfs(int currNode, vector<int> graph[], vector<int> &visited){
+    
+    visited[currNode]=1;
+    
+    for(auto it: graph[currNode]){
+        if(!visited[it]){
+            // parent[it] = currNode;
+            topologicaldfs(it, graph, visited);
+        }
+    }
+    topo.push(currNode);
+}
+
+int main()
+{
+    // eg. 1
+    //       5---->0<---4    
+    //       |          |
+    //       >          >
+    //       2---->3--->1
+
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes];
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+    }
+    
+    vector<int> visited(nodes, 0);
+    
+    for(int i=0; i<nodes; i++){
+        if(!visited[i]){
+            topologicaldfs(i, graph, visited);
+        }
+    }
+    
+    while(!topo.empty()){
+        cout<<topo.top()<<" ";
+        topo.pop();
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 6 6
+Enter the edges: 2 3
+3 1
+4 0
+4 1
+5 0
+5 2
+5 4 2 3 1 0 
+
+
+
+// Topological Sort (BFS) | Kahn's Algorithm
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+queue<int> topo;
+
+int main()
+{
+    // eg. 1
+    //       5---->0<---4    
+    //       |          |
+    //       >          >
+    //       2---->3--->1
+
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes];
+    vector<int> indegree(nodes);
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        indegree[v]++;
+    }
+    
+    queue<int> qu;
+    
+    for(int i=0; i<indegree.size(); i++){
+        if(indegree[i]==0){
+            topo.push(i);
+            qu.push(i);
+        }
+    }
+    
+    while(!qu.empty()){
+        int elem = qu.front();
+        qu.pop();
+        for(auto it: graph[elem]){
+            indegree[it]--;
+            if(indegree[it]==0){
+                qu.push(it);
+                topo.push(it);
+            }
+        }
+    }
+    
+    while(!topo.empty()){
+        cout<<topo.front()<<" ";
+        topo.pop();
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 6 6
+Enter the edges: 2 3
+3 1
+4 1
+4 0
+5 0
+5 2
+4 5 0 2 3 1 
+
+
+
+// Cycle Detection in Directed Graph using BFS(Kahn's Algorithm)
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    //           > 2
+    //         /  |
+    //  0--->1    |
+    //        ^   |
+    //         \  >
+    //           3
+
+    
+    int nodes, edges;
+    queue<int> topo;
+    queue<int> qu;
+    bool cycleExists = false;
+    
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    vector<int> graph[nodes];
+    vector<int> indegree(nodes);
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        indegree[v]++;
+    }
+ 
+    for(int i=0; i<indegree.size(); i++){
+        if(indegree[i]==0){
+            topo.push(i);
+            qu.push(i);
+        }
+    }
+    
+    while(!qu.empty()){
+        int elem = qu.front();
+        qu.pop();
+        for(auto it: graph[elem]){
+            indegree[it]--;
+            if(indegree[it]==0){
+                qu.push(it);
+                topo.push(it);
+            }
+        }
+    }
+    
+    if(topo.size()!=nodes){
+        cycleExists = true;
+    }
+    
+    if(cycleExists){
+        cout<<"Cycle exists";
+    }
+    else{
+        cout<<"Cycle does not exist";
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 4 4
+Enter the edges: 0 1
+1 2
+3 2
+3 1
+Cycle does not exist
+
+
+
+
+// Shortest Path in Undirected Graph with Unit Weights
+
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    
+    //          1--------2     
+    //        / |          \             
+    //       0  |           \     7
+    //        \ |            \  /   \
+    //          3----4---5----6------8
+    
+    int nodes, edges, src;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    
+    vector<int> graph[nodes];
+    vector<int> distance(nodes, INT_MAX);
+    vector<int> visited(nodes, 0);
+    
+    cout<<"Enter the edges: ";
+    for(int i=0; i<edges; i++){
+        int u,v;
+        cin>>u>>v;
+        graph[u].push_back(v);
+        graph[v].push_back(u);
+    }
+    cout<<"Enter source node: ";
+    cin>>src;
+    
+    queue<int> qu;
+    qu.push(src);
+    visited[src] = 1;
+    distance[src] = 0;
+    
+    while(!qu.empty()){
+        int elem = qu.front();
+        qu.pop();
+        for(auto it: graph[elem]){
+            if(distance[elem] + 1 < distance[it]){
+                distance[it] = distance[elem] + 1;
+            }
+            if(!visited[it]){
+                visited[it]=1;
+                qu.push(it);
+            }
+        }
+    }
+    
+    for(auto it: distance){
+        cout<<it<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 9 11 
+Enter the edges: 0 1
+0 3
+1 3
+1 2
+2 6
+3 4
+4 5
+5 6
+6 7
+6 8
+7 8
+Enter source node: 0
+0 1 2 1 2 3 3 4 4 
+
+
+
+// Shortest Path in Directed Acyclic Graph (DAG)
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    //       2     3     6
+    //    0----->1--->2----->3     6
+    //     \        ^      ^       | 1
+    //    1 \    2 /      /        7
+    //       >   /       / 1
+    //         4        /
+    //          \     /
+    //         4 >  /
+    //            5
+    
+    int nodes, edges, src;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    
+    vector<pair<int, int>> graph[nodes];
+    vector<int> distance(nodes, INT_MAX);
+    vector<int> visited(nodes, 0);
+    
+    cout<<"Enter the edges with weight: ";
+    for(int i=0; i<edges; i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        graph[u].push_back({v,w});
+    }
+    cout<<"Enter source node: ";
+    cin>>src;
+
+    visited[src] = 1;
+    distance[src] = 0;
+    
+    for(int i=0; i<nodes; i++){
+        if(!visited[i]){
+            queue<int> qu;
+            qu.push(src);
+            while(!qu.empty()){
+                int elem = qu.front();
+                qu.pop();
+                for(auto it: graph[elem]){
+                    if(distance[elem] + it.second < distance[it.first]){
+                        distance[it.first] = distance[elem] + it.second;
+                    }
+                    if(!visited[it.first]){
+                        visited[it.first]=1;
+                        qu.push(it.first);
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    for(auto it: distance){
+        cout<<it<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 8 8
+Enter the edges with weight: 0 1 2
+0 4 1
+1 2 3
+2 3 6
+4 2 2
+4 5 4
+5 3 1
+6 7 1
+Enter source node: 0
+0 2 3 6 1 5 2147483647 2147483647 
+
+
+
+
+// Dijkstra's Algorithm | Shortest Path in Undirected Graphs
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    // eg. 1
+    //       2     5    
+    //    0-----1-----4
+    //   1|    4|   /
+    //    | 3   |  /1
+    //    3-----2
+
+    // eg. 2
+    //          1--------2     
+    //        / |          \             
+    //       0  |           \     7
+    //        \ |            \  /   \
+    //          3----4---5----6------8
+    
+    int nodes, edges, src;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    
+    vector<pair<int, int>> graph[nodes];
+    vector<int> distance(nodes, INT_MAX);
+    vector<int> visited(nodes, 0);
+    
+    cout<<"Enter the edges with weight: ";
+    for(int i=0; i<edges; i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        graph[u].push_back({v,w});
+        graph[v].push_back({u,w});
+    }
+    cout<<"Enter source node: ";
+    cin>>src;
+
+    visited[src] = 1;
+    distance[src] = 0;
+    
+    for(int i=0; i<nodes; i++){
+        if(!visited[i]){
+            queue<int> qu;
+            qu.push(src);
+            while(!qu.empty()){
+                int elem = qu.front();
+                qu.pop();
+                for(auto it: graph[elem]){
+                    if(distance[elem] + it.second < distance[it.first]){
+                        distance[it.first] = distance[elem] + it.second;
+                    }
+                    if(!visited[it.first]){
+                        visited[it.first]=1;
+                        qu.push(it.first);
+                    }
+                }
+            }
+        }
+        
+    }
+    
+    for(auto it: distance){
+        cout<<it<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 9 11
+Enter the edges with weight: 0 1 1
+0 3 1
+1 2 1
+1 3 1
+2 6 1
+3 4 1
+4 5 1
+5 6 1
+6 7 1     
+6 8 1
+7 8 1
+Enter source node: 0
+0 1 2 1 2 3 3 4 4 
+
+
+
+
+// Prims Algorithm | Minimum Spanning Tree
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    //       2      3   
+    //    0------1-----2
+    //   6|   /  |5   /
+    //    | /8   |  /7
+    //    3      4
+
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    
+    vector<pair<int, int>> graph[nodes];
+    
+    cout<<"Enter the edges with weight: ";
+    for(int i=0; i<edges; i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        graph[u].push_back({v,w});
+        graph[v].push_back({u,w});
+    }
+    
+    vector<int> parent(nodes, -1);
+    vector<int> key(nodes, INT_MAX);
+    vector<int> mst(nodes, 0);
+    
+    key[0] = 0;
+    
+    for(int i=0; i<nodes-1; i++){
+        
+        int minKey = INT_MAX;
+        int minInd = 0;
+        for(int j=0; j<nodes; j++){
+            if(mst[j]==0 && key[j]<minKey){
+                minKey = key[j];
+                minInd = j;
+            }
+        }
+        mst[minInd] = 1;
+        
+        for(auto it: graph[minInd]){
+            if(mst[it.first]==0 &&  it.second < key[it.first]){
+                key[it.first] = it.second;
+                parent[it.first] = minInd;
+            }
+        }
+    }
+    
+    for(auto it: parent){
+        cout<<it<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 5 6
+Enter the edges with weight: 0 1 2
+1 2 3
+0 3 6
+1 4 5
+2 4 7
+1 3 8
+-1 0 1 0 1 
+
+
+
+// Bellman Ford Algorithm | Detect Negative Weight Cycle in Graphs
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+struct edge{
+    int u;
+    int v;
+    int w;
+    edge(int u, int v, int w){
+        this->u = u;
+        this->v = v;
+        this->w = w;
+    }
+};
+
+int main()
+{
+    //             -2        
+    //          1----->2
+    //     5  ^ |      ^ \3
+    //      /   |      |   >
+    //     0    |-3   6|    4
+    //          |      |   > 
+    //          >      | /-2
+    //          5----->3
+    //             1
+    
+    int nodes, edges;
+    cout<<"Enter number of nodes and edges: ";
+    cin>>nodes>>edges;
+    
+    vector<edge*> graph;
+    
+    cout<<"Enter the edges with weight: ";
+    for(int i=0; i<edges; i++){
+        int u,v,w;
+        cin>>u>>v>>w;
+        graph.push_back(new edge(u, v, w));
+    }
+    
+    vector<int> distance(nodes, INT_MAX);
+    distance[0] = 0;
+    
+    for(int i=0; i<nodes-1; i++){
+        for(auto it: graph){
+            if(distance[it->u]!=INT_MAX){
+                if( distance[it->u] + it->w < distance[it->v]){
+                    distance[it->v] = distance[it->u] + it->w;
+                }
+            }
+        }
+    }
+    
+    for(auto it: distance){
+        cout<<it<<" ";
+    }
+    
+    return 0;
+}
+eg.
+Enter number of nodes and edges: 6 7
+Enter the edges with weight: 0 1 5
+1 2 -2
+1 5 -3
+2 4 3
+3 2 6
+3 4 -2
+5 3 1
+0 5 3 3 1 2

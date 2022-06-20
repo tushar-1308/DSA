@@ -1,0 +1,3075 @@
+// LRU, Quadruplet sum
+
+
+// Find Number of Employees under every Employee
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+int getSizeOfEachLevel(map<string, set<string>> companyHierarchy, string manager, map<string, int> &result){
+    // map<string, set<string>>::iterator it;
+    if(companyHierarchy.find(manager)==companyHierarchy.end()){
+        result[manager]=0;
+        return 1;
+    }
+    
+    set<string> answer = companyHierarchy[manager];
+    set<string>::iterator itr;
+    int size=0;
+    for(auto itr=answer.begin(); itr!=answer.end(); itr++){
+        size+=getSizeOfEachLevel(companyHierarchy, *itr, result);
+    }
+    result[manager]=size;
+    return size+1;
+}
+
+void getCompHierarchy(map<string, string> company){
+    string ceo = "";
+    map<string, string>::iterator itr;
+    itr=company.begin();
+    
+    map<string, set<string>> companyHierarchy;
+    map<string, set<string>>::iterator it;
+    
+    while(itr!=company.end()){
+        if(itr->first==itr->second){
+            ceo=itr->first;
+        }
+        else{
+            it = companyHierarchy.find(itr->second);
+            if(it!=companyHierarchy.end()){
+                companyHierarchy[itr->second].insert(itr->first);
+            }
+            else{
+                set<string> answer;
+                answer.insert(itr->first);
+                companyHierarchy[itr->second] = answer;
+            }
+        }
+        itr++;
+    }
+    cout<<"CEO of the company is: "<<ceo<<endl;
+    cout<<"Managers with no of direct employees: "<<endl;
+    for(auto it=companyHierarchy.begin(); it!=companyHierarchy.end(); it++){
+        cout<<it->first<<" "<<it->second.size()<<endl;
+    }
+    
+    map<string, int> result;
+    map<string, int>::iterator i;
+    int totalNodes = getSizeOfEachLevel(companyHierarchy, ceo, result);
+    cout<<"Managers with total no of employees reporting to them: "<<endl;
+    for(auto i=result.begin(); i!=result.end(); i++){
+        cout<<i->first<<" "<<i->second<<endl;
+    }
+}
+
+int main()
+{
+    string emp, man;
+    map<string, string> company;
+    map<string, string>::iterator it;
+    for(int i=0; i<6; i++){
+        cin>>emp>>man;
+        company[emp] = man;
+    }
+    
+    getCompHierarchy(company);
+    
+    return 0;
+}
+eg.
+A C
+B C
+C F
+D E
+E F
+F F
+CEO of the company is: F
+Managers with no of direct employees: 
+C 2
+E 1
+F 2
+Managers with total no of employees reporting to them: 
+A 0
+B 0
+C 2
+D 0
+E 1
+F 5
+
+
+
+// Reconstruct Itinerary using Hashmaps | Find Itinerary from Tickets using Hashmaps
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void getAllItenary(map<string, string> travel, string &allItenary, string source){
+    
+    if(travel.find(source)==travel.end()){
+        return;
+    }
+    
+    allItenary = allItenary + " -> " + travel[source];
+    getAllItenary(travel, allItenary, travel[source]);
+    
+}
+
+void getOriginalSource(map<string, string> travel){
+    
+    string source = "";
+    map<string, string>::iterator itr;
+    itr=travel.begin();
+    
+    map<string, bool> canBeSource;
+    map<string, bool>::iterator it;
+    
+    while(itr!=travel.end()){
+
+        it = canBeSource.find(itr->first);
+        if(it==canBeSource.end()){
+            canBeSource[itr->first] = true;
+        }
+        else{
+            canBeSource[itr->first] = false;
+        }
+        it = canBeSource.find(itr->second);
+        if(it==canBeSource.end()){
+            canBeSource[itr->second] = false;
+        }
+        else{
+            canBeSource[itr->second] = false;
+        }
+        itr++;
+    }
+    
+    for(auto it=canBeSource.begin(); it!=canBeSource.end(); it++){
+        if(canBeSource[it->first]==true){
+            source = it->first;
+        }
+    }
+    string allItenary = source;
+    getAllItenary(travel, allItenary, source);
+    
+    cout<<"source of destination is: "<<source;
+    cout<<"Itenary of travel is: "<<allItenary;
+}
+
+int main()
+{
+    string source, destination;
+    map<string, string> travel;
+    map<string, string>::iterator it;
+    for(int i=0; i<4; i++){
+        cin>>source>>destination;
+        travel[source] = destination;
+    }
+    
+    getOriginalSource(travel);
+    
+    return 0;
+}
+eg.
+chennai bangalore
+bombay delhi
+goa chennai
+delhi goa
+source of destination is: bombayItenary of travel is: bombay -> delhi -> goa -> chennai -> bangalore
+
+
+
+// Check if Array Pairs are Divisible by K
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+bool answer(map<int, int> frequencyMap, int divisible){
+    
+    map<int, int>::iterator itr;
+    itr=frequencyMap.begin();
+    
+    while(itr!=frequencyMap.end()){
+        if(itr->first==0){
+            if(frequencyMap[itr->first]%2==0){
+                itr++;
+                continue;
+            }
+            else{
+                return false;
+            }
+        }
+        else if(divisible%2==0 && itr->first==divisible/2){
+            if(frequencyMap[itr->first]%2==0){
+                itr++;
+                continue;
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            int count = frequencyMap[itr->first];
+            int othrcnt = frequencyMap[divisible - itr->first];
+            if(count==othrcnt){
+                itr++;
+                continue;
+            }
+            else{
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void checkArrayPairsOrNot(vector<int> numbers, int divisible){
+    
+    map<int, int> frequencyMap;
+    map<int, int>::iterator itr;
+    
+    for(int i=0; i<numbers.size(); i++){
+        int rmndr = numbers[i]%divisible;
+        if(frequencyMap.find(rmndr)==frequencyMap.end()){
+            frequencyMap[rmndr]=1;
+        }
+        else{
+            frequencyMap[rmndr]+=1;
+        }
+    }
+    
+    for(auto itr=frequencyMap.begin(); itr!=frequencyMap.end(); itr++){
+        cout<<itr->first<<" "<<itr->second<<endl;
+    }
+    
+    bool ans = answer(frequencyMap, divisible);
+    if(ans==true){
+        cout<<"Pairs are divisible by divisible.";
+    }
+    else{
+        cout<<"Pairs are not divisible by divisible.";
+    }
+}
+
+int main()
+{
+    int totalNumbers, number, divisible;
+    cout<<"Enter total numbers: ";
+    cin>>totalNumbers;
+    vector<int> numbers;
+    
+    for(int i=0; i<totalNumbers; i++){
+        cin>>number;
+        numbers.push_back(number);
+    }
+    
+    cout<<"Enter the divisible element: ";
+    cin>>divisible;
+    
+    checkArrayPairsOrNot(numbers, divisible);
+    
+    return 0;
+}
+eg.
+Enter total numbers: 12
+77 22 56 20 11 45 34 30 78 29 23 55
+Enter the divisible element: 10
+0 2
+1 1
+2 1
+3 1
+4 1
+5 2
+6 1
+7 1
+8 1
+9 1
+Pairs are divisible by divisible.
+
+
+
+// Distinct Elements in Windows of Size K
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void distinctElemsInKSizeWindow(vector<int> numbers, int windowSize){
+    
+    map<int, int> frequencyMap;
+    
+    for(int i=0; i<windowSize-1; i++){
+        int val = numbers[i];
+        if(frequencyMap.find(val)==frequencyMap.end()){
+            frequencyMap[val]=1;
+        }
+        else{
+            frequencyMap[val]+=1;
+        }
+    }
+    
+    int index = windowSize-1;
+    
+    while(index!=numbers.size()){
+        
+        int val = numbers[index];
+        
+        if(frequencyMap.find(val)==frequencyMap.end()){
+            frequencyMap[val]=1;
+        }
+        else{
+            frequencyMap[val]+=1;
+        }
+        
+        if(index>3){
+            int removeElem = numbers[index-windowSize];
+            if(frequencyMap[removeElem]==1){
+                frequencyMap.erase(removeElem);
+            }
+            else{
+                frequencyMap[removeElem]-=1;
+            }
+        }
+        cout<<frequencyMap.size()<<" ";
+        index++;
+    }
+
+}
+
+int main()
+{
+    int totalNumbers, number, windowSize;
+    cout<<"Enter total numbers: ";
+    cin>>totalNumbers;
+    vector<int> numbers;
+    
+    for(int i=0; i<totalNumbers; i++){
+        cin>>number;
+        numbers.push_back(number);
+    }
+    
+    cout<<"Enter the window size: ";
+    cin>>windowSize;
+    
+    distinctElemsInKSizeWindow(numbers, windowSize);
+    
+    return 0;
+}
+eg.
+Enter total numbers: 16
+2 5 5 6 3 2 3 2 4 5 2 2 2 2 3 6
+Enter the window size: 4
+3 3 4 3 2 3 4 3 3 2 1 2 3 
+
+
+
+// Largest Subarray with 0 Sum | Hashmap & Heaps | Data Structure & Algorithms
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void lgstSubArrWith0Sum(vector<int> numbers){
+    
+    int largestSubArray = 0;
+    map<int, vector<int>> frequencyMap;
+    vector<int> ans{-1};
+    frequencyMap[0]=ans;
+    
+    int sum=0;
+    for(int i=0; i<numbers.size(); i++){
+        sum += numbers[i];
+        if(frequencyMap.find(sum)==frequencyMap.end()){
+            vector<int> ans{
+                i
+            };
+            frequencyMap[sum]=ans;
+        }
+        else{
+            frequencyMap[sum].push_back(i);
+            if(i-frequencyMap[sum][0]>=largestSubArray){
+                cout<<frequencyMap[sum][0]<<" "<<i<<endl;
+                largestSubArray = i-frequencyMap[sum][0];
+            }
+        }
+    }
+    
+    cout<<"Largest sub array with sum is: "<<largestSubArray;
+
+}
+
+int main()
+{
+    int totalNumbers, number;
+    cout<<"Enter total numbers: ";
+    cin>>totalNumbers;
+    vector<int> numbers;
+    
+    for(int i=0; i<totalNumbers; i++){
+        cin>>number;
+        numbers.push_back(number);
+    }
+    
+    lgstSubArrWith0Sum(numbers);
+    
+    return 0;
+}
+eg.
+Enter total numbers: 12
+2 8 -3 -5 2 -4 6 1 2 1 -3 4
+0 3
+-1 5
+1 9
+2 10
+Largest sub array with 0 sum is: 8
+
+
+
+// Count of Zero Sum Subarray using Hashmaps
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void ttlSubArrWith0Sum(vector<int> numbers){
+    
+    int ttlSubArray = 0;
+    map<int, vector<int>> frequencyMap;
+    vector<int> ans{-1};
+    frequencyMap[0]=ans;
+    
+    int sum=0;
+    for(int i=0; i<numbers.size(); i++){
+        sum += numbers[i];
+        if(frequencyMap.find(sum)==frequencyMap.end()){
+            vector<int> ans{
+                i
+            };
+            frequencyMap[sum]=ans;
+        }
+        else{
+            ttlSubArray += frequencyMap[sum].size();
+            frequencyMap[sum].push_back(i);
+            cout<<frequencyMap[sum][0]<<" "<<i<<endl;
+        }
+    }
+    
+    cout<<"Total sub array with 0 sum is: "<<ttlSubArray;
+
+}
+
+int main()
+{
+    int totalNumbers, number;
+    cout<<"Enter total numbers: ";
+    cin>>totalNumbers;
+    vector<int> numbers;
+    
+    for(int i=0; i<totalNumbers; i++){
+        cin>>number;
+        numbers.push_back(number);
+    }
+    
+    ttlSubArrWith0Sum(numbers);
+    
+    return 0;
+}
+eg.
+Enter total numbers: 12
+2 8 -3 -5 2 -4 6 1 2 1 -3 4
+0 3
+-1 5
+2 7
+1 9
+2 10
+Total sub array with 0 sum is: 6
+
+
+
+// Length of Largest Subarray with Contiguous Elements 
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void largestSubArrWithContiguousElem(vector<int> numbers){
+    
+    int largestSubArray = 0;
+    
+    for(int i=0; i<numbers.size()-1; i++){
+        int mini = numbers[i];
+        int maxi = numbers[i];
+        set<int> elems;
+        elems.insert(numbers[i]);
+        
+        for(int j=i+1; j<numbers.size(); j++){
+            if(elems.find(numbers[j])!=elems.end()){
+                break;
+            }
+            elems.insert(numbers[j]);
+            maxi = max(maxi, numbers[j]);
+            mini = min(mini, numbers[j]);
+            if(maxi-mini==j-i){
+                largestSubArray = max(largestSubArray, j-i+1);
+            }
+        }
+    }
+    
+    cout<<"Largest sub array with contiguous sum is: "<<largestSubArray;
+
+}
+
+int main()
+{
+    int totalNumbers, number;
+    cout<<"Enter total numbers: ";
+    cin>>totalNumbers;
+    vector<int> numbers;
+    
+    for(int i=0; i<totalNumbers; i++){
+        cin>>number;
+        numbers.push_back(number);
+    }
+    
+    largestSubArrWithContiguousElem(numbers);
+    
+    return 0;
+}
+eg.
+Enter total numbers: 15
+9 2 7 5 6 23 24 22 23 19 17 16 18 39 0
+Largest sub array with contiguous sum is: 4
+
+
+
+// Minimum Window Substring (Leetcode Hard)
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void minWindowSubstr(string windowString, map<char, int> orgStrFreq, int hashValue){
+    
+    string answer = "";
+    int hash = 0;
+    int i = -1;
+    int j = -1;
+    map<char, int> hashmap;
+    
+    while(true){
+        bool flag1=false;
+        bool flag2=false;
+        // acquire
+        while(i<windowString.size()-1 && hash<hashValue){
+            i++;
+            if(hashmap.find(windowString[i]) == hashmap.end()){
+                hashmap[windowString[i]] = 1;
+            }
+            else{
+                hashmap[windowString[i]] += 1;
+            }
+            if(hashmap[windowString[i]]<=orgStrFreq[windowString[i]]){
+                hash++;
+            }
+            flag1 = true;
+        }
+        // release & collect answers
+        while(j<i && hash==hashValue){
+            string ans = windowString.substr(j+1, i+1);
+            if(answer.size()==0 || ans.size()<answer.size()){
+                cout<<ans<<endl;
+                answer = ans;
+            }
+            j++;
+
+            if(hashmap[windowString[j]] == 1){
+                hashmap.erase(windowString[j]);
+            }
+            else{
+                hashmap[windowString[j]] -= 1;
+            }
+            
+            if(hashmap[windowString[j]] < orgStrFreq[windowString[j]]){
+                hash--;
+            }
+            flag2 = true;
+        }
+        if(flag2==false && flag1==false){
+            break;
+        }
+    }
+    cout<<"Minimum window substring is: "<<answer;
+}
+
+int main()
+{
+    string windowString, orgString;
+    cout<<"Enter window string: ";
+    cin>>windowString;
+    cout<<"Enter original string: ";
+    cin>>orgString;
+    
+    map<char, int> orgStrFreq;
+    for(int i=0; i<orgString.size(); i++){
+        if(orgStrFreq.find(orgString[i])==orgStrFreq.end()){
+            orgStrFreq[orgString[i]] = 1;
+        }
+        else{
+            orgStrFreq[orgString[i]] += 1;
+        }
+    }
+    
+    minWindowSubstr(windowString, orgStrFreq, orgString.size());
+    
+    return 0;
+}
+eg.
+Enter window string: dbaecbbabdcaafbddcabgba
+Enter original string: abbcbc
+Minimum window substring is:
+
+
+
+
+// Minimum Window Substring - II using Hashmaps
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void minWindowSubstr(string windowString, set<char> uniqueChars){
+    
+    string answer = "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq";
+    int i = -1;
+    int j = -1;
+    map<char, int> hashmap;
+    
+    while(true){
+        bool flag1 = false;
+        bool flag2 = false;
+        // acquire
+        while(i<windowString.size()-1 && hashmap.size()<uniqueChars.size()){
+            i++;
+            if(hashmap.find(windowString[i]) == hashmap.end()){
+                hashmap[windowString[i]] = 1;
+            }
+            else{
+                hashmap[windowString[i]] += 1;
+            }
+            flag1 = true;
+        }
+        
+        // release & collect answers
+        while(j<i && hashmap.size() == uniqueChars.size()){
+            string ans = windowString.substr(j+1, i+1);
+            if(ans.size()<answer.size()){
+                cout<<ans<<endl;
+                answer = ans;
+            }
+            j++;
+
+            if(hashmap[windowString[j]] == 1){
+                hashmap.erase(windowString[j]);
+            }
+            else{
+                hashmap[windowString[j]] -= 1;
+            }
+            
+            flag2 = true;
+        }
+        if(flag2==false && flag1==false){
+            break;
+        }
+    }
+    cout<<"Minimum window substring is: "<<answer;
+}
+
+int main()
+{
+    string windowString;
+    cout<<"Enter window string: ";
+    cin>>windowString;
+    
+    set<char> uniqueChars;
+    for(int i=0; i<windowString.size(); i++){
+        uniqueChars.insert(windowString[i]);
+    }
+    
+    minWindowSubstr(windowString, uniqueChars);
+    
+    return 0;
+}
+eg.
+Enter window string: bbacacdcbbcaadcdca
+Minimum window substring is: qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
+
+
+
+// Longest Substring without Repeating Characters (Leetcode Medium)
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void lngSubstrWORptngChr(string windowString){
+    
+    string answer = "";
+    int i = -1;
+    int j = -1;
+    map<char, int> hashmap;
+    
+    while(true){
+        bool flag1 = false;
+        bool flag2 = false;
+        // acquire
+        while(i<windowString.size()-1){
+            i++;
+            if(hashmap.find(windowString[i]) == hashmap.end()){
+                hashmap[windowString[i]] = 1;
+            }
+            else{
+                hashmap[windowString[i]] += 1;
+            }
+            
+            if(hashmap[windowString[i]]==2){
+                break;
+            }
+            else{
+                string ans = windowString.substr(j+1, i);
+                if(ans.size()>answer.size()){
+                    answer = ans;
+                    cout<<answer<<endl;
+                }
+            }
+            flag1 = true;
+        }
+        
+        // release & collect answers
+        while(j<i){
+            j++;
+            hashmap[windowString[j]] -= 1;
+            if(hashmap[windowString[j]] == 1){
+                break;
+            }
+            flag2 = true;
+        }
+        if(flag2==false && flag1==false){
+            break;
+        }
+    }
+    cout<<"Longest substring without repeating  is: "<<answer;
+}
+
+int main()
+{
+    string windowString;
+    cout<<"Enter window string: ";
+    cin>>windowString;
+    
+    lngSubstrWORptngChr(windowString);
+    
+    return 0;
+}
+eg.
+Enter window string: dbaecbbabdcaafbddcabgba
+Longest substring without repeating  is: 
+
+
+
+// Count Substrings without Repeating Characters
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void SubstrsWORptngChr(string windowString){
+    
+    int counts = 0;
+    int i = -1;
+    int j = -1;
+    map<char, int> hashmap;
+    
+    while(true){
+        bool flag1 = false;
+        bool flag2 = false;
+        
+        // acquire
+        while(i<windowString.size()-1){
+            flag1 = true;
+            i++;
+            if(hashmap.size()==0 || hashmap.find(windowString[i]) == hashmap.end()){
+                hashmap[windowString[i]] = 1;
+            }
+            else{
+                hashmap[windowString[i]] += 1;
+            }
+            
+            if(hashmap[windowString[i]]==2){
+                break;
+            }
+            else{
+                counts += i-j;
+                cout<<counts<<endl;
+            }
+            
+        }
+        
+        // release & collect answers
+        while(j<i){
+            flag2 = true;
+            j++;
+            hashmap[windowString[j]] -= 1;
+            if(hashmap[windowString[j]] == 1){
+                counts += i-j;
+                cout<<counts<<endl;
+                break;
+            }
+            
+        }
+        if(flag1==false && flag2==false){
+            break;
+        }
+    }
+    cout<<"substrings without repeating characters is: "<<counts;
+}
+
+int main()
+{
+    string windowString;
+    cout<<"Enter window string: ";
+    cin>>windowString;
+    
+    SubstrsWORptngChr(windowString);
+    
+    return 0;
+}
+eg.
+Enter window string: abcd
+substrings without repeating characters is: 0
+
+
+
+// Longest Substring With Exactly K Distinct Characters 
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void lngSubstrsExctKUnqChrs(string windowString, int k){
+    
+    int i = -1;
+    int j = -1;
+    map<char, int> hashmap;
+    string answer = "";
+    
+    while(true){
+        bool flag1 = false;
+        bool flag2 = false;
+        
+        // acquire
+        while(i<windowString.size()-1 && hashmap.size()<=k){
+            
+            flag1 = true;
+            i++;
+            if(hashmap.find(windowString[i]) == hashmap.end()){
+                hashmap[windowString[i]] = 1;
+            }
+            else{
+                hashmap[windowString[i]] += 1;
+            }
+            string ans = windowString.substr(j+1, i);
+            if(ans.size()>answer.size()){
+                answer = ans;
+            }
+        }
+        
+        // release & collect answers
+        while(j<i && hashmap.size()>k){
+            flag2 = true;
+            j++;
+            if(hashmap[windowString[j]] == 1){
+                hashmap.erase(windowString[j]);
+            }
+            else{
+                hashmap[windowString[j]]-=1;
+            }
+            
+            if(hashmap.size()==k){
+                string ans = windowString.substr(j, i);
+                if(ans.size()>answer.size()){
+                    answer = ans;
+                }
+            }
+        }
+        if(flag1==false && flag2==false){
+            break;
+        }
+    }
+    cout<<"longest substring with exactly k unique characters is: "<<answer;
+}
+
+int main()
+{
+    int k;
+    string windowString;
+    cout<<"Enter window string: ";
+    cin>>windowString;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    lngSubstrsExctKUnqChrs(windowString, k);
+    
+    return 0;
+}
+eg.
+Enter window string: aabcbcdbca
+Enter the value of k: 2
+longest substring with exactly k unique characters is:
+
+
+
+// Count Substrings with K Distinct Characters
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void removeElem(map<char, int> &maps, char chr){
+    if(maps[chr]==1){
+        maps.erase(chr);
+    }
+    else{
+        maps[chr]-=1;
+    }
+}
+
+void SubstrsExctKUnqChrs(string windowString, int k){
+    
+    int i = -1;
+    int j = -1;
+    int rem = -1;
+    int counts = 0;
+    map<char, int> smlhashmap;
+    map<char, int> bighashmap;
+    
+    while(true){
+        bool flag1 = false;
+        bool flag2 = false;
+        bool flag3 = false;
+        
+        // acquire
+        while(i<windowString.size()-1){
+            
+            flag1 = true;
+            i++;
+            if(bighashmap.find(windowString[i]) == bighashmap.end()){
+                bighashmap[windowString[i]] = 1;
+            }
+            else{
+                bighashmap[windowString[i]] += 1;
+            }
+            
+            if(bighashmap.size()==k+1){
+                removeElem(bighashmap, windowString[i]);
+                i--;
+                break;
+            }
+        }
+        
+        // release & collect answers
+        while(j<i){
+            flag2 = true;
+            j++;
+            if(smlhashmap.find(windowString[j]) == smlhashmap.end()){
+                smlhashmap[windowString[j]] = 1;
+            }
+            else{
+                smlhashmap[windowString[j]] += 1;
+            }
+            
+            if(smlhashmap.size()==k){
+                removeElem(smlhashmap, windowString[j]);
+                j--;
+                break;
+            }
+        }
+        
+        while(rem<j){
+            flag3 = true;
+            if(smlhashmap.size()==k-1 && bighashmap.size()==k){
+                counts += j-i;
+            }
+            j++;
+            removeElem(smlhashmap, windowString[j]);
+            removeElem(bighashmap, windowString[j]);
+            
+            if(smlhashmap.size()<k-1 || bighashmap.size()<k){
+                break;
+            }
+        }
+        
+        if(flag1==false && flag2==false && flag3==false){
+            break;
+        }
+    }
+    cout<<"total substrings with exactly k unique characters is: "<<counts;
+}
+
+int main()
+{
+    int k;
+    string windowString;
+    cout<<"Enter window string: ";
+    cin>>windowString;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    SubstrsExctKUnqChrs(windowString, k);
+    
+    return 0;
+}
+eg.
+Enter window string: abcabdabbcfa
+Enter the value of k: 3
+total substrings with exactly k unique characters is: 0
+
+
+
+// Count of Equivalent Subarrays
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void countEqvltSubarrs(vector<int> array){
+    
+    int i = -1;
+    int j = -1;
+    bool flag1 = true;
+    bool flag2 = true;
+    int counts = 0;
+    set<int> unqElems;
+    map<int, int> hashmap;
+    
+    for(int i=0; i<array.size(); i++){
+        unqElems.insert(array[i]);
+    }
+    
+    while(true){
+        flag1 = false;
+        flag2 = false;
+        // acquire
+        while(i<array.size()-1){
+            flag1 = true;
+            i++;
+            if(hashmap.find(array[i]) == hashmap.end()){
+                hashmap[array[i]] = 1;
+            }
+            else{
+                hashmap[array[i]] += 1;
+            }
+            
+            if(hashmap.size() == unqElems.size()){
+                counts += array.size() - i;
+                break;
+            }
+        }
+        
+        // release & collect answers
+        while(j<i){
+            flag2 = true;
+            j++;
+            if(hashmap[array[j]] == 1){
+                hashmap.erase(array[j]);
+            }
+            else{
+                hashmap[array[j]] -= 1;
+            }
+            
+            if(hashmap.size() < unqElems.size()){
+                break;
+            }
+            else{
+                counts += array.size() - i;
+            }
+        }
+        
+        if(flag1==false && flag2==false){
+            break;
+        }
+    }
+    cout<<"count of equivalent subarrays is: "<<counts;
+}
+
+int main()
+{
+    int k, elem;
+    vector<int> array;
+    cout<<"Enter size of array: ";
+    cin>>k;
+    
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        array.push_back(elem);
+    }
+    
+    countEqvltSubarrs(array);
+    
+    return 0;
+}
+eg.
+Enter size of array: 10
+2 5 3 5 2 4 1 3 1 4
+count of equivalent subarrays is: 0
+
+
+
+// Maximum Consecutive Ones - 1 (Leetcode Medium)
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void maxConsctvOnes(string origStr, int k){
+    
+    int i = -1;
+    int j = -1;
+    bool flag1 = true;
+    bool flag2 = true;
+    string longestStr = "";
+    map<char, int> hashmap;
+
+    while(true){
+        flag1 = false;
+        flag2 = false;
+        // acquire
+        while(i<origStr.size()-1){
+            flag1 = true;
+            i++;
+            if(hashmap.find(origStr[i]) == hashmap.end()){
+                hashmap[origStr[i]] = 1;
+            }
+            else{
+                hashmap[origStr[i]] += 1;
+            }
+            
+            if(hashmap['0'] > k){
+                break;
+            }
+            else{
+                string ans = origStr.substr(j+1, i+1);
+                if(ans.size()>longestStr.size()){
+                    longestStr = ans;
+                }
+            }
+        }
+        
+        // release & collect answers
+        while(j<i){
+            flag2 = true;
+            j++;
+            if(hashmap[origStr[j]] == 1){
+                hashmap.erase(origStr[j]);
+            }
+            else{
+                hashmap[origStr[j]] -= 1;
+            }
+            
+            if(hashmap['0'] == k){
+                break;
+            }
+            else{
+                string ans = origStr.substr(j+1, i+1);
+                if(ans.size()>longestStr.size()){
+                    longestStr = ans;
+                }
+            }
+        }
+        
+        if(flag1==false && flag2==false){
+            break;
+        }
+    }
+    cout<<"Maximum consecutive 1's in the string is: "<<longestStr;
+}
+
+int main()
+{
+    int k;
+    string origStr;
+    cout<<"Enter the original string: ";
+    cin>>origStr;
+    cout<<"Enter no of flips allowed: ";
+    cin>>k;
+    
+    maxConsctvOnes(origStr, k);
+    
+    return 0;
+}
+
+OR
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void maxConsctvOnes(string origStr, int k){
+
+    int j = -1;
+    int ans = 0;
+    int counts = 0;
+
+    for(int i=0; i<origStr.size(); i++){
+        
+        if(origStr[i]=='0'){
+            counts++;
+        }
+        while(counts>k){
+            j++;
+            if(origStr[j]=='0'){
+                counts--;
+            }
+        }
+        int len = i-j;
+        if(len>ans){
+            ans = len;
+        }
+    }
+
+    cout<<"Maximum consecutive 1's in the string is: "<<ans;
+}
+
+int main()
+{
+    int k;
+    string origStr;
+    cout<<"Enter the original string: ";
+    cin>>origStr;
+    cout<<"Enter no of flips allowed: ";
+    cin>>k;
+    
+    maxConsctvOnes(origStr, k);
+    
+    return 0;
+}
+eg.
+Enter the original string: 1101001101011
+Enter no of flips allowed: 2
+Maximum consecutive 1's in the string is: 7
+
+
+
+// Maximum Consecutive One's - 2 (Leetcode Medium)
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void maxConsctvOnes(string origStr, int k){
+
+    int j = -1;
+    int ans = 0;
+    int counts = 0;
+
+    for(int i=0; i<origStr.size(); i++){
+        
+        if(origStr[i]=='0'){
+            counts++;
+        }
+        while(counts>k){
+            j++;
+            if(origStr[j]=='0'){
+                counts--;
+            }
+        }
+        int len = i-j;
+        if(len>ans){
+            ans = len;
+        }
+    }
+
+    cout<<"Maximum consecutive 1's in the string is: "<<ans;
+}
+
+int main()
+{
+    int k;
+    string origStr;
+    cout<<"Enter the original string: ";
+    cin>>origStr;
+    
+    maxConsctvOnes(origStr, 1);
+    
+    return 0;
+}
+eg.
+Enter the original string: 1101001101011 
+Maximum consecutive 1's in the string is: 4
+
+
+
+
+// Longest Substring with at most K Unique Characters
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void lngSubstrsAtmostKUnqChrs(string windowString, int k){
+    
+    int i = -1;
+    int j = -1;
+    map<char, int> hashmap;
+    string answer = "";
+    
+    while(true){
+        bool flag1 = false;
+        bool flag2 = false;
+        
+        // acquire
+        while(i<windowString.size()-1 && hashmap.size()<=k){
+            
+            flag1 = true;
+            i++;
+            if(hashmap.find(windowString[i]) == hashmap.end()){
+                hashmap[windowString[i]] = 1;
+            }
+            else{
+                hashmap[windowString[i]] += 1;
+            }
+            string ans = windowString.substr(j+1, i);
+            if(ans.size()>answer.size()){
+                answer = ans;
+            }
+        }
+        
+        // release & collect answers
+        while(j<i && hashmap.size()>k){
+            flag2 = true;
+            j++;
+            if(hashmap[windowString[j]] == 1){
+                hashmap.erase(windowString[j]);
+            }
+            else{
+                hashmap[windowString[j]]-=1;
+            }
+            
+            if(hashmap.size()==k){
+                string ans = windowString.substr(j, i);
+                if(ans.size()>answer.size()){
+                    answer = ans;
+                }
+            }
+        }
+        if(flag1==false && flag2==false){
+            break;
+        }
+    }
+    cout<<"longest substring with exactly k unique characters is: "<<answer;
+}
+
+int main()
+{
+    int k;
+    string windowString;
+    cout<<"Enter window string: ";
+    cin>>windowString;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    lngSubstrsAtmostKUnqChrs(windowString, k);
+    
+    return 0;
+}
+eg.
+Enter window string: ddcacbbaccdedacebb
+Enter the value of k: 3
+longest substring with exactly k unique characters is:
+
+
+
+// Find All Anagrams in a String (Leetcode Medium) 
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void anagramOrNot(string source, string pattern){
+
+    int counts = 0;
+    
+    map<char, int> sourceMap;
+    map<char, int> patternMap;
+    map<char, int>::iterator itr;
+    
+    for(int i=0; i<pattern.size(); i++){
+        if(patternMap.find(pattern[i])==patternMap.end()){
+            patternMap[pattern[i]]=1;
+        }
+        else{
+            patternMap[pattern[i]]+=1;
+        }
+        
+        if(sourceMap.find(source[i])==sourceMap.end()){
+            sourceMap[source[i]]=1;
+        }
+        else{
+            sourceMap[source[i]]+=1;
+        }
+        
+    }
+    
+    for(int i=pattern.size(); i<source.size(); i++){
+        if(sourceMap==patternMap){
+            counts++;
+        }
+        if(sourceMap.find(source[i])==sourceMap.end()){
+            sourceMap[source[i]]=1;
+        }
+        else{
+            sourceMap[source[i]]+=1;
+        }
+        
+        if(sourceMap[source[i-pattern.size()]]==1){
+            sourceMap.erase(source[i-pattern.size()]);
+        }
+        else{
+            sourceMap[source[i-pattern.size()]]-=1;
+        }
+    }
+    cout<<"total anagrams in string are: "<<counts;
+}
+
+int main()
+{
+    string source, pattern;
+    cout<<"Enter source string: ";
+    cin>>source;
+    cout<<"Enter pattern string: ";
+    cin>>pattern;
+    
+    anagramOrNot(source, pattern);
+    
+    return 0;
+}
+eg.
+Enter source string: abbacdadcdab
+Enter pattern string: abbc
+total anagrams in string are: 1
+
+
+
+// Check if two Strings are K Anagrams
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+int kAnagrams(string firstStr, string secStr){
+
+    
+    map<char, int> firstStrMap;
+    map<char, int>::iterator itr;
+    
+    for(int i=0; i<firstStr.size(); i++){
+        if(firstStrMap.find(firstStr[i])==firstStrMap.end()){
+            firstStrMap[firstStr[i]]=1;
+        }
+        else{
+            firstStrMap[firstStr[i]]+=1;
+        }
+    }
+    
+    for(int i=0; i<secStr.size(); i++){
+        if(firstStrMap.find(secStr[i])==firstStrMap.end()){
+            firstStrMap[secStr[i]]=-1;
+        }
+        else{
+            firstStrMap[secStr[i]]-=1;
+        }
+    }
+    int ans = 0;
+    for(auto itr=firstStrMap.begin(); itr!=firstStrMap.end(); itr++){
+        cout<<itr->first<<" "<<itr->second<<endl;
+        if(itr->second>0){
+            ans += itr->second;
+        }
+    }
+    cout<<ans<<endl;
+    return ans;
+}
+
+int main()
+{
+    int k;
+    string firstStr, secStr;
+    cout<<"Enter first string: ";
+    cin>>firstStr;
+    cout<<"Enter second string: ";
+    cin>>secStr;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    int ans = kAnagrams(firstStr, secStr);
+    if(ans<=k){
+        cout<<"strings are k anagrams";
+    }
+    else{
+        cout<<"strings are not k anagrams";
+    }
+    return 0;
+}
+eg.
+Enter first string: aabbbc
+Enter second string: badaba
+Enter the value of k: 1
+a -1
+b 1
+c 1
+d -1
+2
+strings are not k anagrams
+
+
+
+// Find Anagrams Mappings using Hashmaps
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+struct mapping{
+    int currInd;
+    vector<int> indexes;
+};
+
+void anagramsMapping(vector<int> firstArr, vector<int> secArr){
+    
+    map<int, mapping*> anagMap;
+    map<int, mapping*>::iterator itr;
+    vector<int> mappedArray;
+    
+    for(int i=0; i<secArr.size(); i++){
+        if(anagMap.find(secArr[i])==anagMap.end()){
+            mapping* mapped = new mapping();
+            mapped->currInd = 0;
+            mapped->indexes.push_back(i);
+            anagMap[secArr[i]] = mapped;
+        }
+        else{
+            mapping* mapped = anagMap[secArr[i]];
+            mapped->indexes.push_back(i);
+        }
+    }
+    
+    // itr=anagMap.begin();
+    // while(itr!=anagMap.end()){
+        
+    //     cout<<itr->first<<"::";
+    //     mapping* ans = itr->second;
+    //     for(int i=0; i<ans->indexes.size(); i++){
+    //         cout<<ans->indexes[i]<<", ";
+    //     }
+    //     cout<<endl;
+    //     itr++;
+    // }
+    
+    for(int i=0; i<firstArr.size(); i++){
+        mappedArray.push_back(anagMap[firstArr[i]]->indexes[anagMap[firstArr[i]]->currInd]);
+        anagMap[firstArr[i]]->currInd++;
+    }
+    
+    for(int i=0; i<mappedArray.size(); i++){
+        cout<<mappedArray[i]<<" ";
+    }
+    
+}
+
+int main()
+{
+    int k;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<int> firstArr;
+    vector<int> secArr;
+    int elem;
+    
+    cout<<"Enter elems for first array: ";
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        firstArr.push_back(elem);
+    }
+    cout<<"Enter elems for second array: ";
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        secArr.push_back(elem);
+    }
+    
+    anagramsMapping(firstArr, secArr);
+    
+    return 0;
+}
+eg.
+Enter the value of k: 9
+Enter elems for first array: 2 7 9 2 8 1 1 3 9
+Enter elems for second array: 3 1 2 9 8 1 7 9 2
+2 6 3 8 4 1 5 0 7 
+
+
+
+// Group Anagrams Explained | Hashmap
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void groupAnagrams(vector<string> stringArr){
+    
+    map<map<char, int>, vector<string>> anagramStringsGroups;
+    map<char, int>::iterator it;
+    map<map<char, int>, vector<string>>::iterator itr;
+    
+    for(int i=0; i<stringArr.size(); i++){
+        
+        map<char, int> maps;
+        for(int j=0; j<stringArr[i].size(); j++){
+            if(maps.find(stringArr[i][j])==maps.end()){
+                maps[stringArr[i][j]]=1;
+            }
+            else{
+                maps[stringArr[i][j]]+=1;
+            }
+        }
+        if(anagramStringsGroups.find(maps)==anagramStringsGroups.end()){
+            vector<string> ans{
+                stringArr[i]
+            };
+            anagramStringsGroups[maps] = ans;
+        }
+        else{
+            anagramStringsGroups[maps].push_back(stringArr[i]);
+        }
+    }
+    
+    for(itr=anagramStringsGroups.begin(); itr!=anagramStringsGroups.end(); itr++){
+        // it = itr->first.begin();
+        // while(it!=itr->first.end()){
+        //     cout<<it->first<<it->second;
+        //     it++;
+        // }
+        // cout<<" ";
+        for(int i=0; i<itr->second.size(); i++){
+            cout<<itr->second[i]<<", ";
+        }
+        cout<<endl;
+    }
+    
+}
+
+int main()
+{
+    int k;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<string> stringArr;
+    string str;
+    
+    cout<<"Enter elems for first array: ";
+    for(int i=0; i<k; i++){
+        cin>>str;
+        stringArr.push_back(str);
+    }
+    
+    groupAnagrams(stringArr);
+    
+    return 0;
+}
+eg.
+Enter the value of k: 8
+Enter elems for first array: abcc acbc badc abcd dabb babd dbca cabc
+badc, abcd, dbca, 
+abcc, acbc, cabc, 
+dabb, babd,
+
+
+
+// Group Shifted Strings | Hashmap
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+void groupShiftedStrings(vector<string> stringArr){
+    
+    map<string, vector<string>> shiftedStringsGroups;
+    map<char, int>::iterator it;
+    map<string, vector<string>>::iterator itr;
+    
+    for(int i=0; i<stringArr.size(); i++){
+        
+        string ans = "";
+        for(int j=1; j<stringArr[i].size(); j++){
+            int val = (int)stringArr[i][j] - (int)stringArr[i][j-1];
+            if(val<0){
+                val += 26;
+            }
+            ans += to_string(val);
+            ans += "#";
+        }
+        if(shiftedStringsGroups.find(ans)==shiftedStringsGroups.end()){
+            vector<string> vect{
+                stringArr[i]
+            };
+            shiftedStringsGroups[ans] = vect;
+        }
+        else{
+            shiftedStringsGroups[ans].push_back(stringArr[i]);
+        }
+    }
+    
+    for(itr=shiftedStringsGroups.begin(); itr!=shiftedStringsGroups.end(); itr++){
+        // it = itr->first.begin();
+        // while(it!=itr->first.end()){
+            cout<<itr->first<<"::";
+        //     it++;
+        // }
+        for(int i=0; i<itr->second.size(); i++){
+            cout<<itr->second[i]<<", ";
+        }
+        cout<<endl;
+    }
+    
+}
+
+int main()
+{
+    int k;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<string> stringArr;
+    string str;
+    
+    cout<<"Enter elems for string array: ";
+    for(int i=0; i<k; i++){
+        cin>>str;
+        stringArr.push_back(str);
+    }
+    
+    groupShiftedStrings(stringArr);
+    
+    return 0;
+}
+eg.
+Enter the value of k: 9
+Enter elems for string array: acd dfg mop wyz yab a x bdfh moqs
+::a, x, 
+2#1#::acd, dfg, mop, wyz, yab, 
+2#2#2#::bdfh, moqs, 
+
+
+
+// Isomorphic Strings Leetcode Solution
+
+
+
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+bool isomorphicStrings(string firstStr, string secStr){
+    
+    map<char, char> strMap;
+    map<char, char>::iterator itr;
+    map<char, bool> mapOrNot;
+    
+    for(int i=0; i<firstStr.size(); i++){
+        
+        if(strMap.find(firstStr[i]) == strMap.end()){
+            if(mapOrNot.find(secStr[i]) == mapOrNot.end()){
+                mapOrNot[secStr[i]] = true;
+                strMap[firstStr[i]] = secStr[i];
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            if(strMap[firstStr[i]] != secStr[i]){
+                return false;
+            }
+        }
+    }
+    return true;
+    
+}
+
+int main()
+{
+    string firstStr, secStr;
+    cout<<"Enter the first string: ";
+    cin>>firstStr;
+    cout<<"Enter the second string: ";
+    cin>>secStr;
+    
+    bool ans = isomorphicStrings(firstStr, secStr);
+    
+    if(ans){
+        cout<<"Strings are isomorphic";
+    }
+    else{
+        cout<<"Strings are not isomorphic";
+    }
+    
+    return 0;
+}
+eg.
+Enter the first string: abacba
+Enter the second string: xyxwyx
+Strings are isomorphic
+
+
+
+// Word Pattern (Leetcode) Explained
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+bool wordPatterns(string firstStr, vector<string> secStrArr){
+    
+    map<char, string> strMap;
+    map<char, string>::iterator itr;
+    map<string, bool> mapOrNot;
+    
+    for(int i=0; i<firstStr.size(); i++){
+        
+        if(strMap.find(firstStr[i]) == strMap.end()){
+            if(mapOrNot.find(secStrArr[i]) == mapOrNot.end()){
+                mapOrNot[secStrArr[i]] = true;
+                strMap[firstStr[i]] = secStrArr[i];
+            }
+            else{
+                return false;
+            }
+        }
+        else{
+            if(strMap[firstStr[i]] != secStrArr[i]){
+                return false;
+            }
+        }
+    }
+    return true;
+    
+}
+
+int main()
+{
+    string firstStr;
+    string secStr;
+    cout<<"Enter the first string: ";
+    cin>>firstStr;
+    cout<<"Enter the second string: ";
+    getline(cin, secStr);
+    
+    std::vector<string> secStrArr;
+    string str = "";
+    for(int i=0; i<secStr.size(); i++){
+        if(secStr[i] != ' '){
+            str += secStr[i];
+        }
+        else{
+            cout<<secStrArr.size()<<endl;
+            secStrArr.push_back(strs);
+            str = "";
+        }
+    }
+    secStrArr.push_back(str);
+    
+    for(int i=0; i<secStrArr.size(); i++){
+        cout<<secStrArr[i]<<endl;
+    }
+    
+    bool ans = wordPatterns(firstStr, secStrArr);
+    
+    if(ans){
+        cout<<"word pattern forms";
+    }
+    else{
+        cout<<"word pattern not formed";
+    }
+    
+    return 0;
+}
+eg.
+Enter the first string: abc
+Enter the second string: 
+terminate called after throwing an instance of 'std::logic_error'
+  what():  basic_string::_M_construct null not valid
+
+
+
+// Longest Subarray with Sum Divisible by K
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int longstSubArrayWdSumDvsblByK(vector<int> vect, int k){
+    
+    map<int, int> intMap;
+    map<int, int>::iterator itr;
+    
+    intMap[0] = -1;
+    int lngstSubArray = 0;
+    int sum = 0;
+    for(int i=0; i<vect.size(); i++){
+        sum += vect[i];
+        if(intMap.find(sum%k)==intMap.end()){
+            intMap[sum%k] = i;
+        }
+        else{
+            int ans = i - intMap[sum%k];
+            if(ans>lngstSubArray){
+                lngstSubArray = ans;
+            }
+        }
+    }
+    
+    return lngstSubArray;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<int> vect;
+    for(int i=0; i<12; i++){
+        cin>>elem;
+        vect.push_back(elem);
+    }
+    
+    int ans = longstSubArrayWdSumDvsblByK(vect, k);
+    
+    cout<<"Longest subarray sum divisible by k is: "<<ans;
+    
+    return 0;
+}
+eg.
+Enter the value of k: 5 
+2 4 8 1 7 3 6 1 9 2 7 3
+Longest subarray sum divisible by k is: 11
+
+
+
+// Subarrays Sums Divisible by K
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int SubArrayWdSumDvsblByK(vector<int> vect, int k){
+    
+    map<int, int> intMap;
+    map<int, int>::iterator itr;
+    
+    intMap[0] = 1;
+    int SubArray = 0;
+    int sum = 0;
+    for(int i=0; i<vect.size(); i++){
+        sum += vect[i];
+        if(intMap.find(sum%k)==intMap.end()){
+            intMap[sum%k] = 1;
+        }
+        else{
+            SubArray += intMap[sum%k];
+            intMap[sum%k] += 1;
+        }
+    }
+    
+    return SubArray;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<int> vect;
+    for(int i=0; i<7; i++){
+        cin>>elem;
+        vect.push_back(elem);
+    }
+    
+    int ans = SubArrayWdSumDvsblByK(vect, k);
+    
+    cout<<"subarrays sum divisible by k is: "<<ans;
+    
+    return 0;
+}
+eg.
+Enter the value of k: 7
+2 3 5 4 5 3 4
+subarrays sum divisible by k is: 4
+
+
+
+// Contiguous Array (Leetcode 525) Solution | Longest Subarray with Equal 0's and 1's
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int longstSubArrayWdEql0and1(vector<int> vect){
+    
+    map<int, int> intMap;
+    map<int, int>::iterator itr;
+    
+    intMap[0] = -1;
+    int lngstSubArray = 0;
+    int sum = 0;
+    for(int i=0; i<vect.size(); i++){
+        if(vect[i]==1){
+            sum += vect[i];
+        }
+        else{
+            sum += -1;
+        }
+        if(intMap.find(sum)==intMap.end()){
+            intMap[sum] = i;
+        }
+        else{
+            int ans = i - intMap[sum];
+            if(ans>lngstSubArray){
+                lngstSubArray = ans;
+            }
+        }
+    }
+    
+    return lngstSubArray;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<int> vect;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        vect.push_back(elem);
+    }
+    
+    int ans = longstSubArrayWdEql0and1(vect);
+    
+    cout<<"Longest subarray sum divisible by k is: "<<ans;
+    
+    return 0;
+}
+eg.
+Enter the value of k: 13
+0 0 1 0 1 0 1 1 0 0 1 1 1
+Longest subarray sum divisible by k is: 12
+
+
+
+// Longest Subarray with Equal 0s 1s and 2s
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int longstSubArrayWdEql0and1and2(vector<int> vect){
+    
+    map<string, int> intMap;
+    map<string, int>::iterator itr;
+    
+    intMap["0#0"] = -1;
+    int count0 = 0;
+    int count1 = 0;
+    int count2 = 0;
+    int lngstSubArray = 0;
+
+    for(int i=0; i<vect.size(); i++){
+        if(vect[i] == 0){
+            count0 += 1;
+        }
+        else if(vect[i] == 1){
+            count1 += 1;
+        }
+        else{
+            count2 += 1;
+        }
+        
+        string val = to_string(count1 - count0) + "#" + to_string(count2 - count1);
+        
+        if(intMap.find(val)==intMap.end()){
+            intMap[val] = i;
+        }
+        else{
+            int ans = i - intMap[val];
+            if(ans>lngstSubArray){
+                lngstSubArray = ans;
+            }
+        }
+    }
+    
+    return lngstSubArray;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<int> vect;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        vect.push_back(elem);
+    }
+    
+    int ans = longstSubArrayWdEql0and1and2(vect);
+    
+    cout<<"Longest subarray with equal 0's, 1's and 2's is: "<<ans;
+    
+    return 0;
+}
+eg.
+Enter the value of k: 13
+1 1 2 0 1 0 1 2 1 2 2 0 1
+Longest subarray with equal 0's, 1's and 2's is: 9
+
+
+// Pairs with Equal Sum
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+void pairsWdEqlSum(vector<int> vect){
+    
+    map<int, vector<vector<int>>> intMap;
+    map<int, vector<vector<int>>>::iterator itr;
+
+    for(int i=0; i<vect.size()-1; i++){
+        for(int j=i+1; j<vect.size(); j++){
+            int sum = vect[i] + vect[j];
+            vector<int> val{
+                vect[i], vect[j]
+            };
+            if(intMap.find(sum)==intMap.end()){
+                vector<vector<int>> ans{
+                    val
+                };
+                intMap[sum] = ans;
+            }
+            else{
+                intMap[sum].push_back(val);
+            }
+        }
+    }
+    itr = intMap.begin();
+    while(itr!=intMap.end()){
+        cout<<itr->first<<":";
+        for(int i=0; i<itr->second.size(); i++){
+            cout<<itr->second[i][0]<<","<<itr->second[i][1]<<" ";
+        }
+        cout<<endl;
+        itr++;
+    }
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    vector<int> vect;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        vect.push_back(elem);
+    }
+    
+    pairsWdEqlSum(vect);
+    
+    return 0;
+}
+eg.
+Enter the value of k: 7
+2 9 3 5 8 6 4
+5:2,3 
+6:2,4 
+7:2,5 3,4 
+8:2,6 3,5 
+9:3,6 5,4 
+10:2,8 6,4 
+11:2,9 3,8 5,6 
+12:9,3 8,4 
+13:9,4 5,8 
+14:9,5 8,6 
+15:9,6 
+17:9,8
+
+
+// Fraction to Recurring Decimal | Not working
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+string fractionToRecurringDecimal(int number, int divisor){
+    
+    map<int, string> intMap;
+    map<int, string>::iterator itr;
+
+    string ans = to_string(number/divisor) + ".";
+    int remaiinder = number%divisor;
+    intMap[remaiinder] = '.';
+    int numb = remaiinder*10;
+    string flags = to_string(numb/divisor);
+    remaiinder = numb%divisor;
+    
+    while(remaiinder!=0 && intMap.find(remaiinder)==intMap.end()){
+        
+        intMap[remaiinder] = to_string(numb/divisor);
+        ans += to_string(numb/divisor);
+        flags = to_string(numb/divisor);
+        numb = remaiinder*10;
+        remaiinder = numb%divisor;
+        
+    }
+    ans += to_string(numb/divisor);
+    
+    cout<<ans<<" "<<flags<<endl;
+    
+    // string answer = "";
+    // for(int i=0; i<ans.size(); i++){
+    //     if(ans[i]==flag){
+    //         answer += "(" + ans[i];
+    //     }
+    //     else{
+    //         answer += ans[i];
+    //     }
+    // }
+    // answer += ")";
+    
+    return ans;
+}
+
+int main()
+{
+    int number, divisor;
+    cout<<"Enter the value of number and divisor: ";
+    cin>>number>>divisor;
+    
+    string ans = fractionToRecurringDecimal(number, divisor);
+    cout<<ans;
+    
+    return 0;
+}
+eg.
+Enter the value of number and divisor: 428 125
+3.424 2
+3.424
+
+
+// Rabbits in Forest (Leetcode 781)
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int rabbitsInForest(vector<int> rabbits){
+    
+    map<int, int> rabbitsReported;
+    map<int, int>::iterator itr;
+    for(int i=0; i<rabbits.size(); i++){
+        if(rabbitsReported.find(rabbits[i])==rabbitsReported.end()){
+            rabbitsReported[rabbits[i]] = 1;
+        }
+        else{
+            rabbitsReported[rabbits[i]] += 1;
+        }
+    }
+    
+    int ans = 0;
+    itr = rabbitsReported.begin();
+    
+    while(itr!=rabbitsReported.end()){
+        if(itr->second%(itr->first+1)==0){
+            ans += itr->second/(itr->first+1)*(itr->first+1);
+        }
+        else{
+            ans += (itr->second/(itr->first+1) + 1)*(itr->first+1);
+        }
+        itr++;
+    }
+    
+    return ans;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    std::vector<int> rabbits;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        rabbits.push_back(elem);
+    }
+    
+    int ans = rabbitsInForest(rabbits);
+    cout<<"Minimum rabbits in forest is: "<<ans;
+    
+    return 0;
+}
+eg.
+Enter the value of k: 33
+2 2 2 2 2 2 2 3 3 3 3 3 3 3 3 3 3 3 3 3 3 4 4 4 4 4 4 4 0 0 1 1 1
+Minimum rabbits in forest is: 41
+
+
+
+// Double Pair Array | Hashmaps and Heaps
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+bool doublePairArray(vector<int> elements){
+    
+    map<int, int> elemMapping;
+    map<int, int>::iterator itr;
+    for(int i=0; i<elements.size()-1; i++){
+        for(int j=i+1; j<elements.size(); j++){
+            if(abs(elements[j])<abs(elements[i])){
+                int temp = elements[j];
+                elements[j] = elements[i];
+                elements[i] = temp;
+            }
+        }
+    }
+    
+    for(int i=0; i<elements.size(); i++){
+        if(elemMapping.find(elements[i]) == elemMapping.end()){
+            elemMapping[elements[i]]=1;
+        }
+        else{
+            elemMapping[elements[i]]+=1;
+        }
+    }
+    
+    for(int i=0; i<elements.size(); i++){
+        if(elemMapping[elements[i]]>0){
+            if(elemMapping.find(2*elements[i])!=elemMapping.end() && elemMapping[2*elements[i]]>0){
+                elemMapping[elements[i]]-=1;
+                elemMapping[2*elements[i]]-=1;
+            }
+            else{
+                return false;
+            }
+        }
+    }
+    
+    return true;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    std::vector<int> elements;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        elements.push_back(elem);
+    }
+    
+    bool ans = doublePairArray(elements);
+    if(ans){
+        cout<<"Array is double pair array";
+    }
+    else{
+        cout<<"Array is not double pair array";
+    }
+    
+    return 0;
+}
+eg.
+Enter the value of k: 16
+-8 -3 8 8 4 -6 -4 2 0 2 1 4 0 16 8 4
+Array is double pair array
+
+
+// Arithmetic Sequence
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+bool APornot(vector<int> elements){
+    
+    set<int> APseries;
+    int smallest = INT_MAX;
+    int largest = INT_MIN;
+    for(int i=0; i<elements.size(); i++){
+        if(elements[i]<smallest){
+            smallest = elements[i];
+        }
+        if(elements[i]>largest){
+            largest = elements[i];
+        }
+        APseries.insert(elements[i]);
+    }
+    
+    int d = (largest - smallest)/(elements.size()-1);
+    for(int i=1; i<elements.size()-1; i++){
+        if(APseries.find(smallest + d*i)==APseries.end()){
+            return false;
+        }
+    }
+    
+    return true;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    std::vector<int> elements;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        elements.push_back(elem);
+    }
+    
+    bool ans = APornot(elements);
+    if(ans){
+        cout<<"Array is AP series";
+    }
+    else{
+        cout<<"Array is not AP series";
+    }
+    
+    return 0;
+}
+eg.
+Enter the value of k: 10
+17 9 5 30 1 25 13 37 21 33
+Array is not AP series
+
+
+
+// Smallest subarray with highest frequency element
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int smallestSubArrWdHighestFrq(vector<int> elements){
+    
+    map<int, int> startIndex;
+    map<int, int> freqMap;
+    
+    int heighestFreq = 0;
+    int startInd, endInd, length;
+    
+    for(int i=0; i<elements.size(); i++){
+        if(freqMap.find(elements[i])==freqMap.end()){
+            freqMap[elements[i]] = 1;
+            startIndex[elements[i]] = i;
+            if(freqMap[elements[i]]>heighestFreq){
+                heighestFreq = freqMap[elements[i]];
+                startInd = startIndex[elements[i]];
+                endInd = i;
+                length = endInd - startInd + 1;
+            }
+        }
+        else{
+            freqMap[elements[i]] += 1;
+            if(freqMap[elements[i]]==heighestFreq){
+                startInd = startIndex[elements[i]];
+                endInd = i;
+                length = std::min(length, endInd - startInd + 1);
+            }
+            else if(freqMap[elements[i]]>heighestFreq){
+                heighestFreq = freqMap[elements[i]];
+                startInd = startIndex[elements[i]];
+                endInd = i;
+                length = endInd - startInd + 1;
+            }
+        }
+    }
+    
+    return length;
+}
+
+int main()
+{
+    int k, elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    std::vector<int> elements;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        elements.push_back(elem);
+    }
+    
+    int ans = smallestSubArrWdHighestFrq(elements);
+    cout<<ans;
+    
+    return 0;
+}
+eg.
+Enter the value of k: 13
+1 3 2 4 2 3 4 2 5 6 5 5 7
+4
+
+
+// Pairs With Given Sum in Two Sorted Matrices
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> pairsWdGvnSumIn2SrtdMtrcs(int sum, vector<vector<int>> firstArray, vector<vector<int>> secArray){
+    
+    vector<vector<int>> ans;
+    
+    set<int> firstArrayElems;
+    for(int i=0; i<firstArray.size(); i++){
+        for(int j=0; j<firstArray[i].size(); j++){
+            firstArrayElems.insert(firstArray[i][j]);
+        }
+    }
+
+    for(int i=0; i<secArray.size(); i++){
+        for(int j=0; j<secArray[i].size(); j++){
+            if(firstArrayElems.find(sum - secArray[i][j])!=firstArrayElems.end()){
+                vector<int> vect{
+                    secArray[i][j], sum - secArray[i][j]
+                };
+                ans.push_back(vect);
+            }
+        }
+    }
+    
+    return ans;
+}
+
+int main()
+{
+    int sum;
+    cout<<"Enter the value of sum: ";
+    cin>>sum;
+    
+    vector<vector<int>> firstArray{
+        {1,5,6},
+        {8,10,11},
+        {15,16,18}
+    };
+    vector<vector<int>> secArray{
+        {2,4,7},
+        {9,10,12},
+        {13,16,20}
+    };
+    
+    vector<vector<int>> ans = pairsWdGvnSumIn2SrtdMtrcs(sum, firstArray, secArray);
+    
+    for(int i=0; i<ans.size(); i++){
+        cout<<ans[i][0]<<" "<<ans[i][1]<<endl;
+    }
+    
+    return 0;
+}
+eg.
+Enter the value of sum: 21
+10 11
+13 8
+16 5
+20 1
+
+
+// Powerful Numbers
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+set<int> powerfulIntegers(int x, int y, int bound){
+    
+    set<int> ans;
+    for(int i=1; i<bound; i*=x){
+        for(int j=1; i+j<=bound; j*=y){
+            ans.insert(i+j);
+        }
+    }
+    
+    return ans;
+}
+
+int main()
+{
+    // x**i + y**j <= bound
+    // 1<=x,y<=100
+    // 1<=bound<=10**6
+    
+    int x,y,bound;
+    cout<<"Enter the value of x, y & bound: ";
+    cin>>x>>y>>bound;
+    
+    set<int> ans = powerfulIntegers(x, y, bound);
+    set<int>::iterator itr;
+    itr=ans.begin();
+    
+    while(itr!=ans.end()){
+        cout<<*itr<<" ";
+        itr++;
+    }
+    
+    return 0;
+}
+eg.
+Enter the value of x, y & bound: 2 3 10
+2 3 4 5 7 9 10 
+
+
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int gcd(int a, int b){
+    if(b==0){
+        return a;
+    }
+    return gcd(b, a%b);
+}
+
+int xOfAKindInDeck(map<int, int> elemMap){
+    
+    std::vector<int> freqVector;
+    map<int, int>::iterator itr;
+    itr = elemMap.begin();
+    while(itr!=elemMap.end()){
+        freqVector.push_back(itr->second);
+        itr++;
+    }
+    
+    int ans = 0;
+    for(int i=0; i<freqVector.size(); i++){
+        ans = gcd(ans, freqVector[i]);
+    }
+    
+    return ans;
+}
+
+int main()
+{
+    int k,elem;
+    cout<<"Enter the value of k: ";
+    cin>>k;
+    
+    map<int, int> elemMap;
+    for(int i=0; i<k; i++){
+        cin>>elem;
+        if(elemMap.find(elem)==elemMap.end()){
+            elemMap[elem]=1;
+        }
+        else{
+            elemMap[elem]+=1;
+        }
+    }
+    
+    int ans = xOfAKindInDeck(elemMap);
+    
+    if(ans<2){
+        cout<<"Equal deck is not possible, as gcd is: "<<ans;
+    }
+    else{
+        cout<<"Equal deck is possible, as gcd is: "<<ans;
+    }
+    
+    return 0;
+}
+eg.
+Enter the value of k: 18
+2 2 2 2 3 3 3 3 3 3 4 4 4 4 4 4 4 4
+Equal deck is possible, as gcd is: 2
+
+
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+int brickWall(vector<vector<int>> bricksStructure){
+    
+    map<int, int> brickGap;
+    map<int, int>::iterator itr;
+    
+    for(int i=0; i<bricksStructure.size(); i++){
+        int ans = 0;
+        for(int j=0; j<bricksStructure[i].size()-1; j++){
+            ans += bricksStructure[i][j];
+            if(brickGap.find(ans)==brickGap.end()){
+                brickGap[ans] = 1;
+            }
+            else{
+                brickGap[ans] += 1; 
+            }
+        }
+    }
+    
+    int ans = INT_MIN;
+    itr=brickGap.begin();
+    while(itr!=brickGap.end()){
+        if(itr->second>ans){
+            ans = itr->second;
+        }
+        itr++;
+    }
+    
+    return ans;
+}
+
+int main()
+{
+
+    vector<vector<int>> bricksStructure{
+        {1,2,2,1},
+        {3,1,2},
+        {1,3,2},
+        {2,4},
+        {3,1,2},
+        {1,3,1,1}
+    };
+    
+    int ans = brickWall(bricksStructure);
+    cout<<"Minimize the brick crossing at: "<<ans;
+    return 0;
+}
+eg.
+Minimize the brick crossing at: 4
+
+
+
+
+
+#include <iostream>
+#include <string>
+#include <bits/stdc++.h>
+using namespace std;
+
+map<int, stack<int>> maxFrequencyStack;
+map<int, stack<int>>::iterator itr;
+map<int, int> FrequencyMap;
+int maxFrequency = 0;
+
+void push(int elem){
+    if(FrequencyMap.find(elem)==FrequencyMap.end()){
+        FrequencyMap[elem] = 1;
+    }
+    else{
+        FrequencyMap[elem] += 1;
+    }
+    
+    if(FrequencyMap[elem]>maxFrequency){
+        maxFrequency = FrequencyMap[elem];
+    }
+    
+    if(maxFrequencyStack.find(FrequencyMap[elem])==maxFrequencyStack.end()){
+        stack<int> st;
+        st.push(elem);
+        maxFrequencyStack[FrequencyMap[elem]] = st;
+    }
+    else{
+        maxFrequencyStack[FrequencyMap[elem]].push(elem);
+    }
+}
+
+int pop(){
+    int ans = maxFrequencyStack[maxFrequency].top();
+    maxFrequencyStack[maxFrequency].pop();
+    if(maxFrequencyStack[maxFrequency].size()==0){
+        maxFrequencyStack.erase(maxFrequency);
+        maxFrequency--;
+        if(FrequencyMap[ans]==1){
+            FrequencyMap.erase(ans);
+        }
+        else{
+            FrequencyMap[ans] -= 1;
+        }
+    }
+    else{
+        if(FrequencyMap[ans]==1){
+            FrequencyMap.erase(ans);
+        }
+        else{
+            FrequencyMap[ans] -= 1;
+        }
+    }
+    return ans;
+}
+
+int main()
+{
+    // Maximum frequency stack is pushing normally like normal stack but popping out highest frequency element
+    // if two element have maximum and same freq. than pop out latest top most elem. 
+    
+    push(12);
+    push(14);
+    push(12);
+    push(13);
+    push(14);
+    push(13);
+    push(14);
+    cout<<pop()<<endl;
+    cout<<pop()<<endl;
+    cout<<pop()<<endl;
+    push(15);
+    cout<<pop()<<endl;
+    push(15);
+    cout<<pop()<<endl;
+
+    return 0;
+}
+eg.
+14
+13
+14
+12
+15
+
+
+
+#include <iostream>
+#include <stdlib.h>
+#include <bits/stdc++.h>
+using namespace std;
+
+map<string, string> encoderDecoder;
+map<string, string>::iterator itr;
+
+void encode(string str){
+    string ans="";
+    ans += (char)(rand()%100 );
+    ans += (char)(rand()%100 );
+    // cout<<ans<<endl;
+    while(encoderDecoder.find(ans)!=encoderDecoder.end()){
+        ans += (char)(rand()%100 + 1);
+    }
+    encoderDecoder[ans] = str;
+}
+
+string decode(string str){
+    
+    string st = encoderDecoder[str];
+    
+    return st;
+}
+
+int main()
+{
+    encode("tushar");
+    encode("bansal");
+    encode("kumar");
+    
+    itr=encoderDecoder.begin();
+    while(itr!=encoderDecoder.end()){
+        cout<<itr->first<<":"<<itr->second<<endl;
+        itr++;
+    }
+    
+    cout<<decode("SV");
+    
+    return 0;
+}
+eg.
+M:bansal
+SV:tushar
+]#:kumar
+tushar
+
+
+
+
+#include <iostream>
+#include <stdlib.h>
+#include <bits/stdc++.h>
+using namespace std;
+
+void skylineProblem(vector<vector<int>> buildings){
+    
+    priority_queue<int> qu;
+    qu.push(0);
+    int maxHeight = 0;
+    
+    vector<vector<int>> buildingStructures;
+    for(int i=0; i<buildings.size(); i++){
+        vector<int> vect1{
+            buildings[i][0], -buildings[i][2]
+        };
+        vector<int> vect2{
+            buildings[i][1], buildings[i][2]
+        };
+        buildingStructures.push_back(vect1);
+        buildingStructures.push_back(vect2);
+    }
+    
+    for(int i=0; i<buildingStructures.size()-1; i++){
+        for(int j=i+1; j<buildingStructures.size(); j++){
+            if(buildingStructures[i][0]>buildingStructures[j][0]){
+                vector<int> ans = buildingStructures[i];
+                buildingStructures[i] = buildingStructures[j];
+                buildingStructures[j] = ans;
+            }
+            else if(buildingStructures[i][0]==buildingStructures[j][0] && buildingStructures[i][1]>buildingStructures[j][1]){
+                vector<int> ans = buildingStructures[i];
+                buildingStructures[i] = buildingStructures[j];
+                buildingStructures[j] = ans;
+            }
+        }
+    }
+    
+    for(int i=0; i<buildingStructures.size(); i++){
+        if(buildingStructures[i][1]<0){
+            qu.push(buildingStructures[i][1]*(-1));
+            int ans = buildingStructures[i][1]*(-1);
+            if(ans>maxHeight){
+                maxHeight = ans;
+                cout<<buildingStructures[i][0]<<":"<<maxHeight<<endl;
+            }
+        }
+        else{
+            int ans = buildingStructures[i][1];
+            priority_queue<int> qus;
+            while(qu.size()!=0){
+                int val = qu.top();
+                qu.pop();
+                if(val!=ans){
+                    qus.push(val);
+                }
+            }
+            qu = qus;
+            int maxHeightInQu = qu.top();
+            if(maxHeightInQu!=maxHeight){
+                maxHeight = maxHeightInQu;
+                cout<<buildingStructures[i][0]<<":"<<maxHeightInQu<<endl;
+            }
+        }
+    }
+}
+
+int main()
+{
+    std::vector<vector<int>> buildings{
+        {2,9,10},
+        {3,7,15},
+        {5,12,12},
+        {15,20,10},
+        {19,24,8}
+    };
+    
+    skylineProblem(buildings);
+    
+    return 0;
+}
+eg.
+2:10
+3:15
+7:12
+12:0
+15:10
+20:8
+24:0

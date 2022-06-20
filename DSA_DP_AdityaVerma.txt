@@ -1,0 +1,1565 @@
+// 01 Knapsack Recursive(Not Working)
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int maxProfit(vector<int> weights, vector<int> profits, int W, int n){
+    
+    if(W==0 || n==0){
+        return 0;
+    }
+    
+    if(weights[n-1]<=W){
+        return max(profits[n-1] + maxProfit(weights, profits, W-weights[n-1], n-1), maxProfit(weights, profits, W, n-1));
+    }
+    else{
+        return maxProfit(weights, profits, W, n-1);
+    }
+    
+}
+
+int main()
+{
+    cout<<"0-1 Knapsack problem";
+    int bagWeight = 7;
+    vector<int> weights{1,3,4,5};
+    vector<int> profits{1,4,5,7};
+
+    return maxProfit(weights, profits, bagWeight, weights.size());
+}
+
+
+
+// 01Knapsack Memoization(Not working)
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int maxProfit(vector<int> weights, vector<int> profits, int W, int n, vector<vector<int>> dpArray){
+    
+    if(W==0 || n==0){
+        return 0;
+    }
+    
+    if(dpArray[n][W]!=-1){
+        return dpArray[n][W];
+    }
+    
+    if(weights[n-1]<=W){
+        return dpArray[n][W] = max(profits[n-1] + maxProfit(weights, profits, W-weights[n-1], n-1, dpArray), maxProfit(weights, profits, W, n-1, dpArray));
+    }
+    else{
+        return dpArray[n][W] = maxProfit(weights, profits, W, n-1, dpArray);
+    }
+    
+}
+
+int main()
+{
+    cout<<"0-1 Knapsack problem";
+    int bagWeight = 7;
+    vector<int> weights{1,3,4,5};
+    vector<int> profits{1,4,5,7};
+    vector<vector<int>> dpArray(weights.size(), vector<int> (bagWeight+1, -1));
+    
+    return maxProfit(weights, profits, bagWeight, weights.size(), dpArray);
+}
+
+
+// 01 Knapsack Top Down DP(Not Working)
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"0-1 Knapsack problem";
+    int bagWeight = 7;
+    vector<int> weights{1,3,4,5};
+    vector<int> profits{1,4,5,7};
+    vector<vector<int>> dpArray(weights.size()+1, vector<int> (bagWeight+1));
+    
+    for(int i=0; i<dpArray.size(); i++){
+        for(int j=0; j<dpArray[i].size(); j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(weights[i]<=j){
+                    dpArray[i][j] = max(profits[i-1] + dpArray[i-1][j-weights[i-1]], dpArray[i-1][j]);
+                }
+                else{
+                    dpArray[i][j] = dpArray[i-1][j];
+                }
+            }
+        }
+    }
+    
+    return dpArray[weights.size()][bagWeight];
+}
+
+
+// Subset Sum Problem
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int sum = 11;
+    vector<int> array{2,3,7,8,10};
+    vector<vector<bool>> dpArray(array.size()+1, vector<bool> (sum+1));
+    
+    for(int i=0; i<dpArray.size(); i++){
+        for(int j=0; j<dpArray[i].size(); j++){
+            if(i==0){
+                dpArray[i][j] = false;
+            }
+            else if(j==0){
+                dpArray[i][j] = true;
+            }
+            else{
+                if(array[i-1]<=j){
+                    dpArray[i][j] = dpArray[i-1][j-array[i-1]] || dpArray[i-1][j];
+                }
+                else{
+                    dpArray[i][j] = dpArray[i-1][j];
+                }
+            }
+        }
+    }
+    
+    if(dpArray[array.size()][sum]){
+        cout<<"true";
+    }
+    else{
+        cout<<"false";
+    }
+    return 0;
+}
+eg.
+true
+
+
+// Count of Subsets Sum with a Given Sum
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int sum = 10;
+    vector<int> arrays{2,3,5,6,8,10};
+    vector<vector<int>> dpArray(arrays.size()+1, vector<int>(sum+1));
+    
+    for(int i=0; i<dpArray.size(); i++){
+        for(int j=0; j<dpArray[i].size(); j++){
+            if(i==0){
+                dpArray[i][j] = 0;
+            }
+            else if(j==0){
+                dpArray[i][j] = 1;
+            }
+            else{
+                if(arrays[i-1]<=j){
+                    dpArray[i][j] = dpArray[i-1][j-arrays[i-1]] + dpArray[i-1][j];
+                }
+                else{
+                    dpArray[i][j] = dpArray[i-1][j];
+                }
+            }
+        }
+    }
+    
+    return dpArray[arrays.size()][sum];
+}
+
+
+
+// Minimum Subset Sum Difference
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    int sum = 10;
+    vector<int> arrays{1,2,7};
+    vector<vector<bool>> dpArray(arrays.size()+1, vector<bool>(sum+1));
+    
+    for(int i=0; i<dpArray.size(); i++){
+        for(int j=0; j<dpArray[i].size(); j++){
+            if(i==0){
+                dpArray[i][j] = false;
+            }
+            else if(j==0){
+                dpArray[i][j] = true;
+            }
+            else{
+                if(arrays[i-1]<=j){
+                    dpArray[i][j] = dpArray[i-1][j-arrays[i-1]] || dpArray[i-1][j];
+                }
+                else{
+                    dpArray[i][j] = dpArray[i-1][j];
+                }
+            }
+        }
+    }
+    
+    int minSubsetSum = INT_MAX;
+    for(int i=0; i<=sum/2; i++){
+        if(dpArray[arrays.size()-1][i]){
+            minSubsetSum = sum - 2*i;
+        }
+    }
+    
+    return minSubsetSum;
+}
+
+
+
+// Rod Cutting Problem - Unbounded Knapsack
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Rod cutting - Unbounded problem";
+    int rodLength = 8;
+    vector<int> length{1,2,3,4,5,6,7,8};
+    vector<int> price{1,5,8,9,10,17,17,20};
+    vector<vector<int>> dpArray(price.size()+1, vector<int> (rodLength+1));
+    
+    for(int i=0; i<dpArray.size(); i++){
+        for(int j=0; j<dpArray[i].size(); j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(length[i]<=j){
+                    dpArray[i][j] = max(price[i-1] + dpArray[i-1][j-length[i-1]], dpArray[i-1][j]);
+                }
+                else{
+                    dpArray[i][j] = dpArray[i-1][j];
+                }
+            }
+        }
+    }
+    
+    return dpArray[price.size()][rodLength];
+}
+
+
+
+// Coin change problem: Maximum number of ways
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Coin change problem - Unbounded problem";
+    int sum = 5;
+    vector<int> coins{1,2,3};
+    vector<vector<int>> dpArray(coins.size()+1, vector<int> (sum+1));
+    
+    for(int i=0; i<dpArray.size(); i++){
+        for(int j=0; j<dpArray[i].size(); j++){
+            if(i==0){
+                dpArray[i][j] = 0;
+            }
+            else if(j==0){
+                dpArray[i][j] = 1;
+            }
+            else{
+                if(coins[i]<=j){
+                    dpArray[i][j] = dpArray[i][j-coins[i-1]], dpArray[i-1][j];
+                }
+                else{
+                    dpArray[i][j] = dpArray[i-1][j];
+                }
+            }
+        }
+    }
+    
+    return dpArray[coins.size()][sum];
+}
+
+
+// Coin change problem: Minimum number of coins
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Coin change problem - Unbounded problem";
+    int sum = 5;
+    vector<int> coins{1,2,3};
+    vector<vector<int>> dpArray(coins.size()+1, vector<int> (sum+1));
+    
+    for(int i=0; i<dpArray.size(); i++){
+        for(int j=0; j<dpArray[i].size(); j++){
+            if(j==0){
+                dpArray[i][j] = 0;
+            }
+            else if(i==0){
+                dpArray[i][j] = INT_MAX - 1;
+            }
+            else{
+                if(coins[i]<=j){
+                    dpArray[i][j] = min(1 + dpArray[i][j-coins[i-1]], dpArray[i-1][j]);
+                }
+                else{
+                    dpArray[i][j] = dpArray[i-1][j];
+                }
+            }
+        }
+    }
+    
+    return dpArray[coins.size()][sum];
+}
+
+
+
+// Longest common subsequence Recursive
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int longestCommonSusbsqnc(string x, string y, int xn, int yn){
+    
+    if(xn==0 || yn==0){
+        return 0;
+    }
+    
+    if(x[xn-1]==y[yn-1]){
+        return 1 + longestCommonSusbsqnc(x, y, xn-1, yn-1);
+    }
+    else{
+        return max(longestCommonSusbsqnc(x, y, xn-1, yn), longestCommonSusbsqnc(x, y, xn, yn-1));
+    }
+}
+
+int main()
+{
+    cout<<"Longest common subsequence";
+    string x = "abcdgh";
+    string y = "abedfhl";
+    
+    return longestCommonSusbsqnc(x, y, x.size(), y.size());
+}
+
+
+// Longest common subsequence Memoization
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int longestCommonSusbsqnc(string x, string y, int xn, int yn, vector<vector<int>> &dpArray){
+    
+    if(xn==0 || yn==0){
+        return 0;
+    }
+    
+    if(dpArray[xn][yn]!=-1){
+        return dpArray[xn][yn];
+    }
+    
+    if(x[xn-1]==y[yn-1]){
+        return dpArray[xn][yn] = 1 + longestCommonSusbsqnc(x, y, xn-1, yn-1, dpArray);
+    }
+    else{
+        return dpArray[xn][yn] = max(longestCommonSusbsqnc(x, y, xn-1, yn, dpArray), longestCommonSusbsqnc(x, y, xn, yn-1, dpArray));
+    }
+}
+
+int main()
+{
+    cout<<"Longest common subsequence";
+    string x = "abcdgh";
+    string y = "abedfhl";
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    return longestCommonSusbsqnc(x, y, x.size(), y.size(), dpArray);
+}
+
+
+
+// Longest common subsequence Top down DP
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Longest common subsequence";
+    string x = "abcdgh";
+    string y = "abedfhl";
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);
+                }
+            }
+        }
+    }
+    
+    return dpArray[x.size()][y.size()];
+}
+eg.
+Longest common subsequence: 4
+
+
+//  Longest Common Substring
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Longest common subsequence";
+    string x = "abcdgh";
+    string y = "abedfhl";
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = 0;
+                }
+            }
+        }
+    }
+    
+    return dpArray[x.size()][y.size()];
+}
+
+
+
+// Printing Longest common subsequence
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Longest common subsequence: ";
+    string x = "abcdgh";
+    string y = "abedfhl";
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);
+                }
+            }
+        }
+    }
+    
+    string ans = "";
+    int i = x.size(), j = y.size();
+    while(i>0 && j>0){
+        if(x[i-1]==y[j-1]){
+            ans += x[i-1];
+            i--, j--;
+        }
+        else{
+            if(dpArray[i][j-1] > dpArray[i-1][j]){
+                j--;
+            }
+            else{
+                i--;
+            }
+        }
+    }
+    
+    cout<<ans;
+    
+    return 0;
+}
+eg.
+Longest common subsequence: hdba
+
+
+
+// Shortest Common SuperSequence
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    string x = "aggtab";
+    string y = "gxtxayb";
+    // ans = aggxtxayb
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);
+                }
+            }
+        }
+    }
+    
+    string ans = "";
+    int i = x.size(), j = y.size();
+    while(i>0 && j>0){
+        if(x[i-1]==y[j-1]){
+            ans += x[i-1];
+            i--, j--;
+        }
+        else{
+            if(dpArray[i][j-1] > dpArray[i-1][j]){
+                j--;
+            }
+            else{
+                i--;
+            }
+        }
+    }
+    
+    cout<<x.size()+y.size()-ans.size();
+    
+    return 0;
+}
+eg.
+9
+
+
+// Minimum Number of Insertion and Deletion to convert String a to String b
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    // string x = "heap";
+    // string y = "pea";
+    string x = "aggtab";
+    string y = "gxtxayb";
+    // ans = aggxtxayb
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);;
+                }
+            }
+        }
+    }
+    
+    cout<<dpArray[x.size()][y.size()]<<endl;
+    cout<<"Deletion: "<<x.size() - dpArray[x.size()][y.size()]<<" ";
+    cout<<"Insertion: "<<y.size() - dpArray[x.size()][y.size()];
+    
+    return 0;
+}
+eg.
+4
+Deletion: 2 Insertion: 3
+
+
+
+// Longest Palindromic Subsequence
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Longest palidromic subsequence: ";
+    string x = "agbcba";
+    string y = x;
+    reverse(y.begin(), y.end());
+    
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);
+                }
+            }
+        }
+    }
+    
+    string ans = "";
+    int i = x.size(), j = y.size();
+    while(i>0 && j>0){
+        if(x[i-1]==y[j-1]){
+            ans += x[i-1];
+            i--, j--;
+        }
+        else{
+            if(dpArray[i][j-1] > dpArray[i-1][j]){
+                j--;
+            }
+            else{
+                i--;
+            }
+        }
+    }
+    
+    cout<<ans;
+    
+    return 0;
+}
+eg.
+Longest palidromic subsequence: abcba
+
+
+
+// Print shortest common Supersequence
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    string x = "aggtab";
+    string y = "gxtxayb";
+    // ans = aggxtxayb
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);
+                }
+            }
+        }
+    }
+    
+    string ans = "";
+    int i = x.size(), j = y.size();
+    while(i>0 && j>0){
+        if(x[i-1]==y[j-1]){
+            ans += x[i-1];
+            i--, j--;
+        }
+        else{
+            if(dpArray[i][j-1] > dpArray[i-1][j]){
+                ans += y[j-1];
+                j--;
+            }
+            else{
+                ans += x[i-1];
+                i--;
+            }
+        }
+    }
+    
+    while(i>0){
+        ans += x[i-1];
+        i--;
+    }
+    
+    while(j>0){
+        ans += y[j-1];
+        j--;
+    }
+    
+    reverse(ans.begin(), ans.end());
+    cout<<ans;
+    
+    return 0;
+}
+eg.
+agxgtxayb
+
+
+
+// Longest repeating subsequence
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Longest repeating subsequence: ";
+    string x = "aabebcdd";
+    string y = "aabebcdd";
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1] && i!=j){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);
+                }
+            }
+        }
+    }
+    
+    cout<<dpArray[x.size()][y.size()];
+    
+    return 0;
+}
+eg.
+Longest repeating subsequence: 3
+
+
+
+// Sequence Pattern Matching
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+    cout<<"Sequence Pattern Matching: ";
+    // string x = "abcdgh";
+    // string y = "abedfhl";
+    string x = "axy";
+    string y = "adxcpy";
+    vector<vector<int>> dpArray(x.size()+1, vector<int>(y.size()+1, -1));
+    
+    for(int i=0; i<x.size()+1; i++){
+        for(int j=0; j<y.size()+1; j++){
+            if(i==0 || j==0){
+                dpArray[i][j] = 0;
+            }
+            else{
+                if(x[i-1]==y[j-1]){
+                    dpArray[i][j] = 1 + dpArray[i-1][j-1];
+                }
+                else{
+                    dpArray[i][j] = max(dpArray[i-1][j], dpArray[i][j-1]);
+                }
+            }
+        }
+    }
+    
+    if(dpArray[x.size()][y.size()] == x.size() || dpArray[x.size()][y.size()] == y.size()){
+        cout<<"True";
+    }
+    else{
+        cout<<"False";
+    }
+    return 0;
+}
+eg.
+Sequence Pattern Matching: True
+
+
+
+// Matrix Chain Multiplication Recursive
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int minCost = INT_MAX;
+
+int solve(vector<int> array, int i, int j){
+    
+    if(i>=j){
+        return 0;
+    }
+    
+    for(int k=i; k<j; k++){
+        int temp = solve(array, i, k) + solve(array, k+1, j) + array[i-1]*array[k]*array[j];
+        minCost = min(minCost, temp);
+    }
+    
+    return minCost;
+}
+
+int main()
+{
+    cout<<"Matrix Chain Multiplication: ";
+    
+    vector<int> array{40, 20, 30, 10, 30};
+    cout<<solve(array, 1, array.size()-1);
+
+    return 0;
+}
+eg.
+Matrix Chain Multiplication: 6000
+
+
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+vector<vector<int>> dpArray(1001, vector<int>(1001, -1));
+
+int solve(vector<int> array, int i, int j){
+    
+    if(i>=j){
+        return 0;
+    }
+    
+    if(dpArray[i][j]!=-1){
+        return dpArray[i][j];
+    }
+    
+    int minCost = INT_MAX;
+    for(int k=i; k<j; k++){
+        int temp = solve(array, i, k) + solve(array, k+1, j) + array[i-1]*array[k]*array[j];
+        minCost = min(minCost, temp);
+    }
+    
+    return dpArray[i][j] = minCost;
+}
+
+int main()
+{
+    cout<<"Matrix Chain Multiplication: ";
+    
+    vector<int> array{40, 20, 30, 10, 30};
+    cout<<solve(array, 1, array.size()-1);
+
+    return 0;
+}
+
+
+
+// Palindrome Partitioning Recursive
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+bool isPalindrome(string str, int i, int j){
+    
+    while(i<j){
+        if(str[i]!=str[j]){
+            return false;
+        }
+        i++;
+        j--;
+    }
+    
+    return true;
+}
+
+int solve(string str, int i, int j){
+    
+    if(i>=j){
+        return 0;
+    }
+    
+    if(isPalindrome(str, i, j)){
+        return 0;
+    }
+    
+    int ans = INT_MAX;
+    for(int k=i; k<j; k++){
+        int temp = solve(str, i, k) + solve(str, k+1, j) + 1;
+        ans = min(temp, ans);
+    }
+    
+    return ans;
+}
+
+int main()
+{
+    cout<<"Palindrome Patitioning: ";
+    
+    string str = "awabcbada";
+    cout<<solve(str, 0, str.size()-1);
+
+    return 0;
+}
+eg.
+Palindrome Patitioning: 2
+
+
+
+// Palindrome Partitioning Memoization
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+std::vector<vector<int>> dpArray(1001, vector<int>(1001, -1));
+
+bool isPalindrome(string str, int i, int j){
+    
+    while(i<j){
+        if(str[i]!=str[j]){
+            return false;
+        }
+        i++;
+        j--;
+    }
+    
+    return true;
+}
+
+int solve(string str, int i, int j){
+    
+    if(i>=j){
+        return 0;
+    }
+    
+    if(isPalindrome(str, i, j)){
+        return 0;
+    }
+    
+    if(dpArray[i][j]!=-1){
+        return dpArray[i][j];
+    }
+    
+    int ans = INT_MAX;
+    for(int k=i; k<j; k++){
+        int temp = solve(str, i, k) + solve(str, k+1, j) + 1;
+        ans = min(temp, ans);
+    }
+    
+    return dpArray[i][j] = ans;
+}
+
+int main()
+{
+    cout<<"Palindrome Patitioning: ";
+    
+    string str = "awabcbada";
+    cout<<solve(str, 0, str.size()-1);
+
+    return 0;
+}
+eg.
+Palindrome Patitioning: 2
+
+
+
+// Palindrome Partitioning Memoized Optimisation
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+std::vector<vector<int>> dpArray(1001, vector<int>(1001, -1));
+
+bool isPalindrome(string str, int i, int j){
+    
+    while(i<j){
+        if(str[i]!=str[j]){
+            return false;
+        }
+        i++;
+        j--;
+    }
+    
+    return true;
+}
+
+int solve(string str, int i, int j){
+    
+    if(i>=j){
+        return 0;
+    }
+    
+    if(isPalindrome(str, i, j)){
+        return 0;
+    }
+    
+    if(dpArray[i][j]!=-1){
+        return dpArray[i][j];
+    }
+    
+    int ans = INT_MAX;
+    for(int k=i; k<j; k++){
+        int left, right;
+        if(dpArray[i][k]!=-1){
+            left = dpArray[i][k];
+        }
+        else{
+            left =  solve(str, i, k);
+            dpArray[i][k] = left;
+        }
+        
+        if(dpArray[k+1][j]!=-1){
+            right = dpArray[k+1][j];
+        }
+        else{
+            right =  solve(str, k+1, j);
+            dpArray[k+1][j] = right;
+        }
+        
+        int temp = left + right + 1;
+        ans = min(temp, ans);
+    }
+    
+    return dpArray[i][j] = ans;
+}
+
+int main()
+{
+    cout<<"Palindrome Patitioning: ";
+    
+    string str = "awabcbada";
+    cout<<solve(str, 0, str.size()-1);
+
+    return 0;
+}
+eg.
+Palindrome Patitioning: 2
+
+
+
+// Evaluate Expression to True Boolean Parenthesization Recursive
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+int solve(string str, int i, int j, bool isTrue){
+    
+    if(i>j){
+        return false;
+    }
+
+    if(i==j){
+        if(isTrue==true){
+            return str[i]=='T';
+        }
+        else{
+            return str[i]=='F';
+        }
+    }
+    
+    int ans = 0;
+    for (int k=i+1 ; k<=j-1 ; k+=2){
+        int lT = solve(str, i, k-1, true);
+        int lF = solve(str, i, k-1, false);
+        int rT = solve(str, k+1, j, true);
+        int rF = solve(str, k+1, j, false);
+
+        //now we will check for each operator (&, |, ^)
+        if (str[k] == '&'){
+            if (isTrue == true){
+                ans += (lT * rT);   //both should be true
+            }
+            else {
+                ans += (lF * rT) + (lT * rF) + (lF * rF);   //any one / both should be false 
+            }
+        }
+        else if (str[k] == '|'){
+            if (isTrue == true){
+                ans += (lT * rT) + (lT * rF) + (lF * rT);   //any one should be true
+            }
+            else {
+                ans += (lF * rF);  //both should be false
+            }
+        }
+        else if (str[k] == '^'){
+            if (isTrue == true){
+                ans += (lT * rF) + (lF * rT);    //xor condition 
+            }
+            else {
+                ans += (lT * rT) + (lF * rF);
+            }
+        }
+    }
+    return ans;
+
+}
+
+int main()
+{
+    cout<<"Evaluate Expression: ";
+    
+    string str = "T|F&T^F";
+    cout<<solve(str, 0, str.size()-1, true);
+
+    return 0;
+}
+eg.
+Evaluate Expression: 5
+
+
+
+// Evaluate Expression To True Boolean Parenthesization Memoized
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+map<string, int> dpMap;
+
+int solve(string str, int i, int j, bool isTrue){
+    
+    if(i>j){
+        return false;
+    }
+
+    if(i==j){
+        if(isTrue==true){
+            return str[i]=='T';
+        }
+        else{
+            return str[i]=='F';
+        }
+    }
+    
+    string key = to_string(i) + " " + to_string(j) + " " + to_string(isTrue);
+    if(dpMap.find(key)!=dpMap.end()){
+        return dpMap[key];
+    }
+    
+    int ans = 0;
+    for (int k=i+1 ; k<=j-1 ; k+=2){
+        int lT = solve(str, i, k-1, true);
+        int lF = solve(str, i, k-1, false);
+        int rT = solve(str, k+1, j, true);
+        int rF = solve(str, k+1, j, false);
+
+        //now we will check for each operator (&, |, ^)
+        if (str[k] == '&'){
+            if (isTrue == true){
+                ans += (lT * rT);   //both should be true
+            }
+            else {
+                ans += (lF * rT) + (lT * rF) + (lF * rF);   //any one / both should be false 
+            }
+        }
+        else if (str[k] == '|'){
+            if (isTrue == true){
+                ans += (lT * rT) + (lT * rF) + (lF * rT);   //any one should be true
+            }
+            else {
+                ans += (lF * rF);  //both should be false
+            }
+        }
+        else if (str[k] == '^'){
+            if (isTrue == true){
+                ans += (lT * rF) + (lF * rT);    //xor condition 
+            }
+            else {
+                ans += (lT * rT) + (lF * rF);
+            }
+        }
+    }
+    return dpMap[key]=ans;
+
+}
+
+int main()
+{
+    cout<<"Evaluate Expression: ";
+    
+    string str = "T|F&T^F";
+    cout<<solve(str, 0, str.size()-1, true);
+
+    return 0;
+}
+eg.
+Evaluate Expression: 5
+
+
+
+
+// Scrambled String Recursive
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+map<string, int> dpMap;
+
+bool solve(string x, string y){
+    
+    if(x==y){
+        return true;
+    }
+    
+    if(x.size()<=1){
+        return false;
+    }
+    
+    int n = x.size();
+    bool flag = false;
+    
+    for(int i=1; i<=n-1; i++){
+        if((solve(x.substr(0, i), y.substr(0, i)) && solve(x.substr(i, n-i), y.substr(i, n-i))) || 
+        (solve(x.substr(0, i), y.substr(n-i, i)) && solve(x.substr(i, n-i), y.substr(0, n-i)))){
+            flag = true;
+            break;
+        }
+    }
+    return flag;
+}
+
+int main()
+{
+    cout<<"Scrambled String: ";
+    string x,y;
+    cin>>x>>y;
+    
+    if(x.size()!=y.size()){
+        cout<<"Non scrambled";
+        return 0;
+    }
+    
+    if(solve(x, y)){
+        cout<<"Scrambled";
+    }
+    else{
+        cout<<"Non scrambled";
+    }
+
+    return 0;
+}
+eg.
+Scrambled String: great aterg
+Scrambled
+Scrambled String: great egart
+Non scrambled
+
+
+
+
+// Scrambled String Memoized
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+map<string, bool> dpMap;
+
+bool solve(string x, string y){
+    
+    if(x==y){
+        return true;
+    }
+    
+    if(x.size()<=1){
+        return false;
+    }
+    
+    string key = x + " " + y;
+    if(dpMap.find(key)!=dpMap.end()){
+        return dpMap[key];
+    }
+    
+    int n = x.size();
+    bool flag = false;
+    
+    for(int i=1; i<=n-1; i++){
+        if((solve(x.substr(0, i), y.substr(0, i)) && solve(x.substr(i, n-i), y.substr(i, n-i))) || 
+        (solve(x.substr(0, i), y.substr(n-i, i)) && solve(x.substr(i, n-i), y.substr(0, n-i)))){
+            flag = true;
+            break;
+        }
+    }
+    return dpMap[key] = flag;
+}
+
+int main()
+{
+    cout<<"Scrambled String: ";
+    string x,y;
+    cin>>x>>y;
+    
+    if(x.size()!=y.size()){
+        cout<<"Non scrambled";
+        return 0;
+    }
+    
+    if(solve(x, y)){
+        cout<<"Scrambled";
+    }
+    else{
+        cout<<"Non scrambled";
+    }
+
+    return 0;
+}
+eg.
+Scrambled String: great aterg
+Scrambled
+
+
+
+// Egg Dropping Problem Recursive
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+
+int solve(int e, int f){
+    
+    if(f==0 || f==1){
+        return f;
+    }
+    
+    if(e==1){
+        return f;
+    }
+    
+    int ans = INT_MAX;
+    for(int k=1; k<=f; k++){
+        int temp = 1 + max(solve(e-1, k-1), solve(e, f-k));
+        ans = min(ans, temp);
+    }
+    
+    return ans;
+}
+
+int main()
+{
+    cout<<"Egg dropping problem: ";
+    int e,f;
+    cin>>e>>f;
+    
+    cout<<solve(e, f);
+    
+    return 0;
+}
+eg.
+Egg dropping problem: 1 5
+5
+Egg dropping problem: 3 5
+3
+
+
+
+// Egg Dropping Problem Memoization
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+std::vector<vector<int>> dpArray(11, vector<int>(51, -1));
+
+int solve(int e, int f){
+    
+    if(f==0 || f==1){
+        return f;
+    }
+    
+    if(e==1){
+        return f;
+    }
+    
+    if(dpArray[e][f]!=-1){
+        return dpArray[e][f];
+    }
+    
+    int ans = INT_MAX;
+    for(int k=1; k<=f; k++){
+        int temp = 1 + max(solve(e-1, k-1), solve(e, f-k));
+        ans = min(ans, temp);
+    }
+    
+    return dpArray[e][f]=ans;
+}
+
+int main()
+{
+    cout<<"Egg dropping problem: ";
+    int e,f;
+    cin>>e>>f;
+    
+    cout<<solve(e, f);
+    
+    return 0;
+}
+eg.
+Egg dropping problem: 3 5
+3
+
+
+
+// Egg Dropping Problem Memoization Optimization
+
+
+
+#include <iostream>
+#include <bits/stdc++.h>
+using namespace std;
+
+std::vector<vector<int>> dpArray(11, vector<int>(51, -1));
+
+int solve(int e, int f){
+    
+    if(f==0 || f==1){
+        return f;
+    }
+    
+    if(e==1){
+        return f;
+    }
+    
+    if(dpArray[e][f]!=-1){
+        return dpArray[e][f];
+    }
+    
+    int ans = INT_MAX;
+    for(int k=1; k<=f; k++){
+        int low, high;
+        if(dpArray[e-1][k-1]!=-1){
+            low = dpArray[e-1][k-1];
+        }
+        else{
+            low = solve(e-1, k-1);
+            dpArray[e-1][k-1] = low;
+        }
+        
+        if(dpArray[e][f-k]!=-1){
+            high = dpArray[e][f-k];
+        }
+        else{
+            high = solve(e, f-k);
+            dpArray[e][f-k] = high;
+        }
+        
+        int temp = 1 + max(low, high);
+        ans = min(ans, temp);
+    }
+    
+    return dpArray[e][f]=ans;
+}
+
+int main()
+{
+    cout<<"Egg dropping problem: ";
+    int e,f;
+    cin>>e>>f;
+    
+    cout<<solve(e, f);
+    
+    return 0;
+}
+eg.
+Egg dropping problem: 3 5
+3
